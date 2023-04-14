@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const { sqlWrite, sqlQuerySingleCompanyNews, sqlCreateStatements, sqlQuerEearningscall, sqlQueryTodayNews } = require("../crud/index");
+const { sqlQuerySingleCompanyNews, sqlQueryTodayNews } = require("../crud/news");
 
 router.get("/:param", (req, res) => {
     const queryParam = req.params.param 

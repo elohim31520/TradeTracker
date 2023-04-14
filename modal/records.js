@@ -13,16 +13,16 @@ const Records = sequelize.define("Records", {
         allowNull: false
     },
     share : {
-        type: DataTypes.DECIMAL,
+        type: DataTypes.DECIMAL(10,2),
     },
     price: {
-        type: DataTypes.DECIMAL,
+        type: DataTypes.DECIMAL(10,2),
     },
     dividend : {
-        type: DataTypes.DECIMAL,
+        type: DataTypes.DECIMAL(10,2),
     },
     total : {
-        type: DataTypes.DECIMAL,
+        type: DataTypes.DECIMAL(10,2),
     },
     company : {
         type: DataTypes.STRING,

@@ -4,7 +4,7 @@ const { createDir, writeFile } = require("./file");
 const { dbDir, requestUrl, stockSymbols } = require("./config");
 const Schedule = require("./schedule");
 const { getTimeNow } = require("./util");
-const { sqlWrite, sqlCreateStatements } = require("../crud/index");
+const { sqlWrite, sqlCreateStatements } = require("../crud/news");
 const dayjs = require('dayjs')
 
 function parseHtmltoData(html, symbo) {
