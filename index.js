@@ -31,7 +31,7 @@ app.get('/earningscall', (req, res) => {
 
 app.use('/news', news)
 app.use('/records', records)
-app.use('/user', require('./routes/user'))
+app.use('/users', require('./routes/user'))
 
 app.listen(1234, () => {
     console.log(`server listen on: localhost:1234`);

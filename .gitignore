@@ -3,3 +3,6 @@
 todo.txt
 /mysql
 /test
+.env
+private.key
+public.key

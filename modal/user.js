@@ -2,7 +2,7 @@ const sequelize = require("../js/connect");
 const { DataTypes } = require("sequelize");
 
 const Users = sequelize.define("Users", {
-    id : {
+    id: {
         type: DataTypes.INTEGER,
         allowNull: false,
         primaryKey: true,
@@ -12,20 +12,23 @@ const Users = sequelize.define("Users", {
         type: DataTypes.STRING,
         allowNull: false
     },
-    md5 : {
+    md5_userId: {
         type: DataTypes.STRING,
+        allowNull: false
     },
-    loginId : {
+    pwd: {
         type: DataTypes.STRING,
+        allowNull: false
     },
-    pass_word : {
+    salt: {
         type: DataTypes.STRING,
+        allowNull: false
     },
     createdAt: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW
     },
-    updatedAt :{
+    updatedAt: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW
     }
