@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const { sqlGet, sqlUpdate, sqlCreate, sqlDelete, sqlGetAvg, sqlBulkCreate } = require("../crud/records/index.js");
+const { verifyToken } = require("../js/middleware")
 
 router.get("/:userId", (req, res) => {
     const id = req.params.userId
@@ -63,14 +64,14 @@ router.put("/put", (req, res) => {
         })
 })
 
-router.get("/:userId/avg", async (req, res) => {
-    const id = req.params.userId
-    if (!id) {
-        res.json({ code: 0, msg: "缺少參數" })
+router.post("/avg", verifyToken, async (req, res) => {
+    const { userId } = req.body
+    if (!userId) {
+        res.json({ code: -1, msg: "缺少參數" })
         return
     }
     try {
-        const resp = await sqlGetAvg(id)
+        const resp = await sqlGetAvg(userId)
         res.json(resp)
     } catch (error) {
         console.log(error);
