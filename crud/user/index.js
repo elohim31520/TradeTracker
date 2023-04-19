@@ -1,7 +1,6 @@
 const Users = require("../../modal/user")
 const sequelize = require("../../js/connect");
-const { md5Encode, generateSalt, sha256 } = require("../../js/util");
-const { generateToken } = require("../../js/crypto")
+const { generateToken, md5Encode, generateSalt, sha256 } = require("../../js/crypto")
 
 async function createUser({ userId, pwd }) {
     await sequelize.sync()
@@ -42,7 +41,7 @@ async function userLogin({ userId, pwd }) {
 
     } catch (e) {
         console.log(e);
-        return Promise.reject({ code: 0, messaage: "登入失敗", error: e })
+        return Promise.reject({ code: 0, messaage: "登入失敗" })
     }
 
 }

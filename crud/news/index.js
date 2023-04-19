@@ -1,7 +1,7 @@
 const News = require("../../modal/news")
 const Statements = require("../../modal/statements")
 const sequelize = require("../../js/connect");
-const { md5Encode } = require("../../js/util");
+const { md5Encode } = require("../../js/crypto");
 const dayjs = require("dayjs")
 
 function sqlWrite(arr) {

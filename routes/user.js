@@ -7,8 +7,7 @@ router.post("/register", async (req, res) => {
         const resp = await createUser(req.body)
         res.json(resp)
     } catch (e) {
-        console.warn(e);
-        res.json({ code: 0, msg: e.msg })
+        res.json(e)
     }
 })
 
@@ -17,8 +16,7 @@ router.post("/login", async (req, res) => {
         const resp = await userLogin(req.body)
         res.json(resp)
     } catch (e) {
-        console.warn(e);
-        res.json({ code: 0, msg: e.msg })
+        res.json(e)
     }
 })
 
