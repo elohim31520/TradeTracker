@@ -14,10 +14,10 @@ router.get("/:userId", (req, res) => {
     })
 })
 
-router.post("/add", (req, res) => {
+router.post("/add", verifyToken, (req, res) => {
     // const {userId ,share ,price ,company ,dividend ,total ,open_time} = req.body.data
     sqlCreate(req.body).then(() => {
-        res.json({ code: 0, msg: "寫入成功" })
+        res.json({ code: 1, msg: "寫入成功" })
     })
         .catch(e => {
             console.error('SQL寫入records失敗 : ', e);
@@ -25,9 +25,9 @@ router.post("/add", (req, res) => {
         })
 })
 
-router.post("/bulkcreate", (req, res) => {
+router.post("/bulkcreate", verifyToken, (req, res) => {
     sqlBulkCreate(req.body).then(() => {
-        res.json({ code: 0, msg: "寫入成功" })
+        res.json({ code: 1, msg: "寫入成功" })
     })
         .catch(e => {
             console.error('SQL寫入records失敗 : ', e);
@@ -35,22 +35,22 @@ router.post("/bulkcreate", (req, res) => {
         })
 })
 
-router.delete("/del/:id", async (req, res) => {
-    const { id } = req.params
-    if (!id) {
-        res.json({ code: 0, msg: "缺少參數" })
+router.post("/del", verifyToken, async (req, res) => {
+    const { userId, id } = req.body
+    if (!userId || (!id && id != 0)) {
+        res.status(401).json({ code: -1, msg: "缺少參數" })
         return
     }
     try {
-        await sqlDelete(id)
+        await sqlDelete({ userId, id })
         res.json({ code: 1, msg: "刪除成功" })
-    } catch (error) {
+    } catch (e) {
         console.error('SQL刪除records失敗 : ', e);
         res.json({ code: 0, msg: "刪除失敗" })
     }
 })
 
-router.put("/put", (req, res) => {
+router.put("/put", verifyToken, (req, res) => {
     if (!req.body.data.id) {
         res.json({ code: 0, msg: "缺少參數 - id" })
         return

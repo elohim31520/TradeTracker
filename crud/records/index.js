@@ -33,10 +33,11 @@ function sqlBulkCreate(arr) {
 }
 
 
-function sqlDelete(id) {
+function sqlDelete({id, userId}) {
     return Records.destroy({
         where: {
-            id
+            id,
+            userId
         }
     })
 }
