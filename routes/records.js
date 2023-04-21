@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const { sqlGet, sqlUpdate, sqlCreate, sqlDelete, sqlGetAvg, sqlBulkCreate } = require("../crud/records/index.js");
 const { verifyToken } = require("../js/middleware")
+const _ = require("lodash")
 
 router.get("/:userId", (req, res) => {
     const id = req.params.userId
@@ -16,17 +17,10 @@ router.get("/:userId", (req, res) => {
 
 router.post("/add", verifyToken, (req, res) => {
     // const {userId ,share ,price ,company ,dividend ,total ,open_time} = req.body.data
-    sqlCreate(req.body).then(() => {
-        res.json({ code: 1, msg: "寫入成功" })
-    })
-        .catch(e => {
-            console.error('SQL寫入records失敗 : ', e);
-            res.json({ code: 0, msg: "寫入失敗" })
-        })
-})
-
-router.post("/bulkcreate", verifyToken, (req, res) => {
-    sqlBulkCreate(req.body).then(() => {
+    let params = req.body
+    const isArray = _.isArray(params)
+    if (!isArray) params = [req.body]
+    sqlBulkCreate(params).then(() => {
         res.json({ code: 1, msg: "寫入成功" })
     })
         .catch(e => {

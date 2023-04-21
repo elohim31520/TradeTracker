@@ -26,10 +26,9 @@ function sqlCreate(params) {
     })
 }
 
-function sqlBulkCreate(arr) {
-    return sequelize.sync().then(() => {
-        return Records.bulkCreate(arr)
-    })
+async function sqlBulkCreate(arr) {
+    await sequelize.sync()
+    return Records.bulkCreate(arr)
 }
 
 
