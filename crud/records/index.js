@@ -1,39 +1,36 @@
-const Records = require("../../modal/records");
 const sequelize = require("../../js/connect");
 
-
-function sqlGet(userId) {
+function sqlGet(table, userId) {
     return sequelize.query(
-        `SELECT * from records WHERE userId = :id;`,
+        `SELECT * from :table WHERE userId = :id;`,
         {
             type: sequelize.QueryTypes.SELECT,
-            replacements: { id: userId }
+            replacements: { id: userId, table }
         }
     )
 }
 
-function sqlUpdate(params) {
-    return Records.update(params, {
+function sqlUpdate(table, params) {
+    return table.update(params, {
         where: {
             id: params.id
         }
     })
 }
 
-function sqlCreate(params) {
-    return sequelize.sync().then(() => {
-        return Records.create(params)
-    })
-}
-
-async function sqlBulkCreate(arr) {
+async function sqlCreate(table, params) {
     await sequelize.sync()
-    return Records.bulkCreate(arr)
+    return table.create(params)
+}
+
+async function sqlBulkCreate(table, arr) {
+    await sequelize.sync()
+    return table.bulkCreate(arr)
 }
 
 
-function sqlDelete({id, userId}) {
-    return Records.destroy({
+function sqlDelete(table, {id, userId}) {
+    return table.destroy({
         where: {
             id,
             userId
@@ -41,7 +38,7 @@ function sqlDelete({id, userId}) {
     })
 }
 
-function sqlGetAvg(userId) {
+function sqlGetAvg(table, userId) {
     return sequelize.query(
         `SELECT
             AVG(price) as average_price ,
@@ -49,10 +46,10 @@ function sqlGetAvg(userId) {
             ROUND(SUM(total), 2) as Total_account,
             company,
             userId
-            FROM records WHERE userId = :id GROUP BY company`,
+            FROM :table WHERE userId = :id GROUP BY company`,
         {
             type: sequelize.QueryTypes.SELECT,
-            replacements: { id: userId }
+            replacements: { id: userId, table }
         }
     )
 }

@@ -4,8 +4,6 @@ require('dotenv').config()
 const { sqlQueryEearningscall } = require("./crud/news");
 const app = express()
 const path = require('path');
-const news = require('./routes/news')
-const records = require('./routes/records')
 const cors = require('cors');
 require('./js/crawler')
 app.use(cors());
@@ -29,8 +27,10 @@ app.get('/earningscall', (req, res) => {
     }).catch(e => console.log(e))
 })
 
-app.use('/news', news)
-app.use('/records', records)
+app.use('/news', require('./routes/news'))
+app.use('/records/buy', require('./routes/records/buy'))
+app.use('/records/holding', require('./routes/records/holding'))
+app.use('/records/sell', require('./routes/records/sell'))
 app.use('/users', require('./routes/user'))
 
 app.listen(1234, () => {

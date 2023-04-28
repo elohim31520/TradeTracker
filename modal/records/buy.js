@@ -1,7 +1,7 @@
-const sequelize = require("../js/connect");
+const sequelize = require("../../js/connect");
 const { DataTypes } = require("sequelize");
 
-const Records = sequelize.define("Records", {
+const BuyRecords = sequelize.define("Buy_Records", {
     id : {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -42,4 +42,4 @@ const Records = sequelize.define("Records", {
     }
 });
 
-module.exports = Records
+module.exports = BuyRecords
