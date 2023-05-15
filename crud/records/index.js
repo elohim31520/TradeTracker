@@ -5,7 +5,8 @@ function sqlGet(table, { userId, company }) {
 		where: {
 			userId,
 			company
-		}
+		},
+		raw: true
 	})
 }
 

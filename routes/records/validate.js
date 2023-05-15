@@ -1,13 +1,12 @@
 const Joi = require('joi');
 
-function validateParams(req, res, next) {
+function validateParamsOfGet(req, res, next) {
 	const schema = Joi.object({
 		userId: Joi.string().required(),
 		company: Joi.string()
 	})
 	const userId = req.params.userId
 	const company = req.query.company
-	console.log("驗證參數開始",userId,company);
 	const result = schema.validate({ userId, company })
 
 	if (result.error) {
@@ -19,5 +18,5 @@ function validateParams(req, res, next) {
 }
 
 module.exports = {
-	validateParams
+	validateParamsOfGet
 }
