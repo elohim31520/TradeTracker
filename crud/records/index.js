@@ -10,12 +10,19 @@ function sqlGet(table, { userId, company }) {
 	})
 }
 
-function sqlUpdate(table, params) {
-	return table.update(params, {
-		where: {
-			id: params.id
-		}
-	})
+async function sqlUpdate(table, params) {
+	let criteria = {
+		userId: params.userId,
+		company: params.company
+	}
+	const record = await table.findOne({ where: criteria })
+	if(record){
+		return table.update(params, {
+			where: criteria
+		})
+	} else {
+		return sqlBulkCreate(table, [params])
+	}
 }
 
 async function sqlCreate(table, params) {

@@ -60,18 +60,15 @@ function delRecords(modal) {
 }
 
 function updateRecords(modal) {
-	return (req, res) => {
-		if (!req.body.data.id) {
-			res.json({ code: 0, msg: "缺少參數 - id" })
-			return
+	return async (req, res, next) => {
+		try {
+			const data = req.commitData || req.body
+			await sqlUpdate(modal, data)
+			next()
+		} catch (err) {
+			console.log(err);
+			res.json({ code: 0, msg: "SQL更新records失敗"})
 		}
-		sqlUpdate(modal, req.body.data).then(resp => {
-			res.json({ code: 1, msg: "更新成功" })
-		})
-			.catch(e => {
-				console.error('SQL更新records失敗 : ', e);
-				res.json({ code: 0, msg: "更新失敗" })
-			})
 	}
 }
 
