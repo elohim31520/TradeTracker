@@ -17,9 +17,8 @@ function getRecordsBy(modal) {
 
 function queryRecordsBy(modal) {
 	return async (req, res, next) => {
-		const { userId, company } = req.body
 		try {
-			req.records = await sqlGet(modal, { userId, company })
+			req.records = await sqlGet(modal, req.body)
 			next()
 		} catch (err) {
 			console.log(err);
@@ -30,11 +29,8 @@ function queryRecordsBy(modal) {
 
 function addRecords(modal) {
 	return async (req, res, next) => {
-		let params = req.body
-		const isArray = _.isArray(params)
-		if (!isArray) params = [req.body]
 		try {
-			await sqlBulkCreate(modal, params)
+			await sqlBulkCreate(modal, req.body)
 			next()
 		} catch (e) {
 			res.json({ code: 0, msg: "寫入失敗" })
@@ -62,7 +58,7 @@ function delRecords(modal) {
 function updateRecords(modal) {
 	return async (req, res, next) => {
 		try {
-			const data = req.commitData || req.body
+			const data = req.body
 			await sqlUpdate(modal, data)
 			next()
 		} catch (err) {
@@ -89,6 +85,37 @@ function getAvgRecords(modal) {
 	}
 }
 
+function mergeRecordsToTable(table) {
+	return (req, res, next) => {
+		const list = req.body
+		list.forEach(async vo => {
+			try {
+				const holdingData = await sqlGet(table, vo)
+				let temp
+				if (_.isArray(holdingData) && holdingData.length) {
+					let record = holdingData[0],
+						current = vo
+					let shareSum = +record.share + +current.share,
+						totalSum = +record.total + +current.total,
+						avgPrice = totalSum / shareSum
+
+					temp = Object.assign({}, req.body, {
+						total: totalSum,
+						share: shareSum,
+						price: avgPrice
+					})
+				} else temp = vo
+
+				await sqlUpdate(table, temp)
+			} catch (err) {
+				console.log(err);
+				console.error("mergeRecordsToTable Error!", vo);
+			}
+		})
+		next()
+	}
+}
+
 module.exports = {
 	getRecordsBy,
 	queryRecordsBy,
@@ -96,4 +123,5 @@ module.exports = {
 	addRecords,
 	updateRecords,
 	getAvgRecords,
+	mergeRecordsToTable
 }

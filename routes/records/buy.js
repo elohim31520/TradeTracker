@@ -3,34 +3,15 @@ const router = express.Router()
 const { verifyToken } = require("../../js/middleware")
 const modal = require("../../modal/records/buy")
 const modal_holding = require("../../modal/records/holding")
-const { getRecordsBy, queryRecordsBy, addRecords, delRecords, updateRecords, getAvgRecords } = require("./index")
-const { validateParamsOfGet } = require("./validate")
+const { getRecordsBy, addRecords, delRecords, updateRecords, getAvgRecords, mergeRecordsToTable } = require("./index")
+const { validateParamsOfGet, validateParamsOfAdd } = require("./validate")
 const _ = require("lodash")
 
 router.get("/:userId", verifyToken, validateParamsOfGet, getRecordsBy(modal), (req, res) => {
-	res.json(req.records)
+	res.json({code: 1, msg: "add success"})
 })
 
-router.post("/add", verifyToken, addRecords(modal), queryRecordsBy(modal_holding),
-	(req, res, next) => {
-		if (!_.isArray(req.records) || !req.records.length) {
-			req.commitData = req.body
-			return next()
-		}
-		let record = req.records[0],
-			current = req.body
-		let shareSum = +record.share + +current.share,
-			totalSum = +record.total + +current.total,
-			avgPrice = totalSum / shareSum
-
-		req.commitData = Object.assign({}, req.body, {
-			total: totalSum,
-			share: shareSum,
-			price: avgPrice
-		})
-		next()
-	},
-	updateRecords(modal_holding),
+router.post("/add", verifyToken, validateParamsOfAdd, addRecords(modal),mergeRecordsToTable(modal_holding),
 	(req, res) => {
 		const data = req.commitData
 		res.json({ code: 1, msg: "success", data })

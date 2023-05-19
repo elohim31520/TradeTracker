@@ -11,12 +11,30 @@ function validateParamsOfGet(req, res, next) {
 
 	if (result.error) {
 		res.status(400).json(result.error)
-	} else {
-		console.log("參數正確");
-		next()
-	}
+	} else next()
+}
+
+function validateParamsOfAdd(req, res, next) {
+	const schema = Joi.array().items(
+		Joi.object({
+			userId: Joi.string().required(),
+			company: Joi.string().required(),
+			share: Joi.number().required(),
+			price: Joi.number().required(),
+			dividend: Joi.number(),
+			total: Joi.number(),
+			open_time: Joi.string()
+		})
+	)
+	const params = req.body
+	const result = schema.validate(params)
+
+	if (result.error) {
+		res.status(400).json({ code: 400, msg: "value must be an array" })
+	} else next()
 }
 
 module.exports = {
-	validateParamsOfGet
+	validateParamsOfGet,
+	validateParamsOfAdd
 }

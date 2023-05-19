@@ -1,8 +1,8 @@
 const express = require('express')
 require('dotenv').config()
 
-if(process.env.NODEMON_RESTART){
-	console.log("in nodemon mode");
+if(process.env.DEBUG_MODE){
+	console.log("in debug mode");
 }
 
 const { sqlQueryEearningscall } = require("./crud/news");

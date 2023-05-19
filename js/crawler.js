@@ -82,7 +82,7 @@ var map = {
 
 const mySchedule = new Schedule({ countdown: 60 * 60 })
 mySchedule.interval(async () => {
-	if(process.env.NODEMON_RESTART) return
+	if(process.env.DEBUG_MODE) return
     console.log(`開始爬蟲，最後創建時間: ${mySchedule.lastTime}`)
     const now = dayjs().format('YYYY-MM-DD HH_mm_ss')
     const myPath = dbDir + now
