@@ -1,6 +1,10 @@
 const express = require('express')
 require('dotenv').config()
 
+if(process.env.NODEMON_RESTART){
+	console.log("in nodemon mode");
+}
+
 const { sqlQueryEearningscall } = require("./crud/news");
 const app = express()
 const path = require('path');

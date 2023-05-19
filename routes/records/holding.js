@@ -9,7 +9,10 @@ router.get("/:userId", verifyToken, validateParamsOfGet, getRecordsBy(modal), (r
 	res.json(req.records)
 })
 
-router.post("/add", verifyToken, addRecords(modal))
+router.post("/add", verifyToken, addRecords(modal), (req, res) => {
+	res.json({code: 1, msg: "寫入成功"})
+})
+
 router.post("/del", verifyToken, delRecords(modal))
 router.put("/put", verifyToken, updateRecords(modal))
 router.post("/avg", verifyToken, getAvgRecords(modal))

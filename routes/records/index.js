@@ -67,7 +67,7 @@ function updateRecords(modal) {
 			next()
 		} catch (err) {
 			console.log(err);
-			res.json({ code: 0, msg: "SQL更新records失敗"})
+			res.json({ code: 0, msg: "SQL更新records失敗" })
 		}
 	}
 }
@@ -89,30 +89,6 @@ function getAvgRecords(modal) {
 	}
 }
 
-function avgAllRecords() {
-	return (req, res, next) => {
-		let records = req.records
-		if (!_.isArray(records)) {
-			res.json({ code: 0, msg: "failed in avg, no records" })
-		}
-		if (_.isArray(req.body)) {
-			records.concat(req.body)
-		} else {
-			records.push(req.body)
-		}
-		const shareSum = records.reduce((accumulator, obj) => accumulator + obj.share, 0)
-		const totalSum = records.reduce((accumulator, obj) => accumulator + obj.total, 0)
-		const avgPrice = shareSum / totalSum
-
-		req.commitData = Object.assign(req.body, {
-			total: totalSum,
-			share: shareSum,
-			price: avgPrice
-		})
-		next()
-	}
-}
-
 module.exports = {
 	getRecordsBy,
 	queryRecordsBy,
@@ -120,5 +96,4 @@ module.exports = {
 	addRecords,
 	updateRecords,
 	getAvgRecords,
-	avgAllRecords,
 }

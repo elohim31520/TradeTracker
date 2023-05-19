@@ -15,12 +15,13 @@ async function sqlUpdate(table, params) {
 		userId: params.userId,
 		company: params.company
 	}
-	const record = await table.findOne({ where: criteria })
-	if(record){
+	const record = await table.findOne({ where: criteria, raw: true })
+	if (record) {
 		return table.update(params, {
 			where: criteria
 		})
 	} else {
+		await sequelize.sync()
 		return sqlBulkCreate(table, [params])
 	}
 }
