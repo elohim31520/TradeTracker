@@ -39,17 +39,15 @@ function addRecords(modal) {
 }
 
 function delRecords(modal) {
-	return async (req, res) => {
-		const { userId, id } = req.body
-		if (!userId || (!id && id != 0)) {
-			res.status(401).json({ code: -1, msg: "缺少參數" })
-			return
-		}
+	return async (req, res, next) => {
 		try {
-			await sqlDelete(modal, { userId, id })
-			res.json({ code: 1, msg: "刪除成功" })
+			const isDone = await sqlDelete(modal, req.body)
+			if(isDone == 0){
+				res.json({ code: 0, msg: "無法刪除" })
+			}
+			next()
 		} catch (e) {
-			console.error('SQL刪除records失敗 : ', e);
+			console.error(e);
 			res.json({ code: 0, msg: "刪除失敗" })
 		}
 	}

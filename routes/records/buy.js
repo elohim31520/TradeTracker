@@ -4,21 +4,21 @@ const { verifyToken } = require("../../js/middleware")
 const modal = require("../../modal/records/buy")
 const modal_holding = require("../../modal/records/holding")
 const { getRecordsBy, addRecords, delRecords, updateRecords, getAvgRecords, mergeRecordsToTable } = require("./index")
-const { validateParamsOfGet, validateParamsOfAdd } = require("./validate")
+const { validateParamsOfGet, validateParamsOfAdd, validateParamsOfDel } = require("./validate")
 const _ = require("lodash")
 
 router.get("/:userId", verifyToken, validateParamsOfGet, getRecordsBy(modal), (req, res) => {
-	res.json({code: 1, msg: "add success"})
+	res.json({ code: 1, msg: "add success" })
 })
 
-router.post("/add", verifyToken, validateParamsOfAdd, addRecords(modal),mergeRecordsToTable(modal_holding),
+router.post("/add", verifyToken, validateParamsOfAdd, addRecords(modal), mergeRecordsToTable(modal_holding),
 	(req, res) => {
 		const data = req.commitData
 		res.json({ code: 1, msg: "success", data })
 	}
 )
 
-router.post("/del", verifyToken, delRecords(modal), (req, res) => {
+router.post("/del", verifyToken, validateParamsOfDel, delRecords(modal), (req, res) => {
 	res.json({ code: 1, msg: "刪除成功" })
 })
 
