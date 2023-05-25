@@ -11,7 +11,7 @@ function verifyToken(req, res, next) {
     jwt.verify(token, publicKey, (err, decoded) => {
         if (err) {
             console.log(err);
-            res.status(401).json({ code: -2, message: "Token not Verified!" })
+            return res.status(401).json({ code: -2, message: "Token not Verified!" })
         }
         next()
     })
