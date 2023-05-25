@@ -89,20 +89,20 @@ function mergeRecordsToTable(table) {
 		list.forEach(async vo => {
 			try {
 				const holdingData = await sqlGet(table, vo)
-				let temp
+				let temp,
+					current = vo
 				if (_.isArray(holdingData) && holdingData.length) {
-					let record = holdingData[0],
-						current = vo
+					let record = holdingData[0]
 					let shareSum = +record.share + +current.share,
 						totalSum = +record.total + +current.total,
 						avgPrice = totalSum / shareSum
 
-					temp = Object.assign({}, req.body, {
+					temp = Object.assign({}, record, {
 						total: totalSum,
 						share: shareSum,
 						price: avgPrice
 					})
-				} else temp = vo
+				} else temp = current
 
 				await sqlUpdate(table, temp)
 			} catch (err) {
