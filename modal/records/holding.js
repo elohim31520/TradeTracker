@@ -18,9 +18,6 @@ const HoldingRecords = sequelize.define("Holding_Records", {
     price: {
         type: DataTypes.DECIMAL(10,2),
     },
-    dividend : {
-        type: DataTypes.DECIMAL(10,2),
-    },
     total : {
         type: DataTypes.DECIMAL(10,2),
     },

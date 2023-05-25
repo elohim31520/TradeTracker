@@ -16,7 +16,7 @@ router.get("/:userId", (req, res) => {
 })
 
 router.post("/add", verifyToken, (req, res) => {
-    // const {userId ,share ,price ,company ,dividend ,total ,open_time} = req.body.data
+    // const {userId ,share ,price ,company ,total ,open_time} = req.body.data
     let params = req.body
     const isArray = _.isArray(params)
     if (!isArray) params = [req.body]
