@@ -42,7 +42,7 @@ function delRecords(modal) {
 	return async (req, res, next) => {
 		try {
 			const isDone = await sqlDelete(modal, req.body)
-			if(isDone == 0){
+			if (isDone == 0) {
 				res.json({ code: 0, msg: "無法刪除" })
 			}
 			next()
@@ -83,7 +83,7 @@ function getAvgRecords(modal) {
 	}
 }
 
-function mergeRecordsToTable(table) {
+function mergeRecordsToTable(table, operator = "+") {
 	return (req, res, next) => {
 		const list = req.body
 		list.forEach(async vo => {
@@ -93,9 +93,17 @@ function mergeRecordsToTable(table) {
 					current = vo
 				if (_.isArray(holdingData) && holdingData.length) {
 					let record = holdingData[0]
-					let shareSum = +record.share + +current.share,
-						totalSum = +record.total + +current.total,
-						avgPrice = totalSum / shareSum
+					let shareSum,
+						totalSum
+
+					if (operator == "+") {
+						shareSum = +record.share + +current.share
+						totalSum = +record.total + +current.total
+					} else {
+						shareSum = +record.share - +current.share
+						totalSum = +record.total - +current.total
+					}
+					let avgPrice = totalSum / shareSum
 
 					temp = Object.assign({}, record, {
 						total: totalSum,
