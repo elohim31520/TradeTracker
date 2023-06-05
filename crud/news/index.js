@@ -40,7 +40,9 @@ function sqlCreateNews({ md5, releaseTime, company, title, publisher, webUrl }) 
 }
 
 function sqlCreateStatements(param) {
-    return Statements.create(param)
+    return Statements.create(param).catch((error) => {
+        console.error('Statements寫入失敗 : ', error);
+    });
 }
 
 const mustFilterdTxt = "Right Now|why today|As Market Dips |Before Betting on It| To Buy Now |How Much You Would Have Today|What You Should Know |Stocks to Buy|Stock a Buy Now"

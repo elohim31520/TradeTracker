@@ -10,7 +10,8 @@ function getStockSymbol(){
     let arr = []
     symbols.forEach(vo => {
         let sym = vo.split(":")
-        arr.push(sym[1])
+		if(sym.length == 1) arr.push(sym[0])
+        else arr.push(sym[1])
     });
     return arr
 }
