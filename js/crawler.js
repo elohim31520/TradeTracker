@@ -6,7 +6,7 @@ const Schedule = require("./schedule");
 const { getTimeNow } = require("./util");
 const { sqlWrite, sqlCreateStatements } = require("../crud/news");
 const dayjs = require('dayjs')
-const { get } = require('lodash')
+const { get, isArray } = require('lodash')
 
 function parseHtmltoData(html, symbo) {
 	const $ = cheerio.load(html);
@@ -88,12 +88,12 @@ mySchedule.interval(async () => {
 	const now = dayjs().format('YYYY-MM-DD HH_mm_ss')
 	const myPath = dbDir + now
 	try {
-		const scheduleSec = new Schedule({ countdown: 8 })
+		const scheduleSec = new Schedule({ countdown: 9 })
 		const myFetch = new Fetch({ requestUrl, stockSymbols }),
 			canGet = mySchedule.isTimeToGet(),
-			hasTimeLimit = !mySchedule.isAfterTime({ gap: 12, gapUnit: "hour" })
+			hasTimeLimit = !mySchedule.isAfterTime({ gap: 24, gapUnit: "hour" })
 		if (hasTimeLimit) {
-			console.log("寫入有12小時限制");
+			console.log("寫入有24小時限制");
 			return
 		}
 		if (canGet) await createDir(myPath)
@@ -111,7 +111,10 @@ mySchedule.interval(async () => {
 				const data = get(res, "data", {})
 				let arr = parseHtmltoData(data, symbo),
 					obj = parseHtmlStatementsTable(data)
-				if (!arr) return
+				if (!isArray(arr) || !arr.length) {
+					console.log("沒有fetch到資料");
+					return
+				}
 				if (canGet) {
 					console.log("寫入.json:", "  現在時間:", getTimeNow(), `寫入路徑: ${myPath}`);
 					try {

@@ -21,6 +21,7 @@ function validateParamsOfAdd(req, res, next) {
 			company: Joi.string().required(),
 			share: Joi.number().required(),
 			price: Joi.number().required(),
+			dividend: Joi.number(),
 			total: Joi.number(),
 			open_time: Joi.string()
 		})
