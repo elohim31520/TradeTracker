@@ -92,14 +92,14 @@ function sqlQueryEearningscall() {
 
 async function sqlQueryTodayNews() {
     let now = dayjs().subtract(1, 'day'),
-        formatedDate = now.format('MMM-DD-YY')
+        formatedDate = now.format('YYYY-MM-DD')
 
     try {
         const res = await sequelize.query(`
             SELECT
                 company ,title ,web_url ,release_time FROM news 
             WHERE
-                release_time like :TODAY
+                createdAt like :TODAY
                 AND title NOT REGEXP "${mustFilterdTxt}";
         `,
             {
