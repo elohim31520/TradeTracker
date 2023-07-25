@@ -7,6 +7,7 @@ const { getTimeNow } = require("./util");
 const { sqlWrite, sqlCreateStatements } = require("../crud/news");
 const dayjs = require('dayjs')
 const { get, isArray } = require('lodash')
+const { sqlCreateCompany } = require("../crud/company");
 
 function parseHtmltoData(html, symbo) {
 	const $ = cheerio.load(html);
@@ -109,6 +110,7 @@ mySchedule.interval(async () => {
 				}
 				const res = await myFetch.getHtml()
 				const data = get(res, "data", {})
+
 				let arr = parseHtmltoData(data, symbo),
 					obj = parseHtmlStatementsTable(data)
 				if (!isArray(arr) || !arr.length) {
@@ -130,6 +132,10 @@ mySchedule.interval(async () => {
 					}
 				}
 				sqlWrite(arr) //12 小時就可以寫sql
+
+				// const companyName = pasreHTMLGetCompanyName(data)
+				// sqlCreateCompany({symbol: symbo, name: companyName})
+
 			} catch (e) {
 				console.log(e);
 				console.log("Fetch finviz失敗");
@@ -161,6 +167,13 @@ function parseHtmlStatementsTable(html) {
 	}
 	return obj
 };
+
+function pasreHTMLGetCompanyName(html) {
+	const $ = cheerio.load(html);
+	const name = $(".tab-link")
+	const text = name.eq(1).text()
+	return text
+}
 
 module.export = {
 	parseHtmlStatementsTable
