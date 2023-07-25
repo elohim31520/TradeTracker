@@ -2,15 +2,10 @@ const sequelize = require("../js/connect");
 const { DataTypes } = require("sequelize");
 
 const Users = sequelize.define("Users", {
-    id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        primaryKey: true,
-        autoIncrement: true
-    },
     userId: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+		primaryKey: true,
     },
     md5_userId: {
         type: DataTypes.STRING,
