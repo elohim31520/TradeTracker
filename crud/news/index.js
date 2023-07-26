@@ -4,6 +4,8 @@ const sequelize = require("../../js/connect");
 const { md5Encode } = require("../../js/crypto");
 const dayjs = require("dayjs")
 const { Op } = require("sequelize");
+const Users = require("../../modal/user")
+const Company = require("../../modal/company")
 
 function sqlWrite(arr) {
 	arr.forEach(async vo => {
@@ -117,7 +119,7 @@ async function sqlQueryTodayNews() {
 
 async function sqlQueryRange(range) {
 	let endDate = dayjs().subtract(1, 'day').toDate(),
-	startDate = dayjs().subtract(range + 1, 'day').toDate()
+		startDate = dayjs().subtract(range + 1, 'day').toDate()
 	try {
 		const res = await News.findAll({
 			where: {
@@ -133,6 +135,38 @@ async function sqlQueryRange(range) {
 	}
 }
 
+async function sqlQuerySubscriptionNews(body) {
+	const { userId } = body
+
+	try {
+		const user = await Users.findByPk(userId, {
+			include: {
+				model: Company,
+				attributes: ['symbol'],
+				through: { attributes: [] },
+			},
+		})
+
+		const companySymbols = user.Companies.map(company => company.symbol);
+
+		let endDate = dayjs().toDate(),
+			startDate = dayjs().startOf('day').subtract(1, 'day').toDate()
+		const res = await News.findAll({
+			where: {
+				company: companySymbols,
+				createdAt: {
+					[Op.between]: [startDate, endDate],
+				}
+			},
+			attributes: ['title', 'company', 'release_time', 'web_url', 'createdAt']
+		})
+		return res
+	} catch (e) {
+		console.log(e);
+		console.log("查詢關聯數據失敗");
+	}
+}
+
 module.exports = {
 	sqlWrite,
 	sqlQueryNews,
@@ -140,5 +174,6 @@ module.exports = {
 	sqlCreateStatements,
 	sqlQueryEearningscall,
 	sqlQueryTodayNews,
-	sqlQueryRange
+	sqlQueryRange,
+	sqlQuerySubscriptionNews
 }

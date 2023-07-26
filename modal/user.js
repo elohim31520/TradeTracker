@@ -1,5 +1,7 @@
 const sequelize = require("../js/connect");
 const { DataTypes } = require("sequelize");
+const Company = require("./company")
+const User_subscribe_company = require("./user_subscribe_company")
 
 const Users = sequelize.define("Users", {
     userId: {
@@ -28,5 +30,9 @@ const Users = sequelize.define("Users", {
         defaultValue: DataTypes.NOW
     }
 });
+
+// 設置多對多關聯
+Users.belongsToMany(Company, { through: User_subscribe_company, foreignKey: 'userId' });
+Company.belongsToMany(Users, { through: User_subscribe_company, foreignKey: 'symbol' });
 
 module.exports = Users

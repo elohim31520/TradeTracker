@@ -1,6 +1,12 @@
 const express = require('express')
 const router = express.Router()
-const { sqlQuerySingleCompanyNews, sqlQueryTodayNews, sqlQueryRange } = require("../crud/news");
+const { sqlQuerySingleCompanyNews, sqlQueryTodayNews, sqlQueryRange, sqlQuerySubscriptionNews } = require("../crud/news");
+
+router.post("/subscription", (req, res) => {
+	sqlQuerySubscriptionNews(req.body).then(resp => {
+		res.json(resp)
+	})
+})
 
 router.get("/:param", (req, res) => {
 	const queryParam = req.params.param

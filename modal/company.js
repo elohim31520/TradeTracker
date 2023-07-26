@@ -1,7 +1,7 @@
 const sequelize = require("../js/connect");
 const { DataTypes } = require("sequelize");
 
-const Model = sequelize.define("Company", {
+const Company = sequelize.define("Company", {
 	symbol: {
 		type: DataTypes.STRING,
 		allowNull: false,
@@ -16,4 +16,4 @@ const Model = sequelize.define("Company", {
 	timestamps: false
 });
 
-module.exports = Model
+module.exports = Company
