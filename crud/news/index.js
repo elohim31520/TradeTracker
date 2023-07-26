@@ -1,4 +1,5 @@
 const News = require("../../modal/news")
+const TechNews = require("../../modal/techNews")
 const Statements = require("../../modal/statements")
 const sequelize = require("../../js/connect");
 const { md5Encode } = require("../../js/crypto");
@@ -167,6 +168,17 @@ async function sqlQuerySubscriptionNews(body) {
 	}
 }
 
+function sqlCreateTechNews(arr) {
+	arr.forEach(async vo => {
+		try {
+			await TechNews.create(vo)
+			console.log("SQL寫入technews成功 ", vo.title)
+		} catch (e) {
+			console.error('SQL寫入technews失敗 : ', e);
+		}
+	})
+}
+
 module.exports = {
 	sqlWrite,
 	sqlQueryNews,
@@ -175,5 +187,6 @@ module.exports = {
 	sqlQueryEearningscall,
 	sqlQueryTodayNews,
 	sqlQueryRange,
-	sqlQuerySubscriptionNews
+	sqlQuerySubscriptionNews,
+	sqlCreateTechNews
 }
