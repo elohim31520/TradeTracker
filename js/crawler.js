@@ -9,6 +9,7 @@ const dayjs = require('dayjs')
 const { get, isArray } = require('lodash')
 const { sqlCreateCompany } = require("../crud/company");
 const { default: axios } = require('axios');
+const TechNews = require("../modal/techNews")
 
 function parseHtmltoData(html, symbo) {
 	const $ = cheerio.load(html);
@@ -85,16 +86,6 @@ var map = {
 
 const mySchedule = new Schedule({ countdown: 60 * 60 })
 mySchedule.interval(async () => {
-	//get tech new ,other website
-	axios.get(process.env.TECHNEWS_URL, { headers: tcHeader }).then(res => {
-		const data = get(res, "data", {})
-		let arr = extractDataFromTechNewsHtml(data)
-		if (!isArray(arr) || !arr.length) {
-			console.log("沒有fetch到資料");
-			return
-		}
-		sqlCreateTechNews(arr)
-	})
 	if (process.env.DEBUG_MODE) return
 	console.log(`開始爬蟲，最後創建時間: ${mySchedule.lastTime}`)
 	const now = dayjs().format('YYYY-MM-DD HH_mm_ss')
@@ -206,6 +197,54 @@ function extractDataFromTechNewsHtml(html) {
 
 	return arr.reverse()
 }
+
+const techNewsSchedule = new Schedule({ countdown: 60 * 60 })
+techNewsSchedule.interval(async () => {
+	try {
+		const res = await TechNews.findOne({
+			attributes: ['createdAt'],
+			order: [['createdAt', 'DESC']],
+			limit: 1,
+		})
+		mySchedule.setLastTime(res.createdAt)
+
+		const scheduleSec = new Schedule({ countdown: 10 }),
+			hasTimeLimit = !techNewsSchedule.isAfterTime({ gap: 48, gapUnit: "hour" })
+		if (hasTimeLimit) {
+			console.log("寫入有24小時限制");
+			return
+		}
+		let techUrl = process.env.TECHNEWS_URL,
+			initialPage = 1
+		scheduleSec.interval(() => {
+			console.log("request url:", techUrl);
+			if (initialPage >= 6) {
+				scheduleSec.removeInterval()
+				return
+			}
+			axios.get(techUrl, { headers: tcHeader }).then(res => {
+				const data = get(res, "data", {})
+				let arr = extractDataFromTechNewsHtml(data)
+				if (!isArray(arr) || !arr.length) {
+					console.log("extract Nothing From Tech");
+					return
+				}
+				sqlCreateTechNews(arr)
+			}).catch(e => {
+				console.log(e.message);
+				console.log("axios get Wrong");
+			})
+			if (initialPage < 6) {
+				initialPage += 1
+				techUrl = `${process.env.TECHNEWS_URL}page/${initialPage}/`
+			}
+		})
+
+	} catch (error) {
+		console.log(error);
+		console.log("techs爬蟲暫停");
+	}
+})
 
 module.export = {
 	parseHtmlStatementsTable

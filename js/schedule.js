@@ -3,8 +3,8 @@ const { FileNameToTime } = require("./util");
 const { getLastDir } = require('./file')
 
 class Schedule {
-    constructor({ countdown, gap, gapUnit }) {
-        this.lastTime = FileNameToTime(getLastDir())
+    constructor({ countdown, gap, gapUnit, lastTime }) {
+        this.lastTime = lastTime || FileNameToTime(getLastDir())
         this.timeoutID = null
         this.countDownSecond = countdown
         this.gap = gap || 24
@@ -27,8 +27,8 @@ class Schedule {
         clearInterval(this.timeoutID)
     }
 
-    setLastTime() {
-        this.lastTime = FileNameToTime(getLastDir())
+    setLastTime(lastTime) {
+        this.lastTime = lastTime || FileNameToTime(getLastDir())
     }
 
     setTimestampStr(now) {
