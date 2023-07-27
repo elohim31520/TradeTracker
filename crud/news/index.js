@@ -7,6 +7,7 @@ const dayjs = require("dayjs")
 const { Op } = require("sequelize");
 const Users = require("../../modal/user")
 const Company = require("../../modal/company")
+const User_favorite_news = require("../../modal/many_to_many/user_favorite_news")
 
 function sqlWrite(arr) {
 	arr.forEach(async vo => {
@@ -205,6 +206,17 @@ async function sqlGetUserFavoriteNews(body) {
 	}
 }
 
+async function sqlSetUserFavoriteNews (body){
+	try {
+		const res = await User_favorite_news.create(body)
+		console.log(res);
+		return res
+	} catch (e) {
+		console.log(e);
+		console.log("sqlSetUserFavoriteNews 寫入失敗");
+	}
+}
+
 module.exports = {
 	sqlWrite,
 	sqlQueryNews,
@@ -215,5 +227,6 @@ module.exports = {
 	sqlQueryRange,
 	sqlQuerySubscriptionNews,
 	sqlCreateTechNews,
-	sqlGetUserFavoriteNews
+	sqlGetUserFavoriteNews,
+	sqlSetUserFavoriteNews
 }

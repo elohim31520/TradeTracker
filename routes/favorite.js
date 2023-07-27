@@ -2,10 +2,12 @@ const express = require('express')
 const router = express.Router()
 const newsController = require("../crud/news");
 const { verifyToken } = require('../js/middleware');
+const validate = require("./favorite/validate")
 
-router.get("/news", async (req, res) => {
+router.post("/news/set", verifyToken, validate.validateParamsOfSet, async (req, res) => {
 	try {
-
+		const data = await newsController.sqlSetUserFavoriteNews(req.body)
+		res.json(data)
 	} catch (e) {
 		res.json(e)
 	}
