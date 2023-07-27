@@ -209,19 +209,24 @@ techNewsSchedule.interval(async () => {
 		mySchedule.setLastTime(res.createdAt)
 
 		const scheduleSec = new Schedule({ countdown: 10 }),
-			hasTimeLimit = !techNewsSchedule.isAfterTime({ gap: 48, gapUnit: "hour" })
-		if (hasTimeLimit) {
-			console.log("寫入有24小時限制");
+			now = dayjs()
+		const startTime = now.set('hour', 17).set('minute', 0).set('second', 0)
+		const endTime = now.set('hour', 18).set('minute', 0).set('second', 0)
+		const isTimeToGet = now.isAfter(startTime) && now.isBefore(endTime)
+
+		if (!isTimeToGet) {
+			console.log("非獲取tech news 時間");
 			return
 		}
-		let techUrl = process.env.TECHNEWS_URL,
-			initialPage = 1
+		let initialPage = 5,
+			techUrl = `${process.env.TECHNEWS_URL}page/${initialPage}/`
+
 		scheduleSec.interval(() => {
-			console.log("request url:", techUrl);
-			if (initialPage >= 6) {
+			if (initialPage <= 0) {
 				scheduleSec.removeInterval()
 				return
 			}
+			console.log("request url:", techUrl);
 			axios.get(techUrl, { headers: tcHeader }).then(res => {
 				const data = get(res, "data", {})
 				let arr = extractDataFromTechNewsHtml(data)
@@ -234,9 +239,12 @@ techNewsSchedule.interval(async () => {
 				console.log(e.message);
 				console.log("axios get Wrong");
 			})
-			if (initialPage < 6) {
-				initialPage += 1
+			if (initialPage > 2) {
+				initialPage -= 1
 				techUrl = `${process.env.TECHNEWS_URL}page/${initialPage}/`
+			} else if (initialPage <= 2) {
+				initialPage -= 1
+				techUrl = process.env.TECHNEWS_URL
 			}
 		})
 
