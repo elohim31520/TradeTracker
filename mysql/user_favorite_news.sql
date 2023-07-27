@@ -1,0 +1,7 @@
+CREATE TABLE User_favorite_news(
+    userId  VARCHAR(32) NOT NULL,
+    newsId  INT NOT NULL,
+	PRIMARY KEY (userId, newsId),
+	FOREIGN KEY(userId) REFERENCES Users(userId) ON DELETE CASCADE,
+	FOREIGN KEY(newsId) REFERENCES News(id) ON DELETE CASCADE
+);

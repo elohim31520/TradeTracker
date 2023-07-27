@@ -7,3 +7,5 @@ SELECT company ,title FROM news where title not REGEXP 'Right Now|why today|As M
 Select company ,title from news where title like "%Earnings Call%";
 
 SELECT company ,title ,web_url ,release_time FROM news WHERE release_time like 'Jun-25-23%';
+
+SELECT company ,title ,web_url ,release_time FROM news WHERE title like '%Price Target%';

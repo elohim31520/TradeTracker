@@ -179,6 +179,32 @@ function sqlCreateTechNews(arr) {
 	})
 }
 
+async function sqlGetUserFavoriteNews(body) {
+	const { userId } = body
+	try {
+		const user = await Users.findByPk(userId, {
+			include: {
+				model: News,
+				attributes: ["id"],
+				through: { attributes: [] }
+			}
+		})
+
+		const allNewsId = user.News.map(vo => vo.id)
+
+		const res = News.findAll({
+			where: {
+				id: allNewsId
+			}
+		})
+
+		return res
+	} catch (e) {
+		console.log(e);
+		console.log("sqlGetUserFavoriteNews 關聯失敗");
+	}
+}
+
 module.exports = {
 	sqlWrite,
 	sqlQueryNews,
@@ -188,5 +214,6 @@ module.exports = {
 	sqlQueryTodayNews,
 	sqlQueryRange,
 	sqlQuerySubscriptionNews,
-	sqlCreateTechNews
+	sqlCreateTechNews,
+	sqlGetUserFavoriteNews
 }

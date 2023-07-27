@@ -36,6 +36,7 @@ app.use('/records/buy', require('./routes/records/buy'))
 app.use('/records/holding', require('./routes/records/holding'))
 app.use('/records/sell', require('./routes/records/sell'))
 app.use('/users', require('./routes/user'))
+app.use('/favorite', require('./routes/favorite'))
 
 app.listen(1234, () => {
     console.log(`server listen on: localhost:1234`);
