@@ -1,8 +1,9 @@
 const express = require('express')
 const router = express.Router()
 const { sqlQuerySingleCompanyNews, sqlQueryTodayNews, sqlQueryRange, sqlQuerySubscriptionNews } = require("../crud/news");
+const { verifyToken } = require('../js/middleware');
 
-router.post("/subscription", (req, res) => {
+router.post("/subscription", verifyToken, (req, res) => {
 	sqlQuerySubscriptionNews(req.body).then(resp => {
 		res.json(resp)
 	})
