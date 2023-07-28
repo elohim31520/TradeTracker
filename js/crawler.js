@@ -10,6 +10,7 @@ const { get, isArray } = require('lodash')
 const { sqlCreateCompany } = require("../crud/company");
 const { default: axios } = require('axios');
 const TechNews = require("../modal/techNews")
+const logger = require("../logger")
 
 function parseHtmltoData(html, symbo) {
 	const $ = cheerio.load(html);
@@ -96,7 +97,7 @@ mySchedule.interval(async () => {
 			canGet = mySchedule.isTimeToGet(),
 			hasTimeLimit = !mySchedule.isAfterTime({ gap: 24, gapUnit: "hour" })
 		if (hasTimeLimit) {
-			console.log("寫入有24小時限制");
+			logger.info('寫入有24小時限制')
 			return
 		}
 		if (canGet) await createDir(myPath)
@@ -210,8 +211,8 @@ techNewsSchedule.interval(async () => {
 
 		const scheduleSec = new Schedule({ countdown: 10 }),
 			now = dayjs()
-		const startTime = now.set('hour', 17).set('minute', 0).set('second', 0)
-		const endTime = now.set('hour', 18).set('minute', 0).set('second', 0)
+		const startTime = now.set('hour', 10).set('minute', 0).set('second', 0)
+		const endTime = now.set('hour', 11).set('minute', 0).set('second', 0)
 		const isTimeToGet = now.isAfter(startTime) && now.isBefore(endTime)
 
 		if (!isTimeToGet) {
