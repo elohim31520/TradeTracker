@@ -142,7 +142,7 @@ async function sqlQueryRange(range) {
 }
 
 async function sqlQuerySubscriptionNews(body) {
-	const { userId } = body
+	const { userId, pageIndex, pageSize } = body
 
 	try {
 		const user = await Users.findByPk(userId, {
@@ -156,7 +156,10 @@ async function sqlQuerySubscriptionNews(body) {
 		const companySymbols = user.Companies.map(company => company.symbol);
 
 		let endDate = dayjs().toDate(),
-			startDate = dayjs().startOf('day').subtract(1, 'day').toDate()
+			startDate = dayjs().startOf('day').subtract(1, 'day').toDate(),
+			offset = (pageIndex - 1) * pageSize
+
+		if(pageIndex <= 0) offset = 0
 		const res = await News.findAll({
 			where: {
 				company: companySymbols,
@@ -164,6 +167,9 @@ async function sqlQuerySubscriptionNews(body) {
 					[Op.between]: [startDate, endDate],
 				}
 			},
+			offset,
+			limit: pageSize,
+			order: [['createdAt']],
 			attributes: ['title', 'company', 'release_time', 'web_url', 'createdAt']
 		})
 		return res
