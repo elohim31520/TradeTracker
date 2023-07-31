@@ -9,6 +9,7 @@ const { sqlQueryEearningscall } = require("./crud/news");
 const app = express()
 const path = require('path');
 const cors = require('cors');
+const logger = require("./logger")
 require('./js/crawler')
 app.use(cors());
 
@@ -28,7 +29,7 @@ app.get('/earningscall', (req, res) => {
         res.render("index", {
             news: resp[0] || [{ title: "Not found" }]
         });
-    }).catch(e => console.log(e))
+    })
 })
 
 app.use('/news', require('./routes/news'))
@@ -39,5 +40,6 @@ app.use('/users', require('./routes/user'))
 app.use('/favorite', require('./routes/favorite'))
 
 app.listen(1234, () => {
+	logger.info(`Server Restart`)
     console.log(`server listen on: localhost:1234`);
 })

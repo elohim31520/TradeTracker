@@ -88,7 +88,7 @@ var map = {
 const mySchedule = new Schedule({ countdown: 60 * 60 })
 mySchedule.interval(async () => {
 	if (process.env.DEBUG_MODE) return
-	console.log(`開始爬蟲，最後創建時間: ${mySchedule.lastTime}`)
+	logger.info(`go request finz，最後創建時間: ${mySchedule.lastTime}`)
 	const now = dayjs().format('YYYY-MM-DD HH_mm_ss')
 	const myPath = dbDir + now
 	try {
@@ -105,10 +105,11 @@ mySchedule.interval(async () => {
 			try {
 				const symbo = myFetch.getRequestSymbo()
 				if (!symbo) {
-					console.log(`no more symbo，爬蟲結束`)
+					logger.info(`no more symbo，爬蟲結束`)
+					console.log(`---Request End---`)
 					mySchedule.setLastTime()
 					scheduleSec.removeInterval()
-					console.log(myFetch.getAllErrorSymbo());
+					logger.info(`failed symbol: ${myFetch.getAllErrorSymbo()}`)
 					return
 				}
 				const res = await myFetch.getHtml()
@@ -117,21 +118,19 @@ mySchedule.interval(async () => {
 				let arr = parseHtmltoData(data, symbo),
 					obj = parseHtmlStatementsTable(data)
 				if (!isArray(arr) || !arr.length) {
-					console.log("沒有fetch到資料");
+					logger.info("not fetching any data in finz")
 					return
 				}
 				if (canGet) {
-					console.log("寫入.json:", "  現在時間:", getTimeNow(), `寫入路徑: ${myPath}`);
 					try {
 						writeFile(`${myPath}/${symbo}.json`, JSON.stringify(arr, null, 4)) //24小時寫一次檔
 
 						// 24小時寫一次statements
 						obj.company = symbo
-						console.log("寫入statememts");
 						sqlCreateStatements(obj)
-					} catch (error) {
-						console.log(error);
-						console.log("寫入資料夾失敗");
+					} catch (e) {
+						console.log(e);
+						logger.error(`寫入資料夾失敗: ${e.message}`)
 					}
 				}
 				sqlWrite(arr)
@@ -141,7 +140,7 @@ mySchedule.interval(async () => {
 
 			} catch (e) {
 				console.log(e);
-				console.log("Fetch finviz失敗");
+				logger.error(`Fetch finviz失敗: ${e.message}`)
 				myFetch.pushErrorSymobo()
 				if (e.code == 999) {
 					scheduleSec.removeInterval()
@@ -152,7 +151,7 @@ mySchedule.interval(async () => {
 		})
 
 	} catch (error) {
-		console.log("爬蟲暫停");
+		console.log("finz爬蟲暫停");
 	}
 })
 
@@ -227,18 +226,17 @@ techNewsSchedule.interval(async () => {
 				scheduleSec.removeInterval()
 				return
 			}
-			console.log("request url:", techUrl);
+			logger.info(`request url: ${techUrl}`)
 			axios.get(techUrl, { headers: tcHeader }).then(res => {
 				const data = get(res, "data", {})
 				let arr = extractDataFromTechNewsHtml(data)
 				if (!isArray(arr) || !arr.length) {
-					console.log("extract Nothing From Tech");
+					logger.error("extract Nothing From Tech, HTML解析錯誤？")
 					return
 				}
 				sqlCreateTechNews(arr)
 			}).catch(e => {
-				console.log(e.message);
-				console.log("axios get Wrong");
+				logger.error(e.message);
 			})
 			if (initialPage > 2) {
 				initialPage -= 1
@@ -249,8 +247,8 @@ techNewsSchedule.interval(async () => {
 			}
 		})
 
-	} catch (error) {
-		console.log(error);
+	} catch (e) {
+		logger.error(e.message)
 		console.log("techs爬蟲暫停");
 	}
 })

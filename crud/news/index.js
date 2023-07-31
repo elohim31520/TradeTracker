@@ -38,15 +38,18 @@ function sqlCreateNews({ md5, releaseTime, company, title, publisher, webUrl }) 
 		publisher,
 		web_url: webUrl,
 	}).then(res => {
-		console.log("SQL寫入成功 ", company, md5)
-	}).catch((error) => {
-		console.error('SQL寫入失敗 : ', error);
+		logger.info(`SQL寫入News成功: ${title}`)
+	}).catch(e => {
+		console.log(error);
+		console.error('SQL寫入News失敗')
 	});
 }
 
 function sqlCreateStatements(param) {
 	return Statements.create(param).catch((error) => {
-		console.error('Statements寫入失敗 : ', error);
+		console.log(e);
+		console.error(e)
+		console.error('SQL寫入Statements失敗');
 	});
 }
 
@@ -206,7 +209,7 @@ async function sqlGetUserFavoriteNews(body) {
 	}
 }
 
-async function sqlSetUserFavoriteNews (body){
+async function sqlSetUserFavoriteNews(body) {
 	try {
 		const res = await User_favorite_news.create(body)
 		console.log(res);

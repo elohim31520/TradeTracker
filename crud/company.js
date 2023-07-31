@@ -1,4 +1,5 @@
 const Company = require("../modal/company")
+const logger = require("../logger")
 
 function sqlQueryCompany(conditions) {
 	return Company.findOne({
@@ -12,9 +13,12 @@ async function sqlCreateCompany({ symbol, name }) {
 			name,
 			symbol
 		})
-		if (res) console.log("寫入symbol成功 ", symbol)
+		if (res) {
+			logger.info(`寫入symbol成功: ${symbol}`)
+			console.log("寫入symbol成功 ", symbol)
+		}
 	} catch (e) {
-		console.log(e);
+		logger.error(e.message)
 		console.error('SQL寫入失敗')
 	}
 }

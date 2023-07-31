@@ -8,8 +8,8 @@ function getRecordsBy(modal) {
 		try {
 			req.records = await sqlGet(modal, { userId, company })
 			next()
-		} catch (err) {
-			console.log(err);
+		} catch (e) {
+			console.log(e);
 			res.json({ code: 0, msg: "get 失敗" })
 		}
 	}
