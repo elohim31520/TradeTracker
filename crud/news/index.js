@@ -8,6 +8,7 @@ const { Op } = require("sequelize");
 const Users = require("../../modal/user")
 const Company = require("../../modal/company")
 const User_favorite_news = require("../../modal/many_to_many/user_favorite_news")
+const logger = require("../../logger")
 
 function sqlWrite(arr) {
 	arr.forEach(async vo => {
@@ -178,7 +179,7 @@ function sqlCreateTechNews(arr) {
 			await TechNews.create(vo)
 			console.log("SQL寫入technews成功 ", vo.title)
 		} catch (e) {
-			console.error('SQL寫入technews失敗 : ', e);
+			logger.error(`SQL寫入technews失敗: ${e.message}`)
 		}
 	})
 }

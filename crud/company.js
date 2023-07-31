@@ -15,7 +15,6 @@ async function sqlCreateCompany({ symbol, name }) {
 		})
 		if (res) {
 			logger.info(`寫入symbol成功: ${symbol}`)
-			console.log("寫入symbol成功 ", symbol)
 		}
 	} catch (e) {
 		logger.error(e.message)

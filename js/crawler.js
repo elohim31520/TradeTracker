@@ -7,7 +7,7 @@ const { getTimeNow, zhTimeToStandardTime } = require("./util");
 const { sqlWrite, sqlCreateStatements, sqlCreateTechNews } = require("../crud/news");
 const dayjs = require('dayjs')
 const { get, isArray } = require('lodash')
-const { sqlCreateCompany } = require("../crud/company");
+// const { sqlCreateCompany } = require("../crud/company");
 const { default: axios } = require('axios');
 const TechNews = require("../modal/techNews")
 const logger = require("../logger")
@@ -210,9 +210,9 @@ techNewsSchedule.interval(async () => {
 
 		const scheduleSec = new Schedule({ countdown: 10 }),
 			now = dayjs()
-		const startTime = now.set('hour', 10).set('minute', 0).set('second', 0)
-		const endTime = now.set('hour', 11).set('minute', 0).set('second', 0)
-		const isTimeToGet = now.isAfter(startTime) && now.isBefore(endTime)
+		const setTime = (t) => now.set('hour', t).set('minute', 0).set('second', 0)
+		const isTimeToGet = (now.isAfter(setTime(10)) && now.isBefore(setTime(11)))
+			|| (now.isAfter(setTime(16)) && now.isBefore(setTime(17)))
 
 		if (!isTimeToGet) {
 			console.log("非獲取tech news 時間");
@@ -224,6 +224,8 @@ techNewsSchedule.interval(async () => {
 		scheduleSec.interval(() => {
 			if (initialPage <= 0) {
 				scheduleSec.removeInterval()
+				logger.info("---request Technews End---")
+				console.log("---request Technews End---");
 				return
 			}
 			logger.info(`request url: ${techUrl}`)
