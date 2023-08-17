@@ -38,6 +38,8 @@ function sqlCreateNews({ md5, releaseTime, company, title, publisher, webUrl }) 
 		title,
 		publisher,
 		web_url: webUrl,
+	}, {
+		logging: false,
 	}).then(res => {
 		logger.info(`SQL寫入News成功: ${title}`)
 	}).catch(e => {
@@ -159,7 +161,7 @@ async function sqlQuerySubscriptionNews(body) {
 			startDate = dayjs().startOf('day').subtract(1, 'day').toDate(),
 			offset = (pageIndex - 1) * pageSize
 
-		if(pageIndex <= 0) offset = 0
+		if (pageIndex <= 0) offset = 0
 		const res = await News.findAll({
 			where: {
 				company: companySymbols,

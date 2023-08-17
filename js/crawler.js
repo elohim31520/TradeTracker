@@ -11,21 +11,32 @@ const { get, isArray } = require('lodash')
 const { default: axios } = require('axios');
 const TechNews = require("../modal/techNews")
 const logger = require("../logger")
+const util = require("./util")
 
-function parseHtmltoData(html, symbo) {
+function parseFinzHtml(html, symbo) {
 	const $ = cheerio.load(html);
+	const monthList = util.getMonthList()
 	let rows = $('#news-table tr')
-	let arr = []
-	let date = null
+	let arr = [],
+		date = ""
+
 	for (let i = 0; i < rows.length; i++) {
 		const td = rows.eq(i).find('td')
 		const atag = $(td).find("a")
-		let time = td.eq(0).text(),
+		let time = td.eq(0).text() || "",
 			title = atag.text(),
 			publisher = $(td).find(".news-link-right").text(),
 			webUrl = atag.attr('href')
-		if (!/-/g.test(time)) time = `${date} ${time}`
-		else date = time.split(" ")[0]
+
+		time = time.trim()
+		const monthAbbreviation = time.substring(0, 3)
+
+		if (monthList.includes(monthAbbreviation)) {
+			date = get(time.split(" "), "0", "")
+		} else {
+			time = `${date} ${time}`
+		}
+
 		arr.push({ releaseTime: time, title, publisher, webUrl, company: symbo })
 	}
 	return arr
@@ -115,7 +126,7 @@ mySchedule.interval(async () => {
 				const res = await myFetch.getHtml()
 				const data = get(res, "data", {})
 
-				let arr = parseHtmltoData(data, symbo),
+				let arr = parseFinzHtml(data, symbo),
 					obj = parseHtmlStatementsTable(data)
 				if (!isArray(arr) || !arr.length) {
 					logger.info("not fetching any data in finz")
