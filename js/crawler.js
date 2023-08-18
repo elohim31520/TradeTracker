@@ -211,6 +211,7 @@ function extractDataFromTechNewsHtml(html) {
 
 const techNewsSchedule = new Schedule({ countdown: 60 * 60 })
 techNewsSchedule.interval(async () => {
+	if (process.env.DEBUG_MODE) return
 	try {
 		const res = await TechNews.findOne({
 			attributes: ['createdAt'],

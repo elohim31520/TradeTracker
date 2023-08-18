@@ -143,9 +143,16 @@ async function sqlQueryTodayNews() {
 	}
 }
 
-async function sqlQueryRange(range) {
-	let endDate = dayjs().subtract(1, 'day').toDate(),
-		startDate = dayjs().subtract(range + 1, 'day').toDate()
+async function sqlQueryRange({ method, body }) {
+	let { endDate, startDate } = body
+
+	if (method == 'POST') {
+		endDate = dayjs(endDate).toDate()
+		startDate = dayjs(startDate).toDate()
+	} else {
+		endDate = dayjs(endDate).subtract(1, 'day').toDate()
+		startDate = dayjs(startDate).subtract(4, 'day').toDate()
+	}
 	try {
 		const res = await News.findAll({
 			where: {
