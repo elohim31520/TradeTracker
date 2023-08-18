@@ -73,22 +73,40 @@ function sqlQueryNews(paramID = 25000) {
 	});
 }
 
-function sqlQuerySingleCompanyNews(paramCode) {
-	if (!paramCode) return Promise.reject('code error')
-	return sequelize.query(
-		`SELECT company ,title ,web_url ,release_time FROM news WHERE company = :SYMBO_CODE
-            AND title NOT REGEXP "${mustFilterdTxt}"
-            ORDER BY createdAt DESC;
-        `,
-		{
-			replacements: { SYMBO_CODE: paramCode },
-			type: sequelize.QueryTypes.SELECT
-		}
-	).then(result => {
-		return result
-	}).catch((error) => {
-		console.error('Failed to query data : ', error);
-	});
+// function sqlQuerySingleCompanyNews(paramCode) {
+// 	return sequelize.query(
+// 		`SELECT company ,title ,web_url ,release_time FROM news WHERE company = :SYMBO_CODE
+//             AND title NOT REGEXP "${mustFilterdTxt}"
+//             ORDER BY createdAt DESC;
+//         `,
+// 		{
+// 			replacements: { SYMBO_CODE: paramCode },
+// 			type: sequelize.QueryTypes.SELECT
+// 		}
+// 	)
+// }
+
+async function sqlQuerySingleCompanyNews(symbol) {
+	const eObj = { code: -1, message: 'no symbol', method: "sqlQuerySingleCompanyNews" }
+	if (!symbol) {
+		return Promise.reject(eObj)
+	}
+	try {
+		const res = await News.findAll({
+			where: {
+				company: symbol,
+				title: {
+					[Op.notRegexp]: mustFilterdTxt
+				}
+			},
+			attributes: ['company', 'title', 'web_url', 'release_time'],
+			order: [['createdAt', 'DESC']]
+		})
+		return res
+	} catch (e) {
+		eObj.message = e.message
+		return Promise.reject(eObj)
+	}
 }
 
 function sqlQueryEearningscall() {
