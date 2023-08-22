@@ -5,7 +5,6 @@ if(process.env.DEBUG_MODE){
 	console.log("in debug mode");
 }
 
-const { sqlQueryEearningscall } = require("./crud/news");
 const app = express()
 const path = require('path');
 const cors = require('cors');
@@ -22,14 +21,6 @@ app.set("views", path.resolve(__dirname, "views"));
 
 app.get('/', function (req, res) {
     res.send('請求路徑:  /data')
-})
-
-app.get('/earningscall', (req, res) => {
-    sqlQueryEearningscall().then(resp => {
-        res.render("index", {
-            news: resp[0] || [{ title: "Not found" }]
-        });
-    })
 })
 
 app.use('/news', require('./routes/news'))

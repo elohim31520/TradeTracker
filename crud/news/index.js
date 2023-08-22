@@ -86,7 +86,7 @@ function sqlQueryNews(paramID = 25000) {
 // 	)
 // }
 
-async function sqlQuerySingleCompanyNews(symbol) {
+async function sqlQuerySingleCompanyNews(symbol, title = "%") {
 	const eObj = { code: -1, message: 'no symbol', method: "sqlQuerySingleCompanyNews" }
 	if (!symbol) {
 		return Promise.reject(eObj)
@@ -96,6 +96,7 @@ async function sqlQuerySingleCompanyNews(symbol) {
 			where: {
 				company: symbol,
 				title: {
+					[Op.like]: `%${title}%`,
 					[Op.notRegexp]: mustFilterdTxt
 				}
 			},
@@ -109,15 +110,15 @@ async function sqlQuerySingleCompanyNews(symbol) {
 	}
 }
 
-function sqlQueryEearningscall() {
-	return sequelize.query(`
-        SELECT 
-            company ,title ,web_url ,release_time FROM news
-        WHERE
-            title REGEXP "Earnings Call" order by company;
-        `
-	)
-}
+// function sqlQueryEearningscall() {
+// 	return sequelize.query(`
+//         SELECT 
+//             company ,title ,web_url ,release_time FROM news
+//         WHERE
+//             title REGEXP "Earnings Call" order by company;
+//         `
+// 	)
+// }
 
 async function sqlQueryTodayNews() {
 	let now = dayjs().subtract(1, 'day'),
@@ -259,7 +260,6 @@ module.exports = {
 	sqlQueryNews,
 	sqlQuerySingleCompanyNews,
 	sqlCreateStatements,
-	sqlQueryEearningscall,
 	sqlQueryTodayNews,
 	sqlQueryRange,
 	sqlQuerySubscriptionNews,

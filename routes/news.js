@@ -21,9 +21,10 @@ router.post("/queryall", async (req, res) => {
 
 router.get("/:param", (req, res) => {
 	const queryParam = req.params.param
+	const queryTitle = req.query.title
 
 	if (queryParam == "today") {
-		sqlQueryTodayNews().then(resp => {
+		sqlQueryTodayNews(queryTitle).then(resp => {
 			res.render("index", {
 				news: resp || [{ title: "Not found" }]
 			});
@@ -35,7 +36,7 @@ router.get("/:param", (req, res) => {
 			});
 		})
 	} else if (typeof queryParam == "string") {
-		sqlQuerySingleCompanyNews(queryParam).then(resp => {
+		sqlQuerySingleCompanyNews(queryParam, queryTitle).then(resp => {
 			res.render("index", {
 				news: resp || [{ title: "Not found" }]
 			});
