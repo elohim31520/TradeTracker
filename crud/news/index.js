@@ -58,34 +58,6 @@ function sqlCreateStatements(param) {
 
 const mustFilterdTxt = "Right Now|why today|As Market Dips |Before Betting on It| To Buy Now |How Much You Would Have Today|What You Should Know |Stocks to Buy|Stock a Buy Now"
 
-function sqlQueryNews(paramID = 25000) {
-	return sequelize.query(
-		`SELECT company ,title ,web_url ,release_time FROM news
-            WHERE title NOT REGEXP "${mustFilterdTxt}" AND id > :NEWS_ID;`,
-		{
-			replacements: { NEWS_ID: paramID },
-			type: sequelize.QueryTypes.SELECT
-		}
-	).then(result => {
-		return result
-	}).catch((error) => {
-		console.error('Failed to query data : ', error);
-	});
-}
-
-// function sqlQuerySingleCompanyNews(paramCode) {
-// 	return sequelize.query(
-// 		`SELECT company ,title ,web_url ,release_time FROM news WHERE company = :SYMBO_CODE
-//             AND title NOT REGEXP "${mustFilterdTxt}"
-//             ORDER BY createdAt DESC;
-//         `,
-// 		{
-// 			replacements: { SYMBO_CODE: paramCode },
-// 			type: sequelize.QueryTypes.SELECT
-// 		}
-// 	)
-// }
-
 async function sqlQuerySingleCompanyNews(symbol, title = "%") {
 	const eObj = { code: -1, message: 'no symbol', method: "sqlQuerySingleCompanyNews" }
 	if (!symbol) {
@@ -110,41 +82,7 @@ async function sqlQuerySingleCompanyNews(symbol, title = "%") {
 	}
 }
 
-// function sqlQueryEearningscall() {
-// 	return sequelize.query(`
-//         SELECT 
-//             company ,title ,web_url ,release_time FROM news
-//         WHERE
-//             title REGEXP "Earnings Call" order by company;
-//         `
-// 	)
-// }
-
-async function sqlQueryTodayNews() {
-	let now = dayjs().subtract(1, 'day'),
-		formatedDate = now.format('YYYY-MM-DD')
-
-	try {
-		const res = await sequelize.query(`
-            SELECT
-                company ,title ,web_url ,release_time FROM news 
-            WHERE
-                createdAt like :TODAY
-                AND title NOT REGEXP "${mustFilterdTxt}";
-        `,
-			{
-				replacements: { TODAY: `${formatedDate}%` },
-				type: sequelize.QueryTypes.SELECT
-			}
-		)
-		return res
-	} catch (error) {
-		console.error(error);
-		console.log("查詢今日失敗");
-	}
-}
-
-async function sqlQueryRange({ method, body }) {
+async function sqlQueryRange({ method = 'GET', body = {} } = {}) {
 	let { endDate, startDate } = body
 
 	if (method == 'POST') {
@@ -160,7 +98,14 @@ async function sqlQueryRange({ method, body }) {
 				createdAt: {
 					[Op.between]: [startDate, endDate],
 				}
-			}
+			},
+			attributes: [
+				'id', 'title', 'company', 'publisher', 'web_url',
+				[
+					sequelize.literal(`DATE_FORMAT(createdAt, '%Y-%m-%d')`),
+					'createdAt'
+				]
+			],
 		})
 		return res
 	} catch (error) {
@@ -257,13 +202,74 @@ async function sqlSetUserFavoriteNews(body) {
 
 module.exports = {
 	sqlWrite,
-	sqlQueryNews,
 	sqlQuerySingleCompanyNews,
 	sqlCreateStatements,
-	sqlQueryTodayNews,
 	sqlQueryRange,
 	sqlQuerySubscriptionNews,
 	sqlCreateTechNews,
 	sqlGetUserFavoriteNews,
 	sqlSetUserFavoriteNews
 }
+
+
+// function sqlQueryEearningscall() {
+// 	return sequelize.query(`
+//         SELECT 
+//             company ,title ,web_url ,release_time FROM news
+//         WHERE
+//             title REGEXP "Earnings Call" order by company;
+//         `
+// 	)
+// }
+
+// async function sqlQueryTodayNews() {
+// 	let now = dayjs().subtract(1, 'day'),
+// 		formatedDate = now.format('YYYY-MM-DD')
+
+// 	try {
+// 		const res = await sequelize.query(`
+//             SELECT
+//                 company ,title ,web_url ,release_time FROM news 
+//             WHERE
+//                 createdAt like :TODAY
+//                 AND title NOT REGEXP "${mustFilterdTxt}";
+//         `,
+// 			{
+// 				replacements: { TODAY: `${formatedDate}%` },
+// 				type: sequelize.QueryTypes.SELECT
+// 			}
+// 		)
+// 		return res
+// 	} catch (error) {
+// 		console.error(error);
+// 		console.log("查詢今日失敗");
+// 	}
+// }
+
+// function sqlQuerySingleCompanyNews(paramCode) {
+// 	return sequelize.query(
+// 		`SELECT company ,title ,web_url ,release_time FROM news WHERE company = :SYMBO_CODE
+//             AND title NOT REGEXP "${mustFilterdTxt}"
+//             ORDER BY createdAt DESC;
+//         `,
+// 		{
+// 			replacements: { SYMBO_CODE: paramCode },
+// 			type: sequelize.QueryTypes.SELECT
+// 		}
+// 	)
+// }
+
+// function sqlQueryNews(paramID = 25000) {
+// 	return sequelize.query(
+// 		`SELECT company ,title ,web_url ,release_time FROM news
+//             WHERE title NOT REGEXP "${mustFilterdTxt}" AND id > :NEWS_ID;`,
+// 		{
+// 			replacements: { NEWS_ID: paramID },
+// 			type: sequelize.QueryTypes.SELECT
+// 		}
+// 	).then(result => {
+// 		return result
+// 	}).catch((error) => {
+// 		console.error('Failed to query data : ', error);
+// 	});
+// }

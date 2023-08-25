@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const { sqlQuerySingleCompanyNews, sqlQueryTodayNews, sqlQueryRange, sqlQuerySubscriptionNews } = require("../crud/news");
+const { sqlQuerySingleCompanyNews, sqlQuerySubscriptionNews } = require("../crud/news");
 const newsModel = require("../crud/news");
 const { verifyToken } = require('../js/middleware');
 
@@ -24,13 +24,13 @@ router.get("/:param", (req, res) => {
 	const queryTitle = req.query.title
 
 	if (queryParam == "today") {
-		sqlQueryTodayNews(queryTitle).then(resp => {
+		newsModel.sqlQueryRange(queryTitle).then(resp => {
 			res.render("index", {
 				news: resp || [{ title: "Not found" }]
 			});
 		})
 	} else if (queryParam == "3days") {
-		sqlQueryRange().then(resp => {
+		newsModel.sqlQueryRange().then(resp => {
 			res.render("index", {
 				news: resp || [{ title: "Not found" }]
 			});
