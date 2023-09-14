@@ -7,3 +7,4 @@ private.key
 public.key
 symbol.json
 /log
+.DS_Store
