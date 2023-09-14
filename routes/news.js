@@ -12,36 +12,36 @@ router.post("/subscription", verifyToken, (req, res) => {
 
 router.post("/queryall", async (req, res) => {
 	try {
-		const data = await newsModel.sqlQueryRange({ method: req.method, body: req.body })
+		const data = await newsModel.sqlQueryAll(req.body)
 		res.json(data)
 	} catch (e) {
 		res.json({ message: e.message })
 	}
 })
 
-router.get("/:param", (req, res) => {
-	const queryParam = req.params.param
-	const queryTitle = req.query.title
+// router.get("/:param", (req, res) => {
+// 	const queryParam = req.params.param
+// 	const queryTitle = req.query.title
 
-	if (queryParam == "today") {
-		newsModel.sqlQueryRange(queryTitle).then(resp => {
-			res.render("index", {
-				news: resp || [{ title: "Not found" }]
-			});
-		})
-	} else if (queryParam == "3days") {
-		newsModel.sqlQueryRange().then(resp => {
-			res.render("index", {
-				news: resp || [{ title: "Not found" }]
-			});
-		})
-	} else if (typeof queryParam == "string") {
-		sqlQuerySingleCompanyNews(queryParam, queryTitle).then(resp => {
-			res.render("index", {
-				news: resp || [{ title: "Not found" }]
-			});
-		})
-	}
-})
+// 	if (queryParam == "today") {
+// 		newsModel.sqlQueryRange(queryTitle).then(resp => {
+// 			res.render("index", {
+// 				news: resp || [{ title: "Not found" }]
+// 			});
+// 		})
+// 	} else if (queryParam == "3days") {
+// 		newsModel.sqlQueryRange().then(resp => {
+// 			res.render("index", {
+// 				news: resp || [{ title: "Not found" }]
+// 			});
+// 		})
+// 	} else if (typeof queryParam == "string") {
+// 		sqlQuerySingleCompanyNews(queryParam, queryTitle).then(resp => {
+// 			res.render("index", {
+// 				news: resp || [{ title: "Not found" }]
+// 			});
+// 		})
+// 	}
+// })
 
 module.exports = router

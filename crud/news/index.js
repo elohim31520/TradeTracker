@@ -82,23 +82,31 @@ async function sqlQuerySingleCompanyNews(symbol, title = "%") {
 	}
 }
 
-async function sqlQueryRange({ method = 'GET', body = {} } = {}) {
-	let { endDate, startDate } = body
+async function sqlQueryAll(body = {}) {
+	let { pageIndex, pageSize, endDate, startDate, query } = body
 
-	if (method == 'POST') {
-		endDate = dayjs(endDate).toDate()
-		startDate = dayjs(startDate).toDate()
-	} else {
-		endDate = dayjs(endDate).subtract(1, 'day').toDate()
-		startDate = dayjs(startDate).subtract(4, 'day').toDate()
-	}
+	if (!endDate) endDate = dayjs().toDate()
+	if (!startDate) startDate = dayjs().startOf('day').subtract(1, 'day').toDate()
+	let offset = (pageIndex - 1) * pageSize
+
+	if (pageIndex <= 0) offset = 0
 	try {
 		const res = await News.findAll({
 			where: {
 				createdAt: {
 					[Op.between]: [startDate, endDate],
+				},
+				[Op.or]: {
+					title: {
+						[Op.like]: `%${query}%`
+					},
+					company: {
+						[Op.eq]: query
+					}
 				}
 			},
+			offset,
+			limit: pageSize,
 			attributes: [
 				'id', 'title', 'company', 'publisher', 'web_url',
 				[
@@ -207,7 +215,7 @@ module.exports = {
 	sqlWrite,
 	sqlQuerySingleCompanyNews,
 	sqlCreateStatements,
-	sqlQueryRange,
+	sqlQueryAll,
 	sqlQuerySubscriptionNews,
 	sqlCreateTechNews,
 	sqlGetUserFavoriteNews,
