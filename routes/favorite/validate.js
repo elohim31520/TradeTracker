@@ -9,7 +9,7 @@ function validateParamsOfSet(req, res, next) {
 	const result = schema.validate(params)
 
 	if (result.error) {
-		res.status(400).json({ code: 400, msg: "value type wrong" })
+		throw new Error(400)
 	} else next()
 }
 

@@ -152,8 +152,9 @@ function sqlCreateTechNews(arr) {
 	})
 }
 
-async function sqlGetUserFavoriteNews(body) {
-	const { userId } = body
+async function sqlGetUserFavoriteNews(req) {
+	const decoded = req.decoded
+	const { userId } = decoded
 	try {
 		const user = await Users.findByPk(userId, {
 			include: {

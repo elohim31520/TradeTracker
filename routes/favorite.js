@@ -4,22 +4,21 @@ const newsController = require("../crud/news");
 const { verifyToken } = require('../js/middleware');
 const validate = require("./favorite/validate")
 
-router.post("/news/set", verifyToken, validate.validateParamsOfSet, async (req, res) => {
-	try {
+router.post("/news/set",
+	verifyToken,
+	validate.validateParamsOfSet,
+	async (req, res) => {
 		const data = await newsController.sqlSetUserFavoriteNews(req.body)
 		res.json(data)
-	} catch (e) {
-		res.json(e)
 	}
-})
+)
 
-router.post("/news", verifyToken, async (req, res) => {
-	try {
-		const data = await newsController.sqlGetUserFavoriteNews(req.body)
+router.post("/news",
+	verifyToken,
+	async (req, res) => {
+		const data = await newsController.sqlGetUserFavoriteNews(req)
 		return res.json(data)
-	} catch (e) {
-		res.json(e)
 	}
-})
+)
 
 module.exports = router
