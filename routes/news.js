@@ -1,22 +1,16 @@
 const express = require('express')
 const router = express.Router()
-const { sqlQuerySingleCompanyNews, sqlQuerySubscriptionNews } = require("../crud/news");
 const newsModel = require("../crud/news");
 const { verifyToken } = require('../js/middleware');
 
-router.post("/subscription", verifyToken, (req, res) => {
-	sqlQuerySubscriptionNews(req.body).then(data => {
-		res.json(data)
-	})
+router.post("/subscription", verifyToken, async (req, res) => {
+	let data = await newsModel.sqlQuerySubscriptionNews(req.body)
+	res.json(data)
 })
 
 router.post("/queryall", async (req, res) => {
-	try {
-		const data = await newsModel.sqlQueryAll(req.body)
-		res.json(data)
-	} catch (e) {
-		res.json({ message: e.message })
-	}
+	const data = await newsModel.sqlQueryAll(req.body)
+	res.json(data)
 })
 
 // router.get("/:param", (req, res) => {

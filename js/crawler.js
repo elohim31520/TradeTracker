@@ -108,7 +108,7 @@ mySchedule.interval(async () => {
 			canGet = mySchedule.isTimeToGet(),
 			hasTimeLimit = !mySchedule.isAfterTime({ gap: 24, gapUnit: "hour" })
 		if (hasTimeLimit) {
-			logger.info('寫入有24小時限制')
+			logger.warn('寫入有24小時限制')
 			return
 		}
 		if (canGet) await createDir(myPath)

@@ -116,15 +116,15 @@ async function sqlQueryAll(body = {}) {
 			],
 		})
 		return res
-	} catch (error) {
-		console.error(error);
-		console.log("查詢日期範圍失敗");
+	} catch (e) {
+		logger.error(e.message)
+		throw new Error(500)
 	}
 }
 
 async function sqlQuerySubscriptionNews(body) {
-	const { userId, pageIndex, pageSize, startDate, endDate, title, company } = body
-
+	const { userId, pageIndex, pageSize, title, company } = body
+	let { startDate, endDate } = body
 	try {
 		const user = await Users.findByPk(userId, {
 			include: {
@@ -158,8 +158,8 @@ async function sqlQuerySubscriptionNews(body) {
 		})
 		return res
 	} catch (e) {
-		console.log(e);
-		console.log("查詢關聯數據失敗");
+		logger.error(e.message)
+		throw new Error(500)
 	}
 }
 
