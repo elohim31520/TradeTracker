@@ -19,7 +19,7 @@ function sqlWrite(arr) {
 			vo.md5 = md5
 			sqlCreateNews(vo)
 		} catch (e) {
-			console.error("檢查資料庫新聞是否重複 - 失敗");
+			logger.error(e.message)
 		}
 	})
 }
@@ -30,22 +30,19 @@ function sqlFindOne(conditions) {
 	})
 }
 
-function sqlCreateNews({ md5, releaseTime, company, title, publisher, webUrl }) {
-	News.create({
-		md5,
-		release_time: releaseTime,
-		company,
-		title,
-		publisher,
-		web_url: webUrl,
-	}, {
-		logging: false,
-	}).then(res => {
-		logger.info(`SQL寫入News成功: ${title}`)
-	}).catch(e => {
-		console.log(error);
-		console.error('SQL寫入News失敗')
-	});
+async function sqlCreateNews({ md5, releaseTime, company, title, publisher, webUrl }) {
+	try {
+		await News.create({
+			md5,
+			release_time: releaseTime,
+			company,
+			title,
+			publisher,
+			web_url: webUrl,
+		})
+	} catch (e) {
+		logger.error(e.message + '		${company}')
+	}
 }
 
 function sqlCreateStatements(param) {
@@ -144,10 +141,9 @@ function sqlCreateTechNews(arr) {
 	arr.forEach(async vo => {
 		try {
 			await TechNews.create(vo)
-			console.log("SQL寫入technews成功 ", vo.title)
 		} catch (e) {
 			logger.error(e.message)
-			throw new Error(500)
+			// sql create不須拋出錯誤，且未被寫入的會被catch拋出錯誤，後續的流程會全部中斷
 		}
 	})
 }
