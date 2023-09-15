@@ -1,7 +1,8 @@
 const express = require('express')
 require('dotenv').config()
+require('express-async-errors');
 
-if(process.env.DEBUG_MODE){
+if (process.env.DEBUG_MODE) {
 	console.log("in debug mode");
 }
 
@@ -9,6 +10,7 @@ const app = express()
 const path = require('path');
 const cors = require('cors');
 const logger = require("./logger")
+const errorHandler = require('./js/errorHandler')
 require('./js/crawler')
 app.use(cors());
 
@@ -20,7 +22,7 @@ app.set('view engine', 'ejs');
 app.set("views", path.resolve(__dirname, "views"));
 
 app.get('/', function (req, res) {
-    res.send('請求路徑:  /data')
+	throw Error(403);
 })
 
 app.use('/news', require('./routes/news'))
@@ -30,7 +32,9 @@ app.use('/records/sell', require('./routes/records/sell'))
 app.use('/users', require('./routes/user'))
 app.use('/favorite', require('./routes/favorite'))
 
+app.use(errorHandler);
+
 app.listen(1234, () => {
 	logger.info(`Server Restart`)
-    console.log(`server listen on: localhost:1234`);
+	console.log(`server listen on: localhost:1234`);
 })
