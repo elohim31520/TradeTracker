@@ -120,7 +120,7 @@ mySchedule.interval(async () => {
 					console.log(`---Request End---`)
 					mySchedule.setLastTime()
 					scheduleSec.removeInterval()
-					logger.info(`failed symbol: ${myFetch.getAllErrorSymbo()}`)
+					logger.warn(`failed symbol: ${myFetch.getAllErrorSymbo()}`)
 					return
 				}
 				const res = await myFetch.getHtml()
@@ -129,7 +129,7 @@ mySchedule.interval(async () => {
 				let arr = parseFinzHtml(data, symbo),
 					obj = parseHtmlStatementsTable(data)
 				if (!isArray(arr) || !arr.length) {
-					logger.info("not fetching any data in finz")
+					logger.warn("not fetching any data in finz")
 					return
 				}
 				if (canGet) {
@@ -140,7 +140,6 @@ mySchedule.interval(async () => {
 						obj.company = symbo
 						sqlCreateStatements(obj)
 					} catch (e) {
-						console.log(e);
 						logger.error(`寫入資料夾失敗: ${e.message}`)
 					}
 				}
@@ -150,7 +149,6 @@ mySchedule.interval(async () => {
 				// sqlCreateCompany({symbol: symbo, name: companyName})
 
 			} catch (e) {
-				console.log(e);
 				logger.error(`Fetch finviz失敗: ${e.message}`)
 				myFetch.pushErrorSymobo()
 				if (e.code == 999) {
@@ -161,8 +159,8 @@ mySchedule.interval(async () => {
 			}
 		})
 
-	} catch (error) {
-		console.log("finz爬蟲暫停");
+	} catch (e) {
+		logger.error(e.message);
 	}
 })
 

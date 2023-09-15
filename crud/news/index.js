@@ -58,30 +58,6 @@ function sqlCreateStatements(param) {
 
 const mustFilterdTxt = "Right Now|why today|As Market Dips |Before Betting on It| To Buy Now |How Much You Would Have Today|What You Should Know |Stocks to Buy|Stock a Buy Now"
 
-async function sqlQuerySingleCompanyNews(symbol, title = "%") {
-	const eObj = { code: -1, message: 'no symbol', method: "sqlQuerySingleCompanyNews" }
-	if (!symbol) {
-		return Promise.reject(eObj)
-	}
-	try {
-		const res = await News.findAll({
-			where: {
-				company: symbol,
-				title: {
-					[Op.like]: `%${title}%`,
-					[Op.notRegexp]: mustFilterdTxt
-				}
-			},
-			attributes: ['company', 'title', 'web_url', 'release_time'],
-			order: [['createdAt', 'DESC']]
-		})
-		return res
-	} catch (e) {
-		eObj.message = e.message
-		return Promise.reject(eObj)
-	}
-}
-
 async function sqlQueryAll(body = {}) {
 	let { pageIndex, pageSize, endDate, startDate, query } = body
 
@@ -145,7 +121,8 @@ async function sqlQuerySubscriptionNews(body) {
 			where: {
 				company: company || companySymbols,
 				title: {
-					[Op.like]: `%${title}%`
+					[Op.like]: `%${title}%`,
+					[Op.notRegexp]: mustFilterdTxt
 				},
 				createdAt: {
 					[Op.between]: [startDate, endDate],
@@ -169,7 +146,8 @@ function sqlCreateTechNews(arr) {
 			await TechNews.create(vo)
 			console.log("SQL寫入technews成功 ", vo.title)
 		} catch (e) {
-			logger.error(`SQL寫入technews失敗: ${e.message}`)
+			logger.error(e.message)
+			throw new Error(500)
 		}
 	})
 }
@@ -195,8 +173,8 @@ async function sqlGetUserFavoriteNews(body) {
 
 		return res
 	} catch (e) {
-		console.log(e);
-		console.log("sqlGetUserFavoriteNews 關聯失敗");
+		logger.error(e.message)
+		throw new Error(500)
 	}
 }
 
@@ -206,14 +184,13 @@ async function sqlSetUserFavoriteNews(body) {
 		console.log(res);
 		return res
 	} catch (e) {
-		console.log(e);
-		console.log("sqlSetUserFavoriteNews 寫入失敗");
+		logger.error(e.message)
+		throw new Error(500)
 	}
 }
 
 module.exports = {
 	sqlWrite,
-	sqlQuerySingleCompanyNews,
 	sqlCreateStatements,
 	sqlQueryAll,
 	sqlQuerySubscriptionNews,
@@ -222,6 +199,30 @@ module.exports = {
 	sqlSetUserFavoriteNews
 }
 
+
+// async function sqlQuerySingleCompanyNews(symbol, title = "%") {
+// 	const eObj = { code: -1, message: 'no symbol', method: "sqlQuerySingleCompanyNews" }
+// 	if (!symbol) {
+// 		return Promise.reject(eObj)
+// 	}
+// 	try {
+// 		const res = await News.findAll({
+// 			where: {
+// 				company: symbol,
+// 				title: {
+// 					[Op.like]: `%${title}%`,
+// 					[Op.notRegexp]: mustFilterdTxt
+// 				}
+// 			},
+// 			attributes: ['company', 'title', 'web_url', 'release_time'],
+// 			order: [['createdAt', 'DESC']]
+// 		})
+// 		return res
+// 	} catch (e) {
+// 		logger.error(e.message)
+// 		throw new Error(500)
+// 	}
+// }
 
 // function sqlQueryEearningscall() {
 // 	return sequelize.query(`
