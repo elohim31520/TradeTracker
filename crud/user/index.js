@@ -33,15 +33,15 @@ async function userLogin({ userId, pwd }) {
         const md5 = md5Encode(userId)
         const user = await Users.findOne({ where: { md5_userId: md5 } })
         const { salt, pwd: storeHash } = user.dataValues
-        if (!user) return Promise.reject({ code: -1, messaage: "帳號或密碼錯誤" })
+        if (!user) throw new Error(401100)
 
         const currentHash = sha256(pwd, salt)
-        if (currentHash != storeHash) return Promise.reject({ code: -2, messaage: "帳號或密碼錯誤" })
+        if (currentHash != storeHash) throw new Error(401100)
         return { code: 1, token: generateToken({ userId }) }
 
     } catch (e) {
-        console.log(e);
-        return Promise.reject({ code: 0, messaage: "登入失敗" })
+		console.log(e);
+        throw new Error(401100)
     }
 
 }
