@@ -3,7 +3,7 @@ const router = express.Router()
 const { createUser, userLogin } = require("../crud/user")
 const { validateLogin } = require('./validate')
 
-router.post("/register", async (req, res) => {
+router.post("/register",validateLogin, async (req, res) => {
 	const resp = await createUser(req.body)
 	res.json(resp)
 })

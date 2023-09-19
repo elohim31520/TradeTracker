@@ -41,7 +41,7 @@ async function sqlCreateNews({ md5, releaseTime, company, title, publisher, webU
 			web_url: webUrl,
 		})
 	} catch (e) {
-		logger.error(e.message + '		${company}')
+		logger.warn(e.message + '		${company}')
 	}
 }
 
@@ -142,7 +142,7 @@ function sqlCreateTechNews(arr) {
 		try {
 			await TechNews.create(vo)
 		} catch (e) {
-			logger.error(e.message)
+			logger.warn(e.message)
 			// sql create不須拋出錯誤，且未被寫入的會被catch拋出錯誤，後續的流程會全部中斷
 		}
 	})

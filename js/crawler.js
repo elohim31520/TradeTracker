@@ -225,7 +225,7 @@ techNewsSchedule.interval(async () => {
 			|| (now.isAfter(setTime(16)) && now.isBefore(setTime(17)))
 
 		if (!isTimeToGet) {
-			console.log("非獲取tech news 時間");
+			logger.info("非獲取tech news 時間")
 			return
 		}
 		let initialPage = 5,
