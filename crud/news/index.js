@@ -142,7 +142,8 @@ function sqlCreateTechNews(arr) {
 		try {
 			await TechNews.create(vo)
 		} catch (e) {
-			logger.warn(e.message)
+			const originalError = e.original
+			logger.warn('TechNews.create : ' + originalError.sqlMessage)
 			// sql create不須拋出錯誤，且未被寫入的會被catch拋出錯誤，後續的流程會全部中斷
 		}
 	})
