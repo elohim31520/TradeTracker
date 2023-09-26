@@ -149,10 +149,15 @@ mySchedule.interval(async () => {
 				// sqlCreateCompany({symbol: symbo, name: companyName})
 
 			} catch (e) {
+				const httpStatus = e.response.status
 				logger.error(`Fetch finviz失敗: ${e.message}`)
 				myFetch.pushErrorSymobo()
-				if (e.code == 999) {
+				if (e.code == 999 || httpStatus == 403) {
 					scheduleSec.removeInterval()
+
+					if(httpStatus == 403){
+						logger.warn('fetch finviz 403 Forbidden')
+					}
 					return
 				}
 				myFetch.index++
