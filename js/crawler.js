@@ -10,6 +10,7 @@ const { get, isArray } = require('lodash')
 // const { sqlCreateCompany } = require("../crud/company");
 const { default: axios } = require('axios');
 const TechNews = require("../modal/techNews")
+const News = require("../modal/news")
 const logger = require("../logger")
 const util = require("./util")
 
@@ -99,7 +100,17 @@ var map = {
 const mySchedule = new Schedule({ countdown: 60 * 60 })
 mySchedule.interval(async () => {
 	if (process.env.DEBUG_MODE) return
-	logger.info(`go request finz，最後創建時間: ${mySchedule.lastTime}`)
+
+	const res = await News.findOne({
+		attributes: ['createdAt'],
+		order: [['createdAt', 'DESC']],
+		limit: 1,
+	})
+	mySchedule.setLastTime(res.createdAt)
+
+	logger.info(`go request finz，最後一筆時間: ${mySchedule.lastTime}`)
+	console.log(`最後一筆時間: ${mySchedule.lastTime}`);
+
 	const now = dayjs().format('YYYY-MM-DD HH_mm_ss')
 	const myPath = dbDir + now
 	try {
@@ -116,11 +127,11 @@ mySchedule.interval(async () => {
 			try {
 				const symbo = myFetch.getRequestSymbo()
 				if (!symbo) {
-					logger.info(`no more symbo，爬蟲結束`)
-					console.log(`---Request End---`)
-					mySchedule.setLastTime()
 					scheduleSec.removeInterval()
+
+					logger.info(`no more symbo，爬蟲結束`)
 					logger.warn(`failed symbol: ${myFetch.getAllErrorSymbo()}`)
+					console.log(`---Request End---`)
 					return
 				}
 				const res = await myFetch.getHtml()
@@ -134,7 +145,7 @@ mySchedule.interval(async () => {
 				}
 				if (canGet) {
 					try {
-						writeFile(`${myPath}/${symbo}.json`, JSON.stringify(arr, null, 4)) //24小時寫一次檔
+						writeFile(`${myPath}/${symbo}.json`, JSON.stringify(arr, null, 4))
 
 						// 24小時寫一次statements
 						obj.company = symbo
@@ -154,7 +165,7 @@ mySchedule.interval(async () => {
 				myFetch.pushErrorSymobo()
 				if (e.code == 999 || httpStatus == 403) {
 					scheduleSec.removeInterval()
-
+					console.log(`---Request End---`);
 					if(httpStatus == 403){
 						logger.warn('fetch finviz 403 Forbidden')
 					}
