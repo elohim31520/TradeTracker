@@ -27,7 +27,8 @@
         "mysql": "^2.18.1",
         "mysql2": "^2.3.3",
         "sequelize": "^6.24.0",
-        "winston": "^3.10.0"
+        "winston": "^3.10.0",
+        "winston-daily-rotate-file": "^4.7.1"
     },
     "devDependencies": {
         "nodemon": "^2.0.16"

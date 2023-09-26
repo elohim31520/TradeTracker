@@ -2,12 +2,20 @@ const winston = require('winston')
 const fs = require('fs');
 const path = require('path');
 const moment = require('moment-timezone');
+require('winston-daily-rotate-file');
 
 moment.tz.setDefault('Asia/Taipei');
 
 const logDirectory = 'log';
 if (!fs.existsSync(logDirectory)) {
 	fs.mkdirSync(logDirectory);
+}
+
+const defaultOptions = {
+	datePattern: "YYYY-MM-DD",
+	zippedArchive: true,
+	maxSize: "20m",
+	maxFiles: "14d",
 }
 
 const logger = winston.createLogger({
@@ -18,9 +26,21 @@ const logger = winston.createLogger({
 	),
 	defaultMeta: { service: 'user-service' },
 	transports: [
-		new winston.transports.File({ filename: path.join(logDirectory, 'warn.log'), level: 'warn' }),
-		new winston.transports.File({ filename: path.join(logDirectory, 'error.log'), level: 'error' }),
-		new winston.transports.File({ filename: path.join(logDirectory, 'combined.log') }),
+		new winston.transports.DailyRotateFile({
+			filename: path.join(logDirectory, 'warn-%DATE%.log'),
+			level: 'warn',
+			...defaultOptions
+		}),
+		new winston.transports.DailyRotateFile({
+			filename: path.join(logDirectory, 'error-%DATE%.log'),
+			level: 'error',
+			...defaultOptions
+		}),
+		new winston.transports.DailyRotateFile({
+			filename: path.join(logDirectory, 'info-%DATE%.log'),
+			level: 'info',
+			...defaultOptions
+		})
 	],
 })
 
