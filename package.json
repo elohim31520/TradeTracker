@@ -23,6 +23,7 @@
         "joi": "^17.9.2",
         "jsonwebtoken": "^8.5.1",
         "lodash": "^4.17.21",
+        "moment-timezone": "^0.5.43",
         "mysql": "^2.18.1",
         "mysql2": "^2.3.3",
         "sequelize": "^6.24.0",

@@ -1,6 +1,9 @@
 const winston = require('winston')
 const fs = require('fs');
 const path = require('path');
+const moment = require('moment-timezone');
+
+moment.tz.setDefault('Asia/Taipei');
 
 const logDirectory = 'log';
 if (!fs.existsSync(logDirectory)) {
@@ -10,7 +13,7 @@ if (!fs.existsSync(logDirectory)) {
 const logger = winston.createLogger({
 	level: 'info',
 	format: winston.format.combine(
-		winston.format.timestamp(), // 加入時間戳記
+		winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
 		winston.format.json()
 	),
 	defaultMeta: { service: 'user-service' },
