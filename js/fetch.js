@@ -7,7 +7,7 @@ class Fetch {
         this.requestUrl = requestUrl
         this.stockSymbols = stockSymbols || []
         this.index = 0
-        this.errorSymobo = []
+        this.errorSymbo = []
     }
 
     getHtml() {
@@ -19,7 +19,7 @@ class Fetch {
             return Promise.reject('no symbo!')
         }
 
-        const url = this.requestUrl + replaceDotToDash(symbo)
+        const url = this.requestUrl + replaceDotToDash(symbo) + '&p=d'
         if (!url) return Promise.reject('Empty Url')
 
         console.log(`request Url : ${url}`);
