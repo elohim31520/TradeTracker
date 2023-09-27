@@ -2,10 +2,6 @@ const express = require('express')
 require('dotenv').config()
 require('express-async-errors');
 
-if (process.env.DEBUG_MODE) {
-	console.log("in debug mode");
-}
-
 const app = express()
 const path = require('path');
 const cors = require('cors');
@@ -13,6 +9,10 @@ const logger = require("./logger")
 const errorHandler = require('./js/errorHandler')
 require('./js/crawler')
 app.use(cors());
+
+if (process.env.DEBUG_MODE) {
+	logger.info("In debug mode")
+}
 
 // 配置解析表单请求体，类型为：application/app
 app.use(express.json())
@@ -35,5 +35,5 @@ app.use('/favorite', require('./routes/favorite'))
 app.use(errorHandler);
 
 app.listen(1234, () => {
-	logger.info(`Server Restart localhost:1234`)
+	logger.info('Server start!')
 })

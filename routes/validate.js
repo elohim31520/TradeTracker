@@ -6,7 +6,6 @@ function validateLogin(req, res, next) {
 		pwd: Joi.string().required()
 	})
 	const params = req.body
-	console.log(params);
 	const result = schema.validate(params)
 
 	if (result.error) {
