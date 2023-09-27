@@ -35,6 +35,5 @@ app.use('/favorite', require('./routes/favorite'))
 app.use(errorHandler);
 
 app.listen(1234, () => {
-	logger.info(`Server Restart`)
-	console.log(`server listen on: localhost:1234`);
+	logger.info(`Server Restart localhost:1234`)
 })

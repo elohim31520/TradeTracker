@@ -1,4 +1,6 @@
 const SequelizeInstance = require("sequelize");
+const logger = require("../logger");
+
 const sequelize = new SequelizeInstance(
 	process.env.DB_NAME,
 	'root',
@@ -14,9 +16,9 @@ const sequelize = new SequelizeInstance(
 );
 
 sequelize.authenticate().then(() => {
-	console.log('Connection has been established successfully.');
+	logger.info('Sql Connection has been established successfully.')
 }).catch((error) => {
-	console.error('Unable to connect to the database: ', error);
+	logger.error('Unable to connect to the database: ' + error.message )
 });
 
 module.exports = sequelize

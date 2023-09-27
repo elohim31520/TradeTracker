@@ -47,7 +47,6 @@ async function sqlCreateNews({ md5, releaseTime, company, title, publisher, webU
 
 function sqlCreateStatements(param) {
 	return Statements.create(param).catch((error) => {
-		console.log(e);
 		console.error(e)
 		console.error('SQL寫入Statements失敗');
 	});
@@ -179,7 +178,6 @@ async function sqlGetUserFavoriteNews(req) {
 async function sqlSetUserFavoriteNews(body) {
 	try {
 		const res = await User_favorite_news.create(body)
-		console.log(res);
 		return res
 	} catch (e) {
 		logger.error(e.message)
@@ -252,7 +250,6 @@ module.exports = {
 // 		return res
 // 	} catch (error) {
 // 		console.error(error);
-// 		console.log("查詢今日失敗");
 // 	}
 // }
 
