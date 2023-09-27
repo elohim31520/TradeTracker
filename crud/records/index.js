@@ -1,12 +1,11 @@
 const sequelize = require("../../js/connect");
+const { Op } = require("sequelize");
 
-function sqlGet(table, { userId, company }) {
+function sqlGet(table, { userId='', company='' }) {
+	let conditions = { userId }
+	if(company) conditions.company = company
 	return table.findAll({
-		where: {
-			userId,
-			company
-		},
-		raw: true
+		where: conditions
 	})
 }
 

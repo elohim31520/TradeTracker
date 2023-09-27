@@ -1,5 +1,6 @@
 const { sqlGet, sqlUpdate, sqlCreate, sqlDelete, sqlGetAvg, sqlBulkCreate } = require("../../crud/records/index.js");
-const _ = require("lodash")
+const _ = require("lodash");
+const logger = require("../../logger.js");
 
 function getRecordsBy(modal) {
 	return async (req, res, next) => {
@@ -9,8 +10,8 @@ function getRecordsBy(modal) {
 			req.records = await sqlGet(modal, { userId, company })
 			next()
 		} catch (e) {
-			console.log(e);
-			res.json({ code: 0, msg: "get 失敗" })
+			logger.error('getRecordsBy: ' + e.message)
+			throw new Error(500)
 		}
 	}
 }
@@ -20,9 +21,9 @@ function queryRecordsBy(modal) {
 		try {
 			req.records = await sqlGet(modal, req.body)
 			next()
-		} catch (err) {
-			console.log(err);
-			res.json({ code: 0, msg: "query 失敗" })
+		} catch (e) {
+			logger.error('queryRecordsBy: ' + e.message)
+			throw new Error(500)
 		}
 	}
 }
@@ -33,7 +34,8 @@ function addRecords(modal) {
 			await sqlBulkCreate(modal, req.body)
 			next()
 		} catch (e) {
-			res.json({ code: 0, msg: "寫入失敗" })
+			logger.error('addRecords: ' + e.message)
+			throw new Error(500)
 		}
 	}
 }
@@ -47,8 +49,8 @@ function delRecords(modal) {
 			}
 			next()
 		} catch (e) {
-			console.error(e);
-			res.json({ code: 0, msg: "刪除失敗" })
+			logger.error('delRecords: ' + e.message)
+			throw new Error(500)
 		}
 	}
 }
@@ -59,9 +61,9 @@ function updateRecords(modal) {
 			const data = req.body
 			await sqlUpdate(modal, data)
 			next()
-		} catch (err) {
-			console.log(err);
-			res.json({ code: 0, msg: "SQL更新records失敗" })
+		} catch (e) {
+			logger.error('updateRecords: ' + e.message)
+			throw new Error(500)
 		}
 	}
 }
@@ -76,9 +78,9 @@ function getAvgRecords(modal) {
 		try {
 			req.records = await sqlGetAvg(modal, userId)
 			next()
-		} catch (error) {
-			console.log(error);
-			console.log('query 平均失敗');
+		} catch (e) {
+			logger.error('getAvgRecords: ' + e.message)
+			throw new Error(500)
 		}
 	}
 }
@@ -113,9 +115,9 @@ function mergeRecordsToTable(table, operator = "+") {
 				} else temp = current
 
 				await sqlUpdate(table, temp)
-			} catch (err) {
-				console.log(err);
-				console.error("mergeRecordsToTable Error!", vo);
+			} catch (e) {
+				logger.error('mergeRecordsToTable: ' + e.message)
+				throw new Error(500)
 			}
 		})
 		next()

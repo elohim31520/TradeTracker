@@ -7,9 +7,14 @@ const { getRecordsBy, addRecords, delRecords, updateRecords, getAvgRecords, merg
 const { validateParamsOfGet, validateParamsOfAdd, validateParamsOfDel } = require("./validate")
 const _ = require("lodash")
 
-router.get("/:userId", verifyToken, validateParamsOfGet, getRecordsBy(modal), (req, res) => {
-	res.json({ code: 1, msg: "add success" })
-})
+router.get("/:userId",
+	verifyToken,
+	validateParamsOfGet,
+	getRecordsBy(modal),
+	(req, res) => {
+		res.json({ code: 1, msg: res.data })
+	}
+)
 
 router.post("/add", verifyToken, validateParamsOfAdd, addRecords(modal), mergeRecordsToTable(modal_holding),
 	(req, res) => {
