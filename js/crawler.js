@@ -2,9 +2,11 @@ const cheerio = require('cheerio')
 const { get, isArray } = require('lodash')
 const { default: axios } = require('axios')
 const CronJob = require('cron').CronJob
+const dayjs = require('dayjs')
 
-const Fetch = require('./fetch')
-const { requestUrl, stockSymbols, tcHeader } = require("./config");
+const FinzService = require('./fetch')
+const { tcHeader } = require("./config");
+
 const Schedule = require("./schedule");
 const { zhTimeToStandardTime } = require("./util");
 const { sqlWrite, sqlCreateStatements, sqlCreateTechNews } = require("../crud/news")
@@ -110,8 +112,7 @@ var map = {
 }
 
 
-const mySchedule = new Schedule({ countdown: 60 * 60 })
-mySchedule.interval(async () => {
+async function fetchFinzNews(){
 	if (process.env.DEBUG_MODE) return
 	if (process.env.STOP_FETCH_FINZ) return
 
@@ -120,20 +121,13 @@ mySchedule.interval(async () => {
 		order: [['createdAt', 'DESC']],
 		limit: 1,
 	})
-	mySchedule.setLastTime(res.createdAt)
-
-	logger.info(`go request finz，最後一筆時間: ${mySchedule.lastTime}`)
+	const lastCreatedTime = res.createdAt
 
 	try {
-		const scheduleSec = new Schedule({ countdown: 9 })
-		const myFetch = new Fetch({ requestUrl, stockSymbols })
-		const canGet = mySchedule.isTimeToGet()
-		const hasTimeLimit = !mySchedule.isAfterTime({ gap: 24, gapUnit: "hour" })
-
-		if (hasTimeLimit) {
-			logger.warn('finz 寫入有24小時限制')
-			return
-		}
+		const scheduleSec = new Schedule({ countdown: 9.5 })
+		const myFetch = new FinzService()
+		const canGet = dayjs().isAfter(dayjs(lastCreatedTime).add(24, 'hour'))
+		if(!canGet) return
 
 		scheduleSec.interval(async () => {
 			try {
@@ -154,29 +148,20 @@ mySchedule.interval(async () => {
 					logger.error("extract Nothing From Finz, HTML解析錯誤？")
 					return
 				}
-				if (canGet) {
-					try {
-						obj.company = symbo
-						sqlCreateStatements(obj)
-					} catch (e) {
-						logger.error(`寫入資料夾失敗: ${e.message}`)
-					}
-				}
+				obj.company = symbo
+				sqlCreateStatements(obj)
 				sqlWrite(arr)
 
 				// const companyName = pasreHTMLGetCompanyName(data)
 				// sqlCreateCompany({symbol: symbo, name: companyName})
-
 			} catch (e) {
-				const httpStatus = e.response.status
+				let httpStatus
+				if(e.response) httpStatus = e.response.status
 				logger.error(`Fetch finviz失敗: ${e.message}`)
 				myFetch.pushErrorSymobo()
 				if (e.code == 999 || httpStatus == 403) {
 					scheduleSec.removeInterval()
 					logger.info(`---Request End---`);
-					if (httpStatus == 403) {
-						logger.warn('fetch finviz 403 Forbidden')
-					}
 					return
 				}
 				myFetch.index++
@@ -186,7 +171,7 @@ mySchedule.interval(async () => {
 	} catch (e) {
 		logger.error(e.message);
 	}
-})
+}
 
 function parseHtmlStatementsTable(html) {
 	const $ = cheerio.load(html);
@@ -274,6 +259,9 @@ createCronJob('0 17 * * *', () => {
 	fetchTnews()
 })
 
+createCronJob('27 11-20 * * *', () => {
+	fetchFinzNews()
+})
 
 module.export = {
 	parseHtmlStatementsTable

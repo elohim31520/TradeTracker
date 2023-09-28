@@ -3,17 +3,17 @@ const fs = require('fs');
 
 const dbDir = path.join(__dirname, `../DB/`)
 
-function getStockSymbol(){
-    let file = path.join(__dirname, `../symbol.json`)
-    let obj = JSON.parse(fs.readFileSync(file));
-    let symbols = obj.symbols
-    let arr = []
-    symbols.forEach(vo => {
-        let sym = vo.split(":")
-		if(sym.length == 1) arr.push(sym[0])
-        else arr.push(sym[1])
-    });
-    return arr
+function getStockSymbol() {
+	let file = path.join(__dirname, `../symbol.json`)
+	let obj = JSON.parse(fs.readFileSync(file));
+	let symbols = obj.symbols
+	let arr = []
+	symbols.forEach(vo => {
+		let sym = vo.split(":")
+		if (sym.length == 1) arr.push(sym[0])
+		else arr.push(sym[1])
+	});
+	return arr
 }
 
 /**
@@ -43,9 +43,12 @@ const tcHeader = {
 	'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36'
 };
 
+const fzHeader = {}
+
 module.exports = {
-    dbDir,
-    requestUrl,
-    stockSymbols,
-	tcHeader
+	dbDir,
+	requestUrl,
+	stockSymbols,
+	tcHeader,
+	fzHeader
 }

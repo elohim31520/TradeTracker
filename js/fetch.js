@@ -1,10 +1,12 @@
 const axios = require('axios').default;
 
 const { replaceDotToDash } = require("./util");
+const { requestUrl, stockSymbols, fzHeader } = require("./config");
 
-class Fetch {
-    constructor({ requestUrl, stockSymbols }) {
-        this.requestUrl = requestUrl
+
+class FinzService {
+    constructor() {
+        this.requestUrl = requestUrl || ''
         this.stockSymbols = stockSymbols || []
         this.index = 0
         this.errorSymbo = []
@@ -23,7 +25,7 @@ class Fetch {
         if (!url) return Promise.reject('Empty Url')
 
         console.log(`request Url : ${url}`);
-        return axios.get(url).then(res => {
+        return axios.get(url, { headers: fzHeader }).then(res => {
             this.index++
             return res
         })
@@ -44,4 +46,4 @@ class Fetch {
 }
 
 
-module.exports = Fetch
+module.exports = FinzService

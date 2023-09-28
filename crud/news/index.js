@@ -46,9 +46,8 @@ async function sqlCreateNews({ md5, releaseTime, company, title, publisher, webU
 }
 
 function sqlCreateStatements(param) {
-	return Statements.create(param).catch((error) => {
-		console.error(e)
-		console.error('SQL寫入Statements失敗');
+	return Statements.create(param).catch(e => {
+		logger.warn('sqlCreateStatements: ' + e.message)
 	});
 }
 
