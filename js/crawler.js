@@ -1,25 +1,34 @@
 const cheerio = require('cheerio')
-const Fetch = require('./fetch')
-const { createDir, writeFile } = require("./file");
-const { dbDir, requestUrl, stockSymbols, tcHeader } = require("./config");
-const Schedule = require("./schedule");
-const { getTimeNow, zhTimeToStandardTime } = require("./util");
-const { sqlWrite, sqlCreateStatements, sqlCreateTechNews } = require("../crud/news");
-const dayjs = require('dayjs')
 const { get, isArray } = require('lodash')
-// const { sqlCreateCompany } = require("../crud/company");
-const { default: axios } = require('axios');
-const TechNews = require("../modal/techNews")
+const { default: axios } = require('axios')
+const CronJob = require('cron').CronJob
+
+const Fetch = require('./fetch')
+const { requestUrl, stockSymbols, tcHeader } = require("./config");
+const Schedule = require("./schedule");
+const { zhTimeToStandardTime } = require("./util");
+const { sqlWrite, sqlCreateStatements, sqlCreateTechNews } = require("../crud/news")
 const News = require("../modal/news")
 const logger = require("../logger")
 const util = require("./util")
+
+function createCronJob(schedule, mission) {
+	const job = new CronJob(
+		schedule,
+		mission,
+		null,
+		true,
+		'Asia/Taipei'
+	)
+	return job
+}
 
 function parseFinzHtml(html, symbo) {
 	const $ = cheerio.load(html);
 	const monthList = util.getMonthList()
 	let rows = $('#news-table tr')
 	let arr = [],
-		date = ""
+		date = ''
 
 	for (let i = 0; i < rows.length; i++) {
 		const td = rows.eq(i).find('td')
@@ -33,10 +42,14 @@ function parseFinzHtml(html, symbo) {
 		const monthAbbreviation = time.substring(0, 3)
 
 		if (monthList.includes(monthAbbreviation)) {
-			date = get(time.split(" "), "0", "")
+			date = get(time.split(' '), '[0]', '')
 		} else {
 			time = `${date} ${time}`
 		}
+
+		publisher = publisher.trim()
+		webUrl = webUrl.trim()
+		title = title.trim()
 
 		arr.push({ releaseTime: time, title, publisher, webUrl, company: symbo })
 	}
@@ -100,6 +113,7 @@ var map = {
 const mySchedule = new Schedule({ countdown: 60 * 60 })
 mySchedule.interval(async () => {
 	if (process.env.DEBUG_MODE) return
+	if (process.env.STOP_FETCH_FINZ) return
 
 	const res = await News.findOne({
 		attributes: ['createdAt'],
@@ -109,29 +123,26 @@ mySchedule.interval(async () => {
 	mySchedule.setLastTime(res.createdAt)
 
 	logger.info(`go request finz，最後一筆時間: ${mySchedule.lastTime}`)
-	console.log(`最後一筆時間: ${mySchedule.lastTime}`);
 
-	const now = dayjs().format('YYYY-MM-DD HH_mm_ss')
-	const myPath = dbDir + now
 	try {
 		const scheduleSec = new Schedule({ countdown: 9 })
-		const myFetch = new Fetch({ requestUrl, stockSymbols }),
-			canGet = mySchedule.isTimeToGet(),
-			hasTimeLimit = !mySchedule.isAfterTime({ gap: 24, gapUnit: "hour" })
+		const myFetch = new Fetch({ requestUrl, stockSymbols })
+		const canGet = mySchedule.isTimeToGet()
+		const hasTimeLimit = !mySchedule.isAfterTime({ gap: 24, gapUnit: "hour" })
+
 		if (hasTimeLimit) {
-			logger.warn('寫入有24小時限制')
+			logger.warn('finz 寫入有24小時限制')
 			return
 		}
-		if (canGet) await createDir(myPath)
+
 		scheduleSec.interval(async () => {
 			try {
 				const symbo = myFetch.getRequestSymbo()
 				if (!symbo) {
 					scheduleSec.removeInterval()
 
-					logger.info(`no more symbo，爬蟲結束`)
+					logger.info(`no more symbo，---Request End---`)
 					logger.warn(`failed symbol: ${myFetch.getAllErrorSymbo()}`)
-					console.log(`---Request End---`)
 					return
 				}
 				const res = await myFetch.getHtml()
@@ -140,14 +151,11 @@ mySchedule.interval(async () => {
 				let arr = parseFinzHtml(data, symbo),
 					obj = parseHtmlStatementsTable(data)
 				if (!isArray(arr) || !arr.length) {
-					logger.warn("not fetching any data in finz")
+					logger.error("extract Nothing From Finz, HTML解析錯誤？")
 					return
 				}
 				if (canGet) {
 					try {
-						writeFile(`${myPath}/${symbo}.json`, JSON.stringify(arr, null, 4))
-
-						// 24小時寫一次statements
 						obj.company = symbo
 						sqlCreateStatements(obj)
 					} catch (e) {
@@ -165,8 +173,8 @@ mySchedule.interval(async () => {
 				myFetch.pushErrorSymobo()
 				if (e.code == 999 || httpStatus == 403) {
 					scheduleSec.removeInterval()
-					console.log(`---Request End---`);
-					if(httpStatus == 403){
+					logger.info(`---Request End---`);
+					if (httpStatus == 403) {
 						logger.warn('fetch finviz 403 Forbidden')
 					}
 					return
@@ -223,63 +231,49 @@ function extractDataFromTechNewsHtml(html) {
 	return arr.reverse()
 }
 
-const techNewsSchedule = new Schedule({ countdown: 60 * 60 })
-techNewsSchedule.interval(async () => {
+function fetchTnews() {
 	if (process.env.DEBUG_MODE) return
-	try {
-		const res = await TechNews.findOne({
-			attributes: ['createdAt'],
-			order: [['createdAt', 'DESC']],
-			limit: 1,
-		})
-		mySchedule.setLastTime(res.createdAt)
+	if (process.env.STOP_FETCH_TNEWS) return
+	const scheduleSec = new Schedule({ countdown: 10 })
+	let initialPage = 5
+	let techUrl = `${process.env.TECHNEWS_URL}page/${initialPage}/`
 
-		const scheduleSec = new Schedule({ countdown: 10 }),
-			now = dayjs()
-		const setTime = (t) => now.set('hour', t).set('minute', 0).set('second', 0)
-		const isTimeToGet = (now.isAfter(setTime(10)) && now.isBefore(setTime(11)))
-			|| (now.isAfter(setTime(16)) && now.isBefore(setTime(17)))
-
-		if (!isTimeToGet) {
-			logger.info("非獲取tech news 時間")
+	scheduleSec.interval(() => {
+		if (initialPage <= 0) {
+			scheduleSec.removeInterval()
+			logger.info("---request Technews End---")
 			return
 		}
-		let initialPage = 5,
-			techUrl = `${process.env.TECHNEWS_URL}page/${initialPage}/`
-
-		scheduleSec.interval(() => {
-			if (initialPage <= 0) {
-				scheduleSec.removeInterval()
-				logger.info("---request Technews End---")
-				console.log("---request Technews End---");
+		axios.get(techUrl, { headers: tcHeader }).then(res => {
+			const data = get(res, "data", {})
+			let arr = extractDataFromTechNewsHtml(data)
+			if (!isArray(arr) || !arr.length) {
+				logger.error("extract Nothing From Tech, HTML解析錯誤？")
 				return
 			}
-			logger.info(`request url: ${techUrl}`)
-			axios.get(techUrl, { headers: tcHeader }).then(res => {
-				const data = get(res, "data", {})
-				let arr = extractDataFromTechNewsHtml(data)
-				if (!isArray(arr) || !arr.length) {
-					logger.error("extract Nothing From Tech, HTML解析錯誤？")
-					return
-				}
-				sqlCreateTechNews(arr)
-			}).catch(e => {
-				logger.error(e.message);
-			})
-			if (initialPage > 2) {
-				initialPage -= 1
-				techUrl = `${process.env.TECHNEWS_URL}page/${initialPage}/`
-			} else if (initialPage <= 2) {
-				initialPage -= 1
-				techUrl = process.env.TECHNEWS_URL
-			}
+			sqlCreateTechNews(arr)
+		}).catch(e => {
+			logger.error(e.message);
 		})
+		if (initialPage > 2) {
+			initialPage -= 1
+			techUrl = `${process.env.TECHNEWS_URL}page/${initialPage}/`
+		} else if (initialPage <= 2) {
+			initialPage -= 1
+			techUrl = process.env.TECHNEWS_URL
+		}
+	})
+}
 
-	} catch (e) {
-		logger.error(e.message)
-		console.log("techs爬蟲暫停");
-	}
+createCronJob('0 10 * * *', () => {
+	fetchTnews()
 })
+
+
+createCronJob('0 17 * * *', () => {
+	fetchTnews()
+})
+
 
 module.export = {
 	parseHtmlStatementsTable

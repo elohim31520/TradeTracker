@@ -1,10 +1,8 @@
 const dayjs = require('dayjs')
-const { FileNameToTime } = require("./util");
-const { getLastDir } = require('./file')
 
 class Schedule {
     constructor({ countdown, gap, gapUnit, lastTime }) {
-        this.lastTime = lastTime || FileNameToTime(getLastDir())
+        this.lastTime = lastTime
         this.timeoutID = null
         this.countDownSecond = countdown
         this.gap = gap || 24
@@ -28,7 +26,7 @@ class Schedule {
     }
 
     setLastTime(lastTime) {
-        this.lastTime = lastTime || FileNameToTime(getLastDir())
+        this.lastTime = lastTime
     }
 
     setTimestampStr(now) {
