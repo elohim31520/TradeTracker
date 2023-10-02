@@ -5,6 +5,7 @@ const modal = require("../../modal/records/buy")
 const modal_holding = require("../../modal/records/holding")
 const { getRecordsBy, addRecords, delRecords, updateRecords, getAvgRecords, mergeRecordsToTable } = require("./index")
 const { validateParamsOfGet, validateParamsOfAdd, validateParamsOfDel } = require("./validate")
+const { successResponse } = require('../../js/config')
 const _ = require("lodash")
 
 router.get("/:userId",
@@ -12,27 +13,32 @@ router.get("/:userId",
 	validateParamsOfGet,
 	getRecordsBy(modal),
 	(req, res) => {
-		res.json({ code: 1, msg: res.data })
+		let resData = successResponse
+		resData.data = req.records
+		res.json(resData)
 	}
 )
 
-router.post("/add", verifyToken, validateParamsOfAdd, addRecords(modal), mergeRecordsToTable(modal_holding),
+router.post("/add",
+	verifyToken,
+	validateParamsOfAdd,
+	addRecords(modal),
+	mergeRecordsToTable(modal_holding),
 	(req, res) => {
-		const data = req.commitData
-		res.json({ code: 1, msg: "success", data })
+		res.json(successResponse)
 	}
 )
 
 router.post("/del", verifyToken, validateParamsOfDel, delRecords(modal), (req, res) => {
-	res.json({ code: 1, msg: "刪除成功" })
+	res.json(successResponse)
 })
 
 router.put("/put", verifyToken, updateRecords(modal), (req, res) => {
-	res.json({ code: 1, msg: "更新成功" })
+	res.json(successResponse)
 })
 
 router.post("/avg", verifyToken, getAvgRecords(modal), (req, res) => {
-	res.json({ code: 1, msg: "取得成功", data: req.records })
+	res.json(successResponse)
 })
 
 module.exports = router

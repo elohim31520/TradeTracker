@@ -93,8 +93,9 @@ function mergeRecordsToTable(table, operator = "+") {
 				const holdingData = await sqlGet(table, vo)
 				let temp,
 					current = vo
+
 				if (_.isArray(holdingData) && holdingData.length) {
-					let record = holdingData[0]
+					let record = holdingData[0].dataValues
 					let shareSum,
 						totalSum
 
@@ -113,7 +114,7 @@ function mergeRecordsToTable(table, operator = "+") {
 						price: avgPrice
 					})
 				} else temp = current
-
+				console.log(temp);
 				await sqlUpdate(table, temp)
 			} catch (e) {
 				logger.error('mergeRecordsToTable: ' + e.message)

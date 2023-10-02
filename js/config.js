@@ -45,10 +45,13 @@ const tcHeader = {
 
 const fzHeader = {}
 
+const successResponse = {code: 1, message: 'Success'}
+
 module.exports = {
 	dbDir,
 	requestUrl,
 	stockSymbols,
 	tcHeader,
-	fzHeader
+	fzHeader,
+	successResponse
 }
