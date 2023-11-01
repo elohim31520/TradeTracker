@@ -3,7 +3,7 @@ const router = express.Router()
 const { verifyToken } = require("../../js/middleware")
 const modal = require("../../modal/records/buy")
 const modal_holding = require("../../modal/records/holding")
-const { getRecordsBy, addRecords, delRecords, updateRecords, getAvgRecords, mergeRecordsToTable } = require("./index")
+const { getRecordsBy, addRecords, delRecords, updateRecords, mergeRecordsToTable } = require("./index")
 const { validateParamsOfGet, validateParamsOfAdd, validateParamsOfDel } = require("./validate")
 const { successResponse } = require('../../js/config')
 const _ = require("lodash")
@@ -19,7 +19,7 @@ router.get("/:userId",
 	}
 )
 
-router.post("/add",
+router.post("/",
 	verifyToken,
 	validateParamsOfAdd,
 	addRecords(modal),
@@ -29,16 +29,29 @@ router.post("/add",
 	}
 )
 
-router.post("/del", verifyToken, validateParamsOfDel, delRecords(modal), (req, res) => {
-	res.json(successResponse)
-})
+router.delete("/:id/:userId",
+	verifyToken,
+	validateParamsOfDel,
+	delRecords(modal),
+	(req, res) => {
+		res.json(successResponse)
+	}
+)
 
-router.put("/put", verifyToken, updateRecords(modal), (req, res) => {
-	res.json(successResponse)
-})
+router.patch("/:id",
+	verifyToken,
+	updateRecords(modal),
+	(req, res) => {
+		res.json(successResponse)
+	}
+)
 
-router.post("/avg", verifyToken, getAvgRecords(modal), (req, res) => {
-	res.json(successResponse)
-})
+router.put("/:id",
+	verifyToken,
+	updateRecords(modal),
+	(req, res) => {
+		res.json(successResponse)
+	}
+)
 
 module.exports = router

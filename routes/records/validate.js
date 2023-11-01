@@ -34,15 +34,19 @@ function validateParamsOfAdd(req, res, next) {
 	} else next()
 }
 
-function validateParamsOfDel (req, res, next) {
+function validateParamsOfDel(req, res, next) {
 	const schema = Joi.object({
-		userId: Joi.string().required(),
-		id: Joi.number().required()
-	})
-	const result = schema.validate(req.body)
+		id: Joi.string().required(),
+		userId: Joi.string().required()
+	});
+	const params = req.params
+	const result = schema.validate(params)
+
 	if (result.error) {
-		res.status(400).json({ code: 400, msg: "userId & id is required" })
-	} else next()
+		res.status(400).json({ code: 400, msg: "id is required" })
+	} else {
+		next()
+	}
 }
 
 module.exports = {

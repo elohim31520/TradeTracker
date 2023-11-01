@@ -26,9 +26,9 @@ app.get('/', function (req, res) {
 })
 
 app.use('/news', require('./routes/news'))
-app.use('/records/buy', require('./routes/records/buy'))
-app.use('/records/holding', require('./routes/records/holding'))
-app.use('/records/sell', require('./routes/records/sell'))
+app.use('/transaction/purchases', require('./routes/records/buy'))
+app.use('/transactions/holdings', require('./routes/records/holding'))
+app.use('/transaction/sales', require('./routes/records/sell'))
 app.use('/users', require('./routes/user'))
 app.use('/favorite', require('./routes/favorite'))
 

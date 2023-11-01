@@ -1,6 +1,32 @@
-const { sqlGet, sqlUpdate, sqlCreate, sqlDelete, sqlGetAvg, sqlBulkCreate } = require("../../crud/records/index.js");
 const _ = require("lodash");
 const logger = require("../../logger.js");
+
+const sequelize = require("../../js/connect");
+const { Op } = require("sequelize");
+
+function sqlGet(table, { userId = '', company = '' }) {
+	let conditions = { userId }
+	if (company) conditions.company = company
+	return table.findAll({
+		where: conditions
+	})
+}
+
+async function sqlUpdate(table, params) {
+	let criteria = {
+		userId: params.userId,
+		company: params.company
+	}
+	const record = await table.findOne({ where: criteria, raw: true })
+	if (record) {
+		return table.update(params, {
+			where: criteria
+		})
+	} else {
+		await sequelize.sync()
+		return table.bulkCreate([ params ])
+	}
+}
 
 function getRecordsBy(modal) {
 	return async (req, res, next) => {
@@ -16,22 +42,12 @@ function getRecordsBy(modal) {
 	}
 }
 
-function queryRecordsBy(modal) {
-	return async (req, res, next) => {
-		try {
-			req.records = await sqlGet(modal, req.body)
-			next()
-		} catch (e) {
-			logger.error('queryRecordsBy: ' + e.message)
-			throw new Error(500)
-		}
-	}
-}
-
 function addRecords(modal) {
 	return async (req, res, next) => {
 		try {
-			await sqlBulkCreate(modal, req.body)
+			const arr = req.body
+			await sequelize.sync()
+			modal.bulkCreate(arr)
 			next()
 		} catch (e) {
 			logger.error('addRecords: ' + e.message)
@@ -43,10 +59,13 @@ function addRecords(modal) {
 function delRecords(modal) {
 	return async (req, res, next) => {
 		try {
-			const isDone = await sqlDelete(modal, req.body)
-			if (isDone == 0) {
-				res.json({ code: 0, msg: "無法刪除" })
-			}
+			const { id, userId } = req.params
+			await modal.destroy({
+				where: {
+					id,
+					userId
+				}
+			})
 			next()
 		} catch (e) {
 			logger.error('delRecords: ' + e.message)
@@ -68,29 +87,12 @@ function updateRecords(modal) {
 	}
 }
 
-function getAvgRecords(modal) {
-	return async (req, res, next) => {
-		const { userId } = req.body
-		if (!userId) {
-			res.json({ code: -1, msg: "缺少參數" })
-			return
-		}
-		try {
-			req.records = await sqlGetAvg(modal, userId)
-			next()
-		} catch (e) {
-			logger.error('getAvgRecords: ' + e.message)
-			throw new Error(500)
-		}
-	}
-}
-
-function mergeRecordsToTable(table, operator = "+") {
+function mergeRecordsToTable(modal, operator = "+") {
 	return (req, res, next) => {
 		const list = req.body
 		list.forEach(async vo => {
 			try {
-				const holdingData = await sqlGet(table, vo)
+				const holdingData = await sqlGet(modal, vo)
 				let temp,
 					current = vo
 
@@ -115,7 +117,7 @@ function mergeRecordsToTable(table, operator = "+") {
 					})
 				} else temp = current
 				console.log(temp);
-				await sqlUpdate(table, temp)
+				await sqlUpdate(modal, temp)
 			} catch (e) {
 				logger.error('mergeRecordsToTable: ' + e.message)
 				throw new Error(500)
@@ -127,10 +129,8 @@ function mergeRecordsToTable(table, operator = "+") {
 
 module.exports = {
 	getRecordsBy,
-	queryRecordsBy,
 	delRecords,
 	addRecords,
 	updateRecords,
-	getAvgRecords,
 	mergeRecordsToTable
 }

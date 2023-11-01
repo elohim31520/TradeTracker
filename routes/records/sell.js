@@ -3,7 +3,7 @@ const router = express.Router()
 const { verifyToken } = require("../../js/middleware")
 const modal = require("../../modal/records/sell")
 const modal_holding = require("../../modal/records/holding")
-const { getRecordsBy, addRecords, delRecords, updateRecords, getAvgRecords, mergeRecordsToTable } = require("./index")
+const { getRecordsBy, addRecords, delRecords, updateRecords, mergeRecordsToTable } = require("./index")
 const { validateParamsOfGet, validateParamsOfAdd } = require("./validate")
 
 router.get("/:userId", verifyToken, validateParamsOfGet, getRecordsBy(modal), (req, res) => {
@@ -19,6 +19,5 @@ router.post("/add", verifyToken, validateParamsOfAdd, addRecords(modal), mergeRe
 
 router.post("/del", verifyToken, delRecords(modal))
 router.put("/put", verifyToken, updateRecords(modal))
-router.post("/avg", verifyToken, getAvgRecords(modal))
 
 module.exports = router
