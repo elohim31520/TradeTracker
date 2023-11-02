@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const { verifyToken } = require("../../js/middleware")
 const modal = require("../../modal/records/holding")
-const { getRecordsBy, addRecords, delRecords, updateRecords } = require("./index")
+const { getRecordsBy, addRecords, delRecords, updateRecords } = require("./crud")
 const { successResponse } = require('../../js/config')
 const { validateParamsOfGet, validateParamsOfAdd, validateParamsOfDel } = require("./validate")
 
