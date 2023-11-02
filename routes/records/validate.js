@@ -37,20 +37,26 @@ function validateParamsOfAdd(req, res, next) {
 function validateParamsOfDel(req, res, next) {
 	const schema = Joi.object({
 		id: Joi.string().required(),
-		userId: Joi.string().required()
+		userId: Joi.string().required(),
+		company: Joi.string().required()
 	});
-	const params = req.params
+	const params = Object.assign({}, req.params, req.query)
 	const result = schema.validate(params)
 
 	if (result.error) {
-		res.status(400).json({ code: 400, msg: "id is required" })
+		res.status(400).json({ code: 400, msg: "id, userId, company is required" })
 	} else {
 		next()
 	}
 }
 
+function validateParamsOfUpdate(req, res, next) {
+	validateParamsOfDel(req, res, next)
+}
+
 module.exports = {
 	validateParamsOfGet,
 	validateParamsOfAdd,
-	validateParamsOfDel
+	validateParamsOfDel,
+	validateParamsOfUpdate
 }

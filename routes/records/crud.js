@@ -24,7 +24,7 @@ async function sqlUpdate(table, params) {
 		})
 	} else {
 		await sequelize.sync()
-		return table.bulkCreate([ params ])
+		return table.bulkCreate([params])
 	}
 }
 
@@ -59,11 +59,13 @@ function addRecords(modal) {
 function delRecords(modal) {
 	return async (req, res, next) => {
 		try {
-			const { id, userId } = req.params
+			const { id } = req.params
+			const { userId, company } = req.query
 			await modal.destroy({
 				where: {
 					id,
-					userId
+					userId,
+					company
 				}
 			})
 			next()
@@ -78,7 +80,15 @@ function updateRecords(modal) {
 	return async (req, res, next) => {
 		try {
 			const data = req.body
-			await sqlUpdate(modal, data)
+			const { id } = req.params
+			const { userId, company } = req.query
+			await modal.update(data, {
+				where: {
+					id,
+					userId,
+					company
+				}
+			})
 			next()
 		} catch (e) {
 			logger.error('updateRecords: ' + e.message)
