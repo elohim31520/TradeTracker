@@ -250,16 +250,11 @@ function fetchTnews() {
 	})
 }
 
-createCronJob('0 10 * * *', () => {
+createCronJob(process.env.CRONJOB_TECHNEWS, () => {
 	fetchTnews()
 })
 
-
-createCronJob('0 17 * * *', () => {
-	fetchTnews()
-})
-
-createCronJob('27 11-20 * * *', () => {
+createCronJob(process.env.CRONJOB_FINZ, () => {
 	fetchFinzNews()
 })
 
