@@ -2,7 +2,6 @@ const express = require('express')
 const router = express.Router()
 const { verifyToken } = require("../../js/middleware")
 const modal = require("../../modal/records/buy")
-const modal_holding = require("../../modal/records/holding")
 const crud = require("./crud")
 const { validateParamsOfGet, validateParamsOfAdd, validateParamsOfDel, validateParamsOfUpdate } = require("./validate")
 const { successResponse } = require('../../js/config')
@@ -24,7 +23,7 @@ router.post("/",
 	validateParamsOfAdd,
 	crud.calculateTotalPrice,
 	crud.addRecords(modal),
-	crud.calculatePurchase(modal_holding),
+	crud.calculatePurchase(),
 	(req, res) => {
 		res.json(successResponse)
 	}

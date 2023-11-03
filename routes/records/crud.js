@@ -3,6 +3,7 @@ const logger = require("../../logger.js");
 
 const sequelize = require("../../js/connect");
 const { Op } = require("sequelize");
+const modal_holding = require("../../modal/records/holding")
 
 function sqlGet(table, { userId = '', company = '' }) {
 	let conditions = { userId }
@@ -97,12 +98,12 @@ function updateRecords(modal) {
 	}
 }
 
-function calculatePurchase(modal) {
+function calculatePurchase() {
 	return (req, res, next) => {
 		const list = req.body
 		list.forEach(async current => {
 			try {
-				const holdingData = await sqlGet(modal, current)
+				const holdingData = await sqlGet(modal_holding, current)
 				let temp
 
 				if (_.isArray(holdingData) && holdingData.length) {
@@ -125,7 +126,7 @@ function calculatePurchase(modal) {
 				}
 				console.log(temp)
 
-				await sqlUpdate(modal, temp)
+				await sqlUpdate(modal_holding, temp)
 			} catch (e) {
 				logger.error('calculatePurchase: ' + e.message)
 				throw new Error(500)
@@ -135,12 +136,12 @@ function calculatePurchase(modal) {
 	}
 }
 
-function calculateSale(modal) {
+function calculateSale() {
 	return (req, res, next) => {
 		const list = req.body
 		list.forEach(async current => {
 			try {
-				const holdingData = await sqlGet(modal, current)
+				const holdingData = await sqlGet(modal_holding, current)
 				let temp
 
 				if (_.isArray(holdingData) && holdingData.length) {
@@ -163,7 +164,7 @@ function calculateSale(modal) {
 				}
 
 				console.log(temp);
-				await sqlUpdate(modal, temp)
+				await sqlUpdate(modal_holding, temp)
 			} catch (e) {
 				logger.error('calculateSale: ' + e.message)
 				throw new Error(500)
@@ -186,6 +187,28 @@ function calculateTotalPrice(req, res, next) {
 	next()
 }
 
+async function calculateSaleProfit(req, res, next) {
+	try {
+		let q = _.isArray(req.body) ? _.get(req.body, '[0]', {}) : req.body
+
+		const result = await sqlGet(modal_holding, q)
+		const avgPrice = _.get(JSON.parse(JSON.stringify(result)), '[0].price', null)
+		const calculateProfit = ({ price }) => (+price - +avgPrice) / +avgPrice * 100
+
+		if (_.isArray(req.body)) {
+			req.body.forEach(vo => {
+				vo.profit = calculateProfit(vo)
+			})
+		} else {
+			req.body.profit = calculateProfit(req.body)
+		}
+		next()
+	} catch (e) {
+		logger.error('calculateSale: ' + e.message)
+		throw new Error(500)
+	}
+}
+
 module.exports = {
 	getRecordsBy,
 	delRecords,
@@ -193,5 +216,6 @@ module.exports = {
 	updateRecords,
 	calculatePurchase,
 	calculateSale,
-	calculateTotalPrice
+	calculateTotalPrice,
+	calculateSaleProfit
 }
