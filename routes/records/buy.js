@@ -3,7 +3,7 @@ const router = express.Router()
 const { verifyToken } = require("../../js/middleware")
 const modal = require("../../modal/records/buy")
 const modal_holding = require("../../modal/records/holding")
-const { getRecordsBy, addRecords, delRecords, updateRecords, mergeRecordsToTable } = require("./crud")
+const { getRecordsBy, addRecords, delRecords, updateRecords, calculatePurchase } = require("./crud")
 const { validateParamsOfGet, validateParamsOfAdd, validateParamsOfDel, validateParamsOfUpdate } = require("./validate")
 const { successResponse } = require('../../js/config')
 const _ = require("lodash")
@@ -23,7 +23,7 @@ router.post("/",
 	verifyToken,
 	validateParamsOfAdd,
 	addRecords(modal),
-	mergeRecordsToTable(modal_holding),
+	calculatePurchase(modal_holding),
 	(req, res) => {
 		res.json(successResponse)
 	}

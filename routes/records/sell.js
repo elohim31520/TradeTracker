@@ -3,8 +3,8 @@ const router = express.Router()
 const { verifyToken } = require("../../js/middleware")
 const modal = require("../../modal/records/sell")
 const modal_holding = require("../../modal/records/holding")
-const { getRecordsBy, addRecords, delRecords, updateRecords, mergeRecordsToTable } = require("./crud")
-const { validateParamsOfGet, validateParamsOfAdd } = require("./validate")
+const { getRecordsBy, addRecords, delRecords, updateRecords, calculateSale } = require("./crud")
+const { validateParamsOfGet, validateParamsOfAdd, validateParamsOfDel, validateParamsOfUpdate } = require("./validate")
 const { successResponse } = require('../../js/config')
 
 router.get("/:userId",
@@ -18,14 +18,41 @@ router.get("/:userId",
 	}
 )
 
-router.post("/add", verifyToken, validateParamsOfAdd, addRecords(modal), mergeRecordsToTable(modal_holding, "-"),
+router.post("/",
+	verifyToken,
+	validateParamsOfAdd,
+	addRecords(modal),
+	calculateSale(modal_holding),
 	(req, res) => {
-		const data = req.commitData
-		res.json({ code: 1, msg: "success", data })
+		res.json(successResponse)
 	}
 )
 
-router.post("/del", verifyToken, delRecords(modal))
-router.put("/put", verifyToken, updateRecords(modal))
+router.delete("/:id",
+	verifyToken,
+	validateParamsOfDel,
+	delRecords(modal),
+	(req, res) => {
+		res.json(successResponse)
+	}
+)
+
+router.patch("/:id",
+	verifyToken,
+	validateParamsOfUpdate,
+	updateRecords(modal),
+	(req, res) => {
+		res.json(successResponse)
+	}
+)
+
+router.put("/:id",
+	verifyToken,
+	validateParamsOfUpdate,
+	updateRecords(modal),
+	(req, res) => {
+		res.json(successResponse)
+	}
+)
 
 module.exports = router

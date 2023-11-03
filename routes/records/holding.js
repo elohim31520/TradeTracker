@@ -2,9 +2,9 @@ const express = require('express')
 const router = express.Router()
 const { verifyToken } = require("../../js/middleware")
 const modal = require("../../modal/records/holding")
-const { getRecordsBy, addRecords, delRecords, updateRecords } = require("./crud")
 const { successResponse } = require('../../js/config')
-const { validateParamsOfGet, validateParamsOfAdd, validateParamsOfDel } = require("./validate")
+const { getRecordsBy, addRecords, delRecords, updateRecords, calculatePurchase } = require("./crud")
+const { validateParamsOfGet, validateParamsOfAdd, validateParamsOfDel, validateParamsOfUpdate } = require("./validate")
 
 router.get("/:userId",
 	verifyToken,
@@ -26,7 +26,7 @@ router.post("/",
 	}
 )
 
-router.delete("/:id/:userId",
+router.delete("/:id",
 	verifyToken,
 	validateParamsOfDel,
 	delRecords(modal),
@@ -37,6 +37,7 @@ router.delete("/:id/:userId",
 
 router.patch("/:id",
 	verifyToken,
+	validateParamsOfUpdate,
 	updateRecords(modal),
 	(req, res) => {
 		res.json(successResponse)
@@ -45,6 +46,7 @@ router.patch("/:id",
 
 router.put("/:id",
 	verifyToken,
+	validateParamsOfUpdate,
 	updateRecords(modal),
 	(req, res) => {
 		res.json(successResponse)

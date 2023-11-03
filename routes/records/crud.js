@@ -97,27 +97,22 @@ function updateRecords(modal) {
 	}
 }
 
-function mergeRecordsToTable(modal, operator = "+") {
+function calculatePurchase(modal) {
 	return (req, res, next) => {
 		const list = req.body
-		list.forEach(async vo => {
+		list.forEach(async current => {
 			try {
-				const holdingData = await sqlGet(modal, vo)
-				let temp,
-					current = vo
+				const holdingData = await sqlGet(modal, current)
+				let temp
 
 				if (_.isArray(holdingData) && holdingData.length) {
 					let record = holdingData[0].dataValues
-					let shareSum,
-						totalSum
+					let shareSum
+					let	totalSum
 
-					if (operator == "+") {
-						shareSum = +record.share + +current.share
-						totalSum = +record.total + +current.total
-					} else {
-						shareSum = +record.share - +current.share
-						totalSum = +record.total - +current.total
-					}
+					shareSum = +record.share + +current.share
+					totalSum = +record.total + +current.total
+					
 					let avgPrice = totalSum / shareSum
 
 					temp = Object.assign({}, record, {
@@ -125,11 +120,52 @@ function mergeRecordsToTable(modal, operator = "+") {
 						share: shareSum,
 						price: avgPrice
 					})
-				} else temp = current
+				} else {
+					temp = current
+				}
+				console.log(temp)
+
+				await sqlUpdate(modal, temp)
+			} catch (e) {
+				logger.error('calculatePurchase: ' + e.message)
+				throw new Error(500)
+			}
+		})
+		next()
+	}
+}
+
+function calculateSale(modal) {
+	return (req, res, next) => {
+		const list = req.body
+		list.forEach(async current => {
+			try {
+				const holdingData = await sqlGet(modal, current)
+				let temp
+
+				if (_.isArray(holdingData) && holdingData.length) {
+					let record = holdingData[0].dataValues
+					let shareSum
+					let totalSum
+
+					shareSum = +record.share - +current.share
+					totalSum = +record.total - +current.total
+
+					let avgPrice = totalSum / shareSum
+
+					temp = Object.assign({}, record, {
+						total: totalSum,
+						share: shareSum,
+						price: avgPrice
+					})
+				} else {
+					temp = current
+				}
+
 				console.log(temp);
 				await sqlUpdate(modal, temp)
 			} catch (e) {
-				logger.error('mergeRecordsToTable: ' + e.message)
+				logger.error('calculateSale: ' + e.message)
 				throw new Error(500)
 			}
 		})
@@ -142,5 +178,6 @@ module.exports = {
 	delRecords,
 	addRecords,
 	updateRecords,
-	mergeRecordsToTable
+	calculatePurchase,
+	calculateSale
 }
