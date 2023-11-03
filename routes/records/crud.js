@@ -108,11 +108,11 @@ function calculatePurchase(modal) {
 				if (_.isArray(holdingData) && holdingData.length) {
 					let record = holdingData[0].dataValues
 					let shareSum
-					let	totalSum
+					let totalSum
 
 					shareSum = +record.share + +current.share
 					totalSum = +record.total + +current.total
-					
+
 					let avgPrice = totalSum / shareSum
 
 					temp = Object.assign({}, record, {
@@ -173,11 +173,25 @@ function calculateSale(modal) {
 	}
 }
 
+function calculateTotalPrice(req, res, next) {
+	const multiply = ({ price, share }) => price * share
+	const data = req.body
+	if (_.isArray(data) && data.length) {
+		data.forEach(vo => {
+			vo.total = multiply(vo)
+		})
+	} else {
+		data.total = multiply(data)
+	}
+	next()
+}
+
 module.exports = {
 	getRecordsBy,
 	delRecords,
 	addRecords,
 	updateRecords,
 	calculatePurchase,
-	calculateSale
+	calculateSale,
+	calculateTotalPrice
 }

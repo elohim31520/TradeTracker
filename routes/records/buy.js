@@ -3,7 +3,7 @@ const router = express.Router()
 const { verifyToken } = require("../../js/middleware")
 const modal = require("../../modal/records/buy")
 const modal_holding = require("../../modal/records/holding")
-const { getRecordsBy, addRecords, delRecords, updateRecords, calculatePurchase } = require("./crud")
+const crud = require("./crud")
 const { validateParamsOfGet, validateParamsOfAdd, validateParamsOfDel, validateParamsOfUpdate } = require("./validate")
 const { successResponse } = require('../../js/config')
 const _ = require("lodash")
@@ -11,7 +11,7 @@ const _ = require("lodash")
 router.get("/:userId",
 	verifyToken,
 	validateParamsOfGet,
-	getRecordsBy(modal),
+	crud.getRecordsBy(modal),
 	(req, res) => {
 		let resData = successResponse
 		resData.data = req.records
@@ -22,8 +22,9 @@ router.get("/:userId",
 router.post("/",
 	verifyToken,
 	validateParamsOfAdd,
-	addRecords(modal),
-	calculatePurchase(modal_holding),
+	crud.calculateTotalPrice,
+	crud.addRecords(modal),
+	crud.calculatePurchase(modal_holding),
 	(req, res) => {
 		res.json(successResponse)
 	}
@@ -32,7 +33,7 @@ router.post("/",
 router.delete("/:id",
 	verifyToken,
 	validateParamsOfDel,
-	delRecords(modal),
+	crud.delRecords(modal),
 	(req, res) => {
 		res.json(successResponse)
 	}
@@ -41,7 +42,7 @@ router.delete("/:id",
 router.patch("/:id",
 	verifyToken,
 	validateParamsOfUpdate,
-	updateRecords(modal),
+	crud.updateRecords(modal),
 	(req, res) => {
 		res.json(successResponse)
 	}
@@ -50,7 +51,7 @@ router.patch("/:id",
 router.put("/:id",
 	verifyToken,
 	validateParamsOfUpdate,
-	updateRecords(modal),
+	crud.updateRecords(modal),
 	(req, res) => {
 		res.json(successResponse)
 	}
