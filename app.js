@@ -7,8 +7,10 @@ const path = require('path');
 const cors = require('cors');
 const logger = require("./logger")
 const errorHandler = require('./js/errorHandler')
+const helmet = require('helmet')
 require('./js/crawler')
 app.use(cors());
+app.use(helmet());
 
 if (process.env.DEBUG_MODE) {
 	logger.info("In debug mode")
