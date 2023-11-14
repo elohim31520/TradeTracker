@@ -1,16 +1,39 @@
 const express = require('express')
 require('dotenv').config()
 require('express-async-errors');
+const helmet = require('helmet')
+const { RateLimiterMemory } = require("rate-limiter-flexible");
 
 const app = express()
 const path = require('path');
 const cors = require('cors');
 const logger = require("./logger")
 const errorHandler = require('./js/errorHandler')
-const helmet = require('helmet')
 require('./js/crawler')
+
 app.use(cors());
 app.use(helmet());
+
+const rateLimiter = new RateLimiterMemory({
+	points: 10,
+	duration: 1
+})
+
+const rateLimiterMiddleware = (req, res, next) => {
+	rateLimiter.consume(req.ip)
+		.then(() => {
+			// request allowed, 
+			// proceed with handling the request
+			next()
+		})
+		.catch(() => {
+			// request limit exceeded, 
+			// respond with an appropriate error message
+			res.status(429).send('Too Many Requests');
+		})
+}
+
+app.use(rateLimiterMiddleware)
 
 if (process.env.DEBUG_MODE) {
 	logger.info("In debug mode")
