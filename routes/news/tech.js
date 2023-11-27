@@ -2,46 +2,45 @@ const express = require('express')
 const router = express.Router()
 const { verifyToken } = require('../../js/middleware');
 
-const TechNews = require("../../modal/techNews")
+const TechNews = require("../../models/techNews")
 const sequelize = require("../../js/connect");
 const dayjs = require("dayjs")
 const { Op } = require("sequelize");
-// const Users = require("../../modal/user")
+// const Users = require("../../models/user")
 const logger = require("../../logger")
+const { successResponse } = require('../../js/config')
 
 
-router.post('/subscription',
-	verifyToken,
-	async (req, res) => {
-		// let data = await TechNews.sqlQuerySubscriptionNews(req.body)
-		// res.json(data)
-	}
-)
+// router.post('/subscription',
+// 	verifyToken,
+// 	async (req, res) => {
+// 		let data = await TechNews.sqlQuerySubscriptionNews(req.body)
+// 		res.json(data)
+// 	}
+// )
 
 router.post("/",
 	async (req, res) => {
-		let { pageIndex, pageSize, endDate, startDate, query } = body
-
-		if (!endDate) endDate = dayjs().toDate()
-		if (!startDate) startDate = dayjs().startOf('day').subtract(1, 'day').toDate()
+		let { pageIndex, pageSize, endDate, startDate, keyword } = req.body
 		let offset = (pageIndex - 1) * pageSize
 
 		if (pageIndex <= 0) offset = 0
 		try {
-			const res = await TechNews.findAll({
-				where: {
-					release_time: {
-						[Op.between]: [startDate, endDate],
+			const conditions = {
+				[Op.or]: {
+					title: {
+						[Op.like]: `%${keyword}%`
 					},
-					[Op.or]: {
-						title: {
-							[Op.like]: `%${query}%`
-						},
-						web_url: {
-							[Op.like]: `%${query}%`
-						}
+					web_url: {
+						[Op.like]: `%${keyword}%`
 					}
-				},
+				}
+			}
+			if(startDate && endDate) conditions.createdAt = {
+				[Op.between]: [startDate, endDate],
+			}
+			const result = await TechNews.findAll({
+				where: conditions,
 				offset,
 				limit: pageSize,
 				attributes: [
@@ -52,14 +51,14 @@ router.post("/",
 					]
 				],
 			})
-			return res
+			let resData = successResponse
+			resData.data = result
+			res.json(resData)
 		} catch (e) {
 			logger.error(e.message)
 			throw new Error(500)
 		}
 	}
 )
-
-router.post()
 
 module.exports = router
