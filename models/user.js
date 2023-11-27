@@ -3,7 +3,7 @@ const { DataTypes } = require("sequelize");
 const Company = require("./company")
 const User_subscribe_company = require("./user_subscribe_company")
 const News = require("./news")
-const User_favorite_news = require("./many_to_many/user_favorite_news")
+const User_favorite_news = require("../modal/many_to_many/user_favorite_news")
 
 const Users = sequelize.define("Users", {
 	userId: {

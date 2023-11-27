@@ -10,7 +10,7 @@ const { tcHeader } = require("./config");
 const Schedule = require("./schedule");
 const { zhTimeToStandardTime } = require("./util");
 const { sqlWrite, sqlCreateStatements, sqlCreateTechNews } = require("../crud/news")
-const News = require("../modal/news")
+const News = require("../models/news")
 const logger = require("../logger")
 const util = require("./util")
 

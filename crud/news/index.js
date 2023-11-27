@@ -1,12 +1,12 @@
-const News = require("../../modal/news")
-const TechNews = require("../../modal/techNews")
-const Statements = require("../../modal/statements")
+const News = require("../../models/news")
+const TechNews = require("../../models/techNews")
+const Statements = require("../../models/statements")
 const sequelize = require("../../js/connect");
 const { md5Encode } = require("../../js/crypto");
 const dayjs = require("dayjs")
 const { Op } = require("sequelize");
-const Users = require("../../modal/user")
-const Company = require("../../modal/company")
+const Users = require("../../models/user")
+const Company = require("../../models/company")
 const User_favorite_news = require("../../modal/many_to_many/user_favorite_news")
 const logger = require("../../logger")
 
