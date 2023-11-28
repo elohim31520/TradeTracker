@@ -20,6 +20,14 @@ fs
 	.readdirSync(__dirname)
 	.filter(file => {
 		return (
+			![
+				'company.js',
+				'index.js',
+				'news.js',
+				'statements.js',
+				'techNews.js',
+				'user.js',
+				'user_subscribe_company.js'].includes(file) &&
 			file.indexOf('.') !== 0 &&
 			file !== basename &&
 			file.slice(-3) === '.js' &&

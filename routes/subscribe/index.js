@@ -1,9 +1,14 @@
 const express = require('express')
 const router = express.Router()
-const News = require("../../crud/news");
+
 const { verifyToken } = require('../../js/middleware');
 const validate = require("./validate")
 const User_favorite_news = require("../../modal/many_to_many/user_favorite_news")
+const { successResponse } = require('../../js/config')
+const logger = require("../../logger.js")
+
+const db = require('../../models')
+const pk_user_technews = db.pk_user_technews
 
 router.post("/news",
 	verifyToken,
@@ -19,7 +24,7 @@ router.post("/news",
 	}
 )
 
-router.post("/news",
+router.get("/news",
 	verifyToken,
 	async (req, res) => {
 		const decoded = req.decoded
@@ -42,6 +47,20 @@ router.post("/news",
 			})
 
 			res.json(data)
+		} catch (e) {
+			logger.error(e.message)
+			throw new Error(500)
+		}
+	}
+)
+
+router.post("/technews",
+	verifyToken,
+	validate.validateParamsOfSet,
+	async (req, res) => {
+		try {
+			const data = await pk_user_technews.create(req.body)
+			res.json(successResponse)
 		} catch (e) {
 			logger.error(e.message)
 			throw new Error(500)
