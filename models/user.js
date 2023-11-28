@@ -3,6 +3,7 @@ const { DataTypes } = require("sequelize");
 const Company = require("./company")
 const User_subscribe_company = require("./user_subscribe_company")
 const News = require("./news")
+const TechNews = require("./techNews")
 const User_favorite_news = require("../modal/many_to_many/user_favorite_news")
 
 const Users = sequelize.define("Users", {
@@ -39,5 +40,8 @@ Company.belongsToMany(Users, { through: User_subscribe_company, foreignKey: 'sym
 
 Users.belongsToMany(News, { through: User_favorite_news, foreignKey: "userId" })
 News.belongsToMany(Users, { through: User_favorite_news, foreignKey: "newsId" })
+
+Users.belongsToMany(TechNews, { through: 'pk_user_technews', foreignKey: "newsId" })
+TechNews.belongsToMany(Users, { through: 'pk_user_technews', foreignKey: "newsId" })
 
 module.exports = Users

@@ -10,15 +10,6 @@ const { Op } = require("sequelize");
 const logger = require("../../logger")
 const { successResponse } = require('../../js/config')
 
-
-// router.post('/subscription',
-// 	verifyToken,
-// 	async (req, res) => {
-// 		let data = await TechNews.sqlQuerySubscriptionNews(req.body)
-// 		res.json(data)
-// 	}
-// )
-
 router.get('/:id',
 	async (req, res) => {
 		let id = req.params.id
