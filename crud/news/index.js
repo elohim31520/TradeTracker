@@ -7,7 +7,7 @@ const dayjs = require("dayjs")
 const { Op } = require("sequelize");
 const Users = require("../../models/user")
 const Company = require("../../models/company")
-const User_favorite_news = require("../../modal/many_to_many/user_favorite_news")
+
 const logger = require("../../logger")
 
 function sqlWrite(arr) {
@@ -147,51 +147,12 @@ function sqlCreateTechNews(arr) {
 	})
 }
 
-async function sqlGetUserFavoriteNews(req) {
-	const decoded = req.decoded
-	const { userId } = decoded
-	try {
-		const user = await Users.findByPk(userId, {
-			include: {
-				model: News,
-				attributes: ["id"],
-				through: { attributes: [] }
-			}
-		})
-
-		const allNewsId = user.News.map(vo => vo.id)
-
-		const res = News.findAll({
-			where: {
-				id: allNewsId
-			}
-		})
-
-		return res
-	} catch (e) {
-		logger.error(e.message)
-		throw new Error(500)
-	}
-}
-
-async function sqlSetUserFavoriteNews(body) {
-	try {
-		const res = await User_favorite_news.create(body)
-		return res
-	} catch (e) {
-		logger.error(e.message)
-		throw new Error(500)
-	}
-}
-
 module.exports = {
 	sqlWrite,
 	sqlCreateStatements,
 	sqlQueryAll,
 	sqlQuerySubscriptionNews,
 	sqlCreateTechNews,
-	sqlGetUserFavoriteNews,
-	sqlSetUserFavoriteNews
 }
 
 

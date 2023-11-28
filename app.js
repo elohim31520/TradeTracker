@@ -56,7 +56,7 @@ app.use('/transaction/purchases', require('./routes/records/buy'))
 app.use('/transaction/holdings', require('./routes/records/holding'))
 app.use('/transaction/sales', require('./routes/records/sell'))
 app.use('/users', require('./routes/user'))
-app.use('/favorite', require('./routes/favorite'))
+app.use('/subscribe', require('./routes/subscribe/index'))
 
 app.use(errorHandler);
 
