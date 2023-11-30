@@ -41,7 +41,7 @@ Company.belongsToMany(Users, { through: User_subscribe_company, foreignKey: 'sym
 Users.belongsToMany(News, { through: User_favorite_news, foreignKey: "userId" })
 News.belongsToMany(Users, { through: User_favorite_news, foreignKey: "newsId" })
 
-Users.belongsToMany(TechNews, { through: 'pk_user_technews', foreignKey: "newsId" })
+Users.belongsToMany(TechNews, { through: 'pk_user_technews', foreignKey: "userId" })
 TechNews.belongsToMany(Users, { through: 'pk_user_technews', foreignKey: "newsId" })
 
 module.exports = Users
