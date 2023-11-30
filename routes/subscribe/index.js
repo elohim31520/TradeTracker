@@ -61,7 +61,10 @@ router.post("/technews",
 	validate.validateParamsOfSet,
 	async (req, res) => {
 		try {
-			const data = await pk_user_technews.create(req.body)
+			const decoded = req.decoded
+			const { userId } = decoded
+			const { newsId } = req.body
+			const data = await pk_user_technews.create({ userId, newsId })
 			res.json(successResponse)
 		} catch (e) {
 			logger.error(e.message)
