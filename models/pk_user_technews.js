@@ -14,11 +14,30 @@ module.exports = (sequelize, DataTypes) => {
 		}
 	}
 	pk_user_technews.init({
-		userId: DataTypes.STRING,
-		newsId: DataTypes.STRING
+		userId: {
+			type: DataTypes.STRING,
+			allowNull: false,
+			references: {
+				model: 'Users',
+				key: 'userId',
+				onDelete: 'CASCADE',
+				onUpdate: 'CASCADE'
+			}
+		},
+		newsId: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			references: {
+				model: 'TechNews',
+				key: 'id',
+				onDelete: 'CASCADE',
+				onUpdate: 'CASCADE'
+			}
+		}
 	}, {
 		sequelize,
 		modelName: 'pk_user_technews',
 	});
+	pk_user_technews.removeAttribute('id')
 	return pk_user_technews;
 };
