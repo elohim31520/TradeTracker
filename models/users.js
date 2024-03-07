@@ -10,16 +10,12 @@ module.exports = (sequelize, DataTypes) => {
 		 */
 		static associate(models) {
 			// define association here
-			// 多對多關聯1
-			// 多對多關聯1
 			// Users.belongsToMany(models.Company, { through: models.User_subscribe_company, foreignKey: 'userId' });
 			// models.Company.belongsToMany(Users, { through: models.User_subscribe_company, foreignKey: 'symbol' });
 
-			// 多對多關聯2
 			// Users.belongsToMany(models.News, { through: models.User_favorite_news, foreignKey: 'userId' });
 			// models.News.belongsToMany(Users, { through: models.User_favorite_news, foreignKey: 'newsId' });
 
-			// 多對多關聯3
 			// Users.belongsToMany(models.TechNews, { through: models.pk_user_technews, foreignKey: 'userId' });
 			// models.TechNews.belongsToMany(Users, { through: models.pk_user_technews, foreignKey: 'newsId' });
 		}
