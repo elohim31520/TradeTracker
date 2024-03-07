@@ -1,4 +1,4 @@
-const Users = require("../../models/user")
+const Users = require("../../models/users")
 const sequelize = require("../../js/connect");
 const { generateToken, md5Encode, generateSalt, sha256 } = require("../../js/crypto")
 const logger = require("../../logger")

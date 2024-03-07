@@ -5,7 +5,7 @@ const sequelize = require("../../js/connect");
 const { md5Encode } = require("../../js/crypto");
 const dayjs = require("dayjs")
 const { Op } = require("sequelize");
-const Users = require("../../models/user")
+const Users = require("../../models/users")
 const Company = require("../../models/company")
 
 const logger = require("../../logger")

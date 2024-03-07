@@ -6,7 +6,7 @@ const TechNews = require("../../models/techNews")
 const sequelize = require("../../js/connect");
 const dayjs = require("dayjs")
 const { Op } = require("sequelize");
-// const Users = require("../../models/user")
+// const Users = require("../../models/users")
 const logger = require("../../logger")
 const { successResponse } = require('../../js/config')
 
