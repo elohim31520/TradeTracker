@@ -47,7 +47,6 @@ function addRecords(modal) {
 	return async (req, res, next) => {
 		try {
 			const arr = req.body
-			await sequelize.sync()
 			modal.bulkCreate(arr)
 			next()
 		} catch (e) {

@@ -17,12 +17,10 @@ function validateParamsOfGet(req, res, next) {
 function validateParamsOfAdd(req, res, next) {
 	const schema = Joi.array().items(
 		Joi.object({
-			userId: Joi.string().required(),
-			company: Joi.string().required(),
+			userId: Joi.number().required(),
+			symbo: Joi.string().required(),
 			share: Joi.number().required(),
-			price: Joi.number().required(),
-			dividend: Joi.number(),
-			open_time: Joi.string()
+			price: Joi.number().required()
 		})
 	)
 	const params = req.body

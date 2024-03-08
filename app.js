@@ -52,9 +52,7 @@ app.get('/', function (req, res) {
 
 // app.use('/news/finv', require('./routes/news/finv'))
 app.use('/news/tech', require('./routes/news/tech'))
-app.use('/transaction/purchases', require('./routes/records/buy'))
-app.use('/transaction/holdings', require('./routes/records/holding'))
-app.use('/transaction/sales', require('./routes/records/sell'))
+app.use('/transactions', require('./routes/records/buy'))
 app.use('/users', require('./routes/user'))
 app.use('/subscribe', require('./routes/subscribe/index'))
 
