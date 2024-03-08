@@ -3,7 +3,6 @@ const logger = require("../../logger.js");
 
 const sequelize = require("../../js/connect");
 const { Op } = require("sequelize");
-const modal_holding = require("../../modal/records/holding")
 
 function sqlGet(table, { userId = '', company = '' }) {
 	let conditions = { userId }
@@ -100,6 +99,7 @@ function updateRecords(modal) {
 function calculatePurchase() {
 	return (req, res, next) => {
 		const list = req.body
+		return next()
 		list.forEach(async current => {
 			try {
 				const holdingData = await sqlGet(modal_holding, current)
@@ -138,6 +138,7 @@ function calculatePurchase() {
 function calculateSale() {
 	return (req, res, next) => {
 		const list = req.body
+		return next()
 		list.forEach(async current => {
 			try {
 				const holdingData = await sqlGet(modal_holding, current)
