@@ -18,11 +18,11 @@ module.exports = (sequelize, DataTypes) => {
 			type: DataTypes.STRING,
 			allowNull: false
 		},
-		price: DataTypes.DECIMAL,
-		PE_Trailing: DataTypes.DECIMAL,
-		PE_Forward: DataTypes.DECIMAL,
-		EPS_Trailing: DataTypes.DECIMAL,
-		EPS_Forward: DataTypes.DECIMAL,
+		price: DataTypes.DECIMAL(10, 2),
+		PE_Trailing: DataTypes.DECIMAL(10, 2),
+		PE_Forward: DataTypes.DECIMAL(10, 2),
+		EPS_Trailing: DataTypes.DECIMAL(10, 2),
+		EPS_Forward: DataTypes.DECIMAL(10, 2),
 		volume: DataTypes.INTEGER,
 		marketCap: DataTypes.STRING
 	}, {

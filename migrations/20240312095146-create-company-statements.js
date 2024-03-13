@@ -14,19 +14,19 @@ module.exports = {
 				allowNull: false,
 			},
 			price: {
-				type: Sequelize.DECIMAL
+				type: Sequelize.DECIMAL(10, 2)
 			},
 			PE_Trailing: {
-				type: Sequelize.DECIMAL
+				type: Sequelize.DECIMAL(10, 2)
 			},
 			PE_Forward: {
-				type: Sequelize.DECIMAL
+				type: Sequelize.DECIMAL(10, 2)
 			},
 			EPS_Trailing: {
-				type: Sequelize.DECIMAL
+				type: Sequelize.DECIMAL(10, 2)
 			},
 			EPS_Forward: {
-				type: Sequelize.DECIMAL
+				type: Sequelize.DECIMAL(10, 2)
 			},
 			volume: {
 				type: Sequelize.INTEGER
