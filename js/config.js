@@ -20,8 +20,6 @@ function getStockSymbol() {
  * 配置
  */
 
-const requestUrl = 'https://finviz.com/quote.ashx?t='
-
 const stockSymbols = getStockSymbol()
 
 const tcHeader = {
@@ -88,7 +86,6 @@ const symbos = [
 
 module.exports = {
 	dbDir,
-	requestUrl,
 	stockSymbols,
 	tcHeader,
 	fzHeader,

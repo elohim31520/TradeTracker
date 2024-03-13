@@ -1,13 +1,13 @@
-const axios = require('axios').default;
+const axios = require('axios').default
 
-const { replaceDotToDash } = require("./util");
-const { requestUrl, stockSymbols, fzHeader, symbos } = require("./config");
-const iconv = require('iconv-lite');
+const { replaceDotToDash } = require('./util')
+const { fzHeader } = require('./config')
+const iconv = require('iconv-lite')
 
 class FinzService {
-	constructor() {
-		this.requestUrl = requestUrl || ''
-		this.stockSymbols = stockSymbols || []
+	constructor({ requestUrl = '', stockSymbols = [] }) {
+		this.requestUrl = requestUrl
+		this.stockSymbols = stockSymbols
 		this.index = 0
 		this.errorSymbo = []
 	}
@@ -24,8 +24,8 @@ class FinzService {
 		const url = this.requestUrl + replaceDotToDash(symbo) + '&p=d'
 		if (!url) return Promise.reject('Empty Url')
 
-		console.log(`request Url : ${url}`);
-		return axios.get(url, { headers: fzHeader }).then(res => {
+		console.log(`request Url : ${url}`)
+		return axios.get(url, { headers: fzHeader }).then((res) => {
 			this.index++
 			return res
 		})
@@ -45,12 +45,9 @@ class FinzService {
 	}
 }
 
-class Sp500Service {
-	constructor() {
-		this.requestUrl = process.env.SP500_URL || ''
-		this.stockSymbols = symbos || []
-		this.index = 0
-		this.errorSymbo = []
+class Sp500Service extends FinzService {
+	constructor({ requestUrl = '', stockSymbols = [] }) {
+		super({ requestUrl, stockSymbols })
 	}
 
 	getHtml() {
@@ -65,31 +62,16 @@ class Sp500Service {
 		const url = this.requestUrl + replaceDotToDash(symbo)
 		if (!url) return Promise.reject('Empty Url')
 
-		console.log(`request Url : ${url}`);
-		return axios.get(url, { responseType: 'arraybuffer' })
-			.then(response => {
-				this.index++
-				const data = iconv.decode(response.data, 'utf-8');
-				return data
-			})
-	}
-
-	getRequestSymbo() {
-		return this.stockSymbols[this.index]
-	}
-
-	pushErrorSymbo() {
-		let sym = this.getRequestSymbo()
-		this.errorSymbo.push(sym)
-	}
-
-	getAllErrorSymbo() {
-		return this.errorSymbo
+		console.log(`request Url : ${url}`)
+		return axios.get(url, { responseType: 'arraybuffer' }).then((response) => {
+			this.index++
+			const data = iconv.decode(response.data, 'utf-8')
+			return data
+		})
 	}
 }
 
-
 module.exports = {
 	FinzService,
-	Sp500Service
+	Sp500Service,
 }
