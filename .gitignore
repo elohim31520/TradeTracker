@@ -1,7 +1,6 @@
 /DB
 /node_modules
 todo.txt
-/test
 .env
 private.key
 public.key
