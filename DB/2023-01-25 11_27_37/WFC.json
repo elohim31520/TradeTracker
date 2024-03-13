@@ -1,0 +1,702 @@
+[
+    {
+        "releaseTime": "Jan-24-23 01:00PM",
+        "title": "Wells Fargo & Company Announces Common Stock Dividend",
+        "publisher": " Business Wire",
+        "webUrl": "https://finance.yahoo.com/news/wells-fargo-company-announces-common-180000992.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Jan-24-23 05:30AM",
+        "title": "Rich Customers Pull Money From Banks Offering Paltry Interest Rates",
+        "publisher": " The Wall Street Journal",
+        "webUrl": "https://finance.yahoo.com/m/890e930a-9fb5-3c44-9f01-bf6944be866e/rich-customers-pull-money.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Jan-17-23 04:53PM",
+        "title": "Wells Fargo upgrades WWE stock to Equalweight",
+        "publisher": " Yahoo Finance Video",
+        "webUrl": "https://finance.yahoo.com/video/wells-fargo-upgrades-wwe-stock-215338021.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Jan-17-23 04:09PM",
+        "title": "Wells Fargo downgrades Pfizer stock, citing need for a COVID reset",
+        "publisher": " Yahoo Finance Video",
+        "webUrl": "https://finance.yahoo.com/video/wells-fargo-downgrades-pfizer-stock-210950051.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Jan-17-23 07:05AM",
+        "title": "Analyst Report: Wells Fargo & Co.",
+        "publisher": " Argus Research",
+        "webUrl": "https://finance.yahoo.com/m/4265409a-8910-3fd6-bb49-f209eb6758e0/analyst-report%3A-wells-fargo-%26.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Jan-17-23 06:50AM",
+        "title": "Market Digest: BK, C, WFC, BLK",
+        "publisher": " Argus Research",
+        "webUrl": "https://finance.yahoo.com/m/95aad1a9-f78f-30e5-aa06-501e62cc7a18/market-digest%3A-bk%2C-c%2C-wfc%2C-blk.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Jan-13-23 05:27PM",
+        "title": "What Bank Earnings Can Tell Us About the Economy",
+        "publisher": " WSJ",
+        "webUrl": "https://finance.yahoo.com/video/bank-earnings-tell-us-economy-222700234.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Jan-13-23 04:45PM",
+        "title": "S&P 500 Within a Whisker of 4,000 in Stock Rebound: Markets Wrap",
+        "publisher": " Bloomberg",
+        "webUrl": "https://finance.yahoo.com/news/asian-stocks-set-boost-easing-231025236.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Jan-13-23 04:25PM",
+        "title": "Americas Biggest Banks Are Girding for a Recession but Arent Feeling One Yet",
+        "publisher": " The Wall Street Journal",
+        "webUrl": "https://finance.yahoo.com/m/390bc8eb-d9d6-3a93-9927-7db704459b1d/america%E2%80%99s-biggest-banks-are.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Jan-13-23 04:06PM",
+        "title": "Bank CEOs weigh in on economic, consumer outlooks in 2023",
+        "publisher": " Yahoo Finance Video",
+        "webUrl": "https://finance.yahoo.com/video/bank-ceos-weigh-economic-consumer-210647360.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Jan-13-23 03:35PM",
+        "title": "Bank stocks: We may cross the valley into economic recovery in latter half of 2023, analyst says",
+        "publisher": " Yahoo Finance Video",
+        "webUrl": "https://finance.yahoo.com/video/bank-stocks-may-cross-valley-203511113.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Jan-13-23 12:58PM",
+        "title": "Banks Face Uphill Battle Even as Rates Rise",
+        "publisher": " The Wall Street Journal",
+        "webUrl": "https://finance.yahoo.com/m/e14c1ddb-2cb0-3778-a62a-701c04611fcd/banks-face-uphill-battle-even.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Jan-13-23 10:24AM",
+        "title": "Consumer sentiment index up as inflation eases, plus the top takeaways from bank earnings",
+        "publisher": " Yahoo Finance Video",
+        "webUrl": "https://finance.yahoo.com/video/bank-earnings-top-takeaways-lackluster-152455331.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Jan-13-23 09:31AM",
+        "title": "Analyst Report: Wells Fargo & Company",
+        "publisher": " Morningstar Research",
+        "webUrl": "https://finance.yahoo.com/m/3b471bac-ed5d-3dbc-929f-062af4cbc19e/analyst-report%3A-wells-fargo-%26.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Jan-13-23 09:21AM",
+        "title": "Bank earnings: JPMorgan, Bank of America, Wells Fargo, Citigroup report Q4 results",
+        "publisher": " Yahoo Finance Video",
+        "webUrl": "https://finance.yahoo.com/video/bank-earnings-jpmorgan-bank-america-142135196.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Jan-13-23 09:20AM",
+        "title": "Wells Fargo Launches $20 Million Invest Native Initiative for Native American Communities",
+        "publisher": " ACCESSWIRE",
+        "webUrl": "https://finance.yahoo.com/news/wells-fargo-launches-20-million-142000617.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Jan-13-23 09:18AM",
+        "title": "Goldman Sachs, JPMorgan, Other Banks Sell Off in Early Trading",
+        "publisher": " The Wall Street Journal",
+        "webUrl": "https://finance.yahoo.com/m/dff80265-abb5-3f41-9107-1dec2fa2b948/goldman-sachs%2C-jpmorgan%2C.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Jan-13-23 08:13AM",
+        "title": "Wells Fargo Sees More of Its Scandals Concluding",
+        "publisher": " The Wall Street Journal",
+        "webUrl": "https://finance.yahoo.com/m/223e008c-f81e-360d-a5ec-008730694298/wells-fargo-sees-more-of-its.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Jan-13-23 07:32AM",
+        "title": "Your Guide to Fourth-Quarter Bank Earnings",
+        "publisher": " The Wall Street Journal",
+        "webUrl": "https://finance.yahoo.com/m/c5405ba7-c9ba-3eed-8e85-b6a00e596e90/your-guide-to-fourth-quarter.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Jan-13-23 07:03AM",
+        "title": "Wells Fargo Says Regulatory Settlement Hit Earnings",
+        "publisher": " The Wall Street Journal",
+        "webUrl": "https://finance.yahoo.com/m/98817bde-4672-30e7-aef4-1d009c016dac/wells-fargo-says-regulatory.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Jan-13-23 06:57AM",
+        "title": "Wells Fargo Reports Fourth Quarter 2022 Financial Results",
+        "publisher": " Business Wire",
+        "webUrl": "https://finance.yahoo.com/news/wells-fargo-reports-fourth-quarter-115700982.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Jan-12-23 11:30AM",
+        "title": "The Savarick Group of Wells Fargo Advisors Offers Resources Dedicated to Medical Professionals",
+        "publisher": " PR Newswire",
+        "webUrl": "https://finance.yahoo.com/news/savarick-group-wells-fargo-advisors-163000703.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Jan-12-23 11:29AM",
+        "title": "Wells Fargo Is Shrinking Its Mortgage BusinessExcept Where It Isnt",
+        "publisher": " The Wall Street Journal",
+        "webUrl": "https://finance.yahoo.com/m/d753862c-edc2-3ffb-a6dc-d680b6f9071a/wells-fargo-is-shrinking-its.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Jan-12-23 10:15AM",
+        "title": "Wells Fargo Launches $20 Million Invest Native Initiative for Native American Communities",
+        "publisher": " Business Wire",
+        "webUrl": "https://finance.yahoo.com/news/wells-fargo-launches-20-million-151500185.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Jan-11-23 10:15AM",
+        "title": "Enterprise and Wells Fargo Foundation Announce $20M Housing Affordability Breakthrough Challenge",
+        "publisher": " ACCESSWIRE",
+        "webUrl": "https://finance.yahoo.com/news/enterprise-wells-fargo-foundation-announce-151500593.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Jan-10-23 05:52PM",
+        "title": "Stocks moving after hours: Wells Fargo, Franchise Group",
+        "publisher": " Yahoo Finance",
+        "webUrl": "https://finance.yahoo.com/news/stocks-moving-after-hours-wells-fargo-franchise-group-225242054.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Jan-10-23 05:45PM",
+        "title": "Wells Fargo Is Shrinking Its Mortgage Business",
+        "publisher": " The Wall Street Journal",
+        "webUrl": "https://finance.yahoo.com/m/ff50c62a-46e0-3de2-96db-7e37c652f8a5/wells-fargo-is-shrinking-its.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Jan-10-23 04:59PM",
+        "title": "Wells Fargo to scale back housing business, Vitamin Shoppe-owner considers going private",
+        "publisher": " Yahoo Finance Video",
+        "webUrl": "https://finance.yahoo.com/video/wells-fargo-scale-back-housing-215935854.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Jan-10-23 04:15PM",
+        "title": "Wells Fargo Announces Strategic Direction for Home Lending: A Smaller, Less Complex Business Focused on Bank Customers and Minority Communities",
+        "publisher": " Business Wire",
+        "webUrl": "https://finance.yahoo.com/news/wells-fargo-announces-strategic-direction-211500996.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Jan-10-23 10:15AM",
+        "title": "Enterprise and Wells Fargo Foundation Announce $20M Housing Affordability Breakthrough Challenge",
+        "publisher": " Business Wire",
+        "webUrl": "https://finance.yahoo.com/news/enterprise-wells-fargo-foundation-announce-151500904.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Jan-09-23 03:46PM",
+        "title": "Nvidia, AMD stock named top tech picks for 2023 by Wells Fargo",
+        "publisher": " Yahoo Finance Video",
+        "webUrl": "https://finance.yahoo.com/video/nvidia-amd-stock-named-top-204645567.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Jan-09-23 09:18AM",
+        "title": "Earnings: What to expect from big banks this week",
+        "publisher": " Yahoo Finance Video",
+        "webUrl": "https://finance.yahoo.com/video/earnings-expect-big-banks-week-141810694.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Jan-08-23 09:43AM",
+        "title": "Inflation data, banks kick off earnings season: What to know this week",
+        "publisher": " Yahoo Finance",
+        "webUrl": "https://finance.yahoo.com/news/stock-market-week-ahead-cpi-report-inflation-bank-earnings-144340262.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Jan-06-23 03:00PM",
+        "title": "Inflation, Banks & Biotech: What's on Tap for Next Week",
+        "publisher": " The Wall Street Journal",
+        "webUrl": "https://finance.yahoo.com/m/53954f16-c502-371a-be31-0e48fac3e8de/inflation%2C-banks-%26-biotech%3A.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Jan-06-23 08:00AM",
+        "title": "Wells Fargo to Announce Fourth Quarter 2022 Earnings on Jan. 13, 2023",
+        "publisher": " Business Wire",
+        "webUrl": "https://finance.yahoo.com/news/wells-fargo-announce-fourth-quarter-130000409.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Dec-21-22 02:02PM",
+        "title": "Wells Fargo Shares Keep Rolling",
+        "publisher": " The Wall Street Journal",
+        "webUrl": "https://finance.yahoo.com/m/b1e06f24-5f92-3d52-a901-96773f710239/wells-fargo-shares-keep.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Dec-20-22 04:22PM",
+        "title": "Wells Fargo to Pay Record CFPB Fine to Settle Allegations It Harmed Customers",
+        "publisher": " The Wall Street Journal",
+        "webUrl": "https://finance.yahoo.com/m/bfd4b21d-cec4-3456-b257-ffd46c8251c9/wells-fargo-to-pay-record.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Dec-20-22 03:52PM",
+        "title": "Wells Fargo reaches $3.7 billion settlement with CFPB over customer abuses",
+        "publisher": " Yahoo Finance Video",
+        "webUrl": "https://finance.yahoo.com/video/wells-fargo-reaches-3-7-205239108.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Dec-20-22 11:15AM",
+        "title": "Analyst Report: Wells Fargo & Company",
+        "publisher": " Morningstar Research",
+        "webUrl": "https://finance.yahoo.com/m/04228e5c-8641-3b24-83ac-16a920e812ba/analyst-report%3A-wells-fargo-%26.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Dec-20-22 10:02AM",
+        "title": "Wells Fargo Reaches $3.7 Billion Deal With Regulators Over Consumer Banking",
+        "publisher": " The Wall Street Journal",
+        "webUrl": "https://finance.yahoo.com/m/bfd4b21d-cec4-3456-b257-ffd46c8251c9/wells-fargo-reaches-%243.7.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Dec-20-22 09:28AM",
+        "title": "Wells Fargo settles with CFPB for $3.7 billion, stock down premarket",
+        "publisher": " Yahoo Finance Video",
+        "webUrl": "https://finance.yahoo.com/video/wells-fargo-settles-cfpb-3-142816793.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Dec-20-22 09:16AM",
+        "title": "Wells Fargo Enters into Agreement with CFPB to Resolve Multiple Issues",
+        "publisher": " Business Wire",
+        "webUrl": "https://finance.yahoo.com/news/wells-fargo-enters-agreement-cfpb-141600637.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Dec-16-22 05:00AM",
+        "title": "Zacks Value Investor Highlights: NexTier Oilfield Solutions, JinkoSolar Holding, Albemarle, Wintrust Financial and Wells Fargo",
+        "publisher": " Zacks",
+        "webUrl": "https://finance.yahoo.com/news/zacks-value-investor-highlights-nextier-100010449.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Dec-15-22 02:33PM",
+        "title": "Where to Find Top Value Stocks in 2023",
+        "publisher": " Zacks",
+        "webUrl": "https://finance.yahoo.com/news/where-top-value-stocks-2023-193307407.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Dec-15-22 09:00AM",
+        "title": "Wells Fargo & Company (NYSE:WFC) is favoured by institutional owners who hold 74% of the company",
+        "publisher": " Simply Wall St.",
+        "webUrl": "https://finance.yahoo.com/news/wells-fargo-company-nyse-wfc-140043575.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Dec-15-22 06:15AM",
+        "title": "Which Large U.S. Bank Stock Had the Best Deposit Franchise in 2022?",
+        "publisher": " Motley Fool",
+        "webUrl": "https://www.fool.com/investing/2022/12/15/which-large-us-bank-stock-has-had-the-best-deposit/?source=eptyholnk0000202&utm_source=yahoo-host&utm_medium=feed&utm_campaign=article",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Dec-14-22 04:30PM",
+        "title": "Wells Fargo Bank Increases Prime Rate to 7.50 Percent",
+        "publisher": " Business Wire",
+        "webUrl": "https://finance.yahoo.com/news/wells-fargo-bank-increases-prime-213000233.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Dec-14-22 10:41AM",
+        "title": "Wells Fargo warns theres downside risk for FedEx earnings",
+        "publisher": " Yahoo Finance Video",
+        "webUrl": "https://finance.yahoo.com/video/wells-fargo-warns-downside-risk-154110908.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Dec-14-22 09:19AM",
+        "title": "Wells Fargo's Crippling Asset Cap Has Cost the Bank Billions in Profits. But It Might Be a Tailwind in 2023",
+        "publisher": " Motley Fool",
+        "webUrl": "https://www.fool.com/investing/2022/12/14/wells-fargos-crippling-asset-cap-has-cost-the-bank/?source=eptyholnk0000202&utm_source=yahoo-host&utm_medium=feed&utm_campaign=article",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Dec-14-22 09:00AM",
+        "title": "Investors Heavily Search Wells Fargo & Company (WFC): Here is What You Need to Know",
+        "publisher": " Zacks",
+        "webUrl": "https://finance.yahoo.com/news/investors-heavily-search-wells-fargo-140002700.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Dec-12-22 05:50PM",
+        "title": "Wells Fargo (WFC) Gains But Lags Market: What You Should Know",
+        "publisher": " Zacks",
+        "webUrl": "https://finance.yahoo.com/news/wells-fargo-wfc-gains-lags-225010419.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Dec-12-22 05:26PM",
+        "title": "Wells Fargo holding job fair to court Bay Area tech talent",
+        "publisher": " American City Business Journals",
+        "webUrl": "https://www.bizjournals.com/sanfrancisco/news/2022/12/12/wells-fargo-job-fair-technology-talent-wfc.html?utm_source=sy&utm_medium=nsyp&utm_campaign=yh",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Dec-12-22 09:41AM",
+        "title": "Qualcomm stock dips after Wells Fargo cuts smartphone outlook",
+        "publisher": " Yahoo Finance Video",
+        "webUrl": "https://finance.yahoo.com/video/qualcomm-stock-dips-wells-fargo-144156448.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Dec-11-22 06:00AM",
+        "title": "Wells Fargo & Company's (NYSE:WFC) latest 7.5% decline adds to one-year losses, institutional investors may consider drastic measures",
+        "publisher": " Simply Wall St.",
+        "webUrl": "https://finance.yahoo.com/news/wells-fargo-companys-nyse-wfc-110035977.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Dec-10-22 07:25AM",
+        "title": "Wells Fargo Has Plenty of Runway on Its Efficiency Initiatives",
+        "publisher": " Motley Fool",
+        "webUrl": "https://www.fool.com/investing/2022/12/10/wells-fargo-has-plenty-of-runway-on-its-efficiency/?source=eptyholnk0000202&utm_source=yahoo-host&utm_medium=feed&utm_campaign=article",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Dec-09-22 09:00AM",
+        "title": "Wells Fargo Investment Institute 2023 Outlook: A Year of Recession, Recovery, and Rebound",
+        "publisher": " Business Wire",
+        "webUrl": "https://finance.yahoo.com/news/wells-fargo-investment-institute-2023-140000088.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Dec-08-22 08:48AM",
+        "title": "Wells Fargo Stock Is Primed to Jump Higher. How to Play It.",
+        "publisher": " Barrons.com",
+        "webUrl": "https://www.barrons.com/articles/wells-fargo-stock-price-51670452147?siteid=yhoof2",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Dec-08-22 01:30AM",
+        "title": "Wells Fargo Stock Is Primed to Jump Higher. How to Play It.",
+        "publisher": " Barrons.com",
+        "webUrl": "https://www.barrons.com/articles/wells-fargo-stock-primed-to-jump-higher-51670452147?siteid=yhoof2",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Dec-07-22 09:30AM",
+        "title": "Enterprise Community Partners Expands Faith-Based Development Initiative to New York City to Build 1,050 Affordable Homes",
+        "publisher": " ACCESSWIRE",
+        "webUrl": "https://finance.yahoo.com/news/enterprise-community-partners-expands-faith-143000349.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Dec-07-22 09:00AM",
+        "title": "Insiders probably made the right decision selling US$1.0m worth of shares earlier this year as Wells Fargo & Company's (NYSE:WFC)) stock dips by 8.8%.",
+        "publisher": " Simply Wall St.",
+        "webUrl": "https://finance.yahoo.com/news/insiders-probably-made-decision-selling-140044198.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Dec-07-22 08:38AM",
+        "title": "Irving project tied to Wells Fargo regional campus to get underway in January",
+        "publisher": " American City Business Journals",
+        "webUrl": "https://www.bizjournals.com/dallas/news/2022/12/07/irvings-project-falcon-to-get-underway-in-january.html?utm_source=sy&utm_medium=nsyp&utm_campaign=yh",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Dec-06-22 05:50PM",
+        "title": "Wells Fargo (WFC) Stock Moves -0.6%: What You Should Know",
+        "publisher": " Zacks",
+        "webUrl": "https://finance.yahoo.com/news/wells-fargo-wfc-stock-moves-225010445.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Dec-06-22 05:29PM",
+        "title": "Wells Fargo CEO Charlie Scharf on how businesses see the economy: Our customers are nervous",
+        "publisher": " American City Business Journals",
+        "webUrl": "https://www.bizjournals.com/sanfrancisco/news/2022/12/06/wells-fargo-ceo-charlie-scharf-wfc-inflation-rates.html?utm_source=sy&utm_medium=nsyp&utm_campaign=yh",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Dec-05-22 07:00AM",
+        "title": "Wells Fargos Vantage Platform Enhances Commercial and Corporate Clients Digital Experience, Grows with Businesses at Scale",
+        "publisher": " Business Wire",
+        "webUrl": "https://finance.yahoo.com/news/wells-fargo-vantage-platform-enhances-120000379.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Dec-04-22 04:29PM",
+        "title": "15 Most Capitalist Companies in the World",
+        "publisher": " Insider Monkey",
+        "webUrl": "https://finance.yahoo.com/news/15-most-capitalist-companies-world-212921330.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Dec-03-22 09:00AM",
+        "title": "Wells Fargo & Company's (NYSE:WFC) stock dropped 3.2% this week, offering solace to those who sold earlier in the year",
+        "publisher": " Simply Wall St.",
+        "webUrl": "https://finance.yahoo.com/news/wells-fargo-companys-nyse-wfc-140044985.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Dec-03-22 07:00AM",
+        "title": "Appraisal diversity initiative adds another tool for Houston Area Urban League",
+        "publisher": " American City Business Journals",
+        "webUrl": "https://www.bizjournals.com/houston/news/2022/12/03/houston-area-urban-league-appraisal-diversity.html?utm_source=sy&utm_medium=nsyp&utm_campaign=yh",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Dec-02-22 05:00PM",
+        "title": "Wells Fargo makes more layoffs in its beleaguered mortgage business, Bloomberg reports",
+        "publisher": " American City Business Journals",
+        "webUrl": "https://www.bizjournals.com/sanfrancisco/news/2022/12/02/wells-fargo-layoffs-san-francisco-warn-mortgage.html?utm_source=sy&utm_medium=nsyp&utm_campaign=yh",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Dec-02-22 09:07AM",
+        "title": "If You Invested $5,000 in Wells Fargo in 2007, This Is How Much You Would Have Today",
+        "publisher": " Motley Fool",
+        "webUrl": "https://www.fool.com/investing/2022/12/02/if-you-invested-5000-in-wells-fargo-in-2007-this-i/?source=eptyholnk0000202&utm_source=yahoo-host&utm_medium=feed&utm_campaign=article",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Dec-02-22 07:47AM",
+        "title": "Bank of America, other financial giants discuss refund plan for Zelle customer fraud victims",
+        "publisher": " American City Business Journals",
+        "webUrl": "https://www.bizjournals.com/charlotte/news/2022/12/02/bank-of-america-plan-refund-zelle-fraud-victims.html?utm_source=sy&utm_medium=nsyp&utm_campaign=yh",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Dec-02-22 07:45AM",
+        "title": "Houston chosen for $5M Wells Fargo, National Urban League home appraisal grant",
+        "publisher": " American City Business Journals",
+        "webUrl": "https://www.bizjournals.com/houston/news/2022/12/02/wells-fargo-houston-grant-home-appraisal-industry.html?utm_source=sy&utm_medium=nsyp&utm_campaign=yh",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Dec-01-22 03:39PM",
+        "title": "Mortgage rates drop for third-straight week, Wells Fargo lays off hundreds of workers",
+        "publisher": " Yahoo Finance Video",
+        "webUrl": "https://finance.yahoo.com/video/mortgage-rates-drop-third-straight-203927234.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Dec-01-22 01:25PM",
+        "title": "National Urban League Partnership With Wells Fargo Aims To Diversify Home Appraisal Industry",
+        "publisher": " ACCESSWIRE",
+        "webUrl": "https://finance.yahoo.com/news/national-urban-league-partnership-wells-182500409.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Dec-01-22 12:54PM",
+        "title": "Wells Fargo Cuts Hundreds More Mortgage Employees on Industry Slowdown",
+        "publisher": " Bloomberg",
+        "webUrl": "https://finance.yahoo.com/news/wells-fargo-cuts-hundreds-more-175447766.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Dec-01-22 06:00AM",
+        "title": "Wells Fargo Named a Global Best in Service Winner by Euromoney Magazine",
+        "publisher": " Business Wire",
+        "webUrl": "https://finance.yahoo.com/news/wells-fargo-named-global-best-110000387.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Nov-30-22 04:20PM",
+        "title": "Wells Fargo Foundation Awards $22.5 Million to LISC To Expand Homeownership for BIPOC Families",
+        "publisher": " ACCESSWIRE",
+        "webUrl": "https://finance.yahoo.com/news/wells-fargo-foundation-awards-22-212000387.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Nov-29-22 08:32PM",
+        "title": "Wells Fargo to close three more Philadelphia-area branches, including one in Montgomery County",
+        "publisher": " American City Business Journals",
+        "webUrl": "https://www.bizjournals.com/philadelphia/news/2022/11/29/wells-fargo-to-close-three-more-local-branches.html?utm_source=sy&utm_medium=nsyp&utm_campaign=yh",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Nov-29-22 05:31PM",
+        "title": "5 Preferred Stocks That Offer Safety and High Yields",
+        "publisher": " Barrons.com",
+        "webUrl": "https://www.barrons.com/articles/6-preferred-stocks-that-offer-safety-and-high-yields-51669424636?siteid=yhoof2",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Nov-29-22 09:01AM",
+        "title": "A Wells Fargo & Company (NYSE:WFC) insider lowered their holding by 51% earlier this year",
+        "publisher": " Simply Wall St.",
+        "webUrl": "https://finance.yahoo.com/news/wells-fargo-company-nyse-wfc-140102049.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Nov-29-22 08:00AM",
+        "title": "Wells Fargo to Present at the Goldman Sachs US Financial Services Conference",
+        "publisher": " Business Wire",
+        "webUrl": "https://finance.yahoo.com/news/wells-fargo-present-goldman-sachs-130000415.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Nov-28-22 05:45PM",
+        "title": "Wells Fargo (WFC) Stock Moves -0.97%: What You Should Know",
+        "publisher": " Zacks",
+        "webUrl": "https://finance.yahoo.com/news/wells-fargo-wfc-stock-moves-224510231.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Nov-28-22 02:44PM",
+        "title": "Wells Fargo Stock Is Getting Closer To Key Technical Measure",
+        "publisher": " Investor's Business Daily",
+        "webUrl": "https://www.investors.com/research/wells-fargo-getting-closer-to-key-technical-measure/?src=A00220",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Nov-28-22 05:30AM",
+        "title": "JPMorgan, Other Banks in Talks to Reimburse Scammed Zelle Customers",
+        "publisher": " The Wall Street Journal",
+        "webUrl": "https://www.wsj.com/articles/jpmorgan-other-banks-in-talks-to-reimburse-scammed-zelle-customers-11669608886?siteid=yhoof2",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Nov-27-22 01:06PM",
+        "title": "15 Biggest Holding Companies in the World",
+        "publisher": " Insider Monkey",
+        "webUrl": "https://finance.yahoo.com/news/15-biggest-holding-companies-world-180637937.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Nov-25-22 09:00AM",
+        "title": "With 74% institutional ownership, Wells Fargo & Company (NYSE:WFC) is a favorite amongst the big guns",
+        "publisher": " Simply Wall St.",
+        "webUrl": "https://finance.yahoo.com/news/74-institutional-ownership-wells-fargo-140017929.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Nov-23-22 08:11PM",
+        "title": "Wells Fargo, Back in the Hot Seat, Could Face Over $1B in Fines",
+        "publisher": " NerdWallet",
+        "webUrl": "https://finance.yahoo.com/news/wells-fargo-back-hot-seat-011139436.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Nov-23-22 11:58AM",
+        "title": "JPMorgan Chase dethrones Wells Fargo in Austin",
+        "publisher": " American City Business Journals",
+        "webUrl": "https://www.bizjournals.com/austin/news/2022/11/23/austin-banks-2022.html?utm_source=sy&utm_medium=nsyp&utm_campaign=yh",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Nov-21-22 05:45PM",
+        "title": "Wells Fargo (WFC) Gains As Market Dips: What You Should Know",
+        "publisher": " Zacks",
+        "webUrl": "https://finance.yahoo.com/news/wells-fargo-wfc-gains-market-224510080.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Nov-21-22 05:05PM",
+        "title": "Truist, Wells Fargo among banks participating in NY Fed's digital dollar pilot program",
+        "publisher": " American City Business Journals",
+        "webUrl": "https://www.bizjournals.com/charlotte/news/2022/11/21/truist-ny-fed-start-12-week-digital-dollar-pilot.html?utm_source=sy&utm_medium=nsyp&utm_campaign=yh",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Nov-21-22 11:15AM",
+        "title": "Thanksgiving Dinner at Home Is Expensive This Year. How Eating at a Restaurant Compares.",
+        "publisher": " Barrons.com",
+        "webUrl": "https://www.barrons.com/articles/thanksgiving-dinner-restaurants-51668977745?siteid=yhoof2",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Nov-21-22 07:02AM",
+        "title": "Wells Fargo & Company (NYSE:WFC) is favoured by institutional owners who hold 74% of the company",
+        "publisher": " Simply Wall St.",
+        "webUrl": "https://finance.yahoo.com/news/wells-fargo-company-nyse-wfc-120218834.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Nov-21-22 07:02AM",
+        "title": "51%of this Wells Fargo & Company (NYSE:WFC) insider's holdings were sold in the last year",
+        "publisher": " Simply Wall St.",
+        "webUrl": "https://finance.yahoo.com/news/51-wells-fargo-company-nyse-120209300.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Nov-20-22 03:55PM",
+        "title": "Thanksgiving Dinner Is More Expensive This Year. Staying In Isnt the Only Option.",
+        "publisher": " Barrons.com",
+        "webUrl": "https://www.barrons.com/articles/thanksgiving-dinner-is-more-expensive-this-year-staying-in-isnt-the-only-option-51668977745?siteid=yhoof2",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Nov-19-22 02:37PM",
+        "title": "Wells Fargo Tries Something New (and Customer Friendly)",
+        "publisher": " TheStreet.com",
+        "webUrl": "https://www.thestreet.com/banking/wells-fargo-offers-loans-with-a-twist-to-help-with-christmas?puc=yahoo&cm_ven=YAHOO",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Nov-18-22 06:23PM",
+        "title": "Man settles lawsuit with Wells Fargo after Beaverton branch scuffle",
+        "publisher": " American City Business Journals",
+        "webUrl": "https://www.bizjournals.com/portland/news/2022/11/18/lawsuit-wells-fargo-beaverton-ososke.html?utm_source=sy&utm_medium=nsyp&utm_campaign=yh",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Nov-18-22 11:30AM",
+        "title": "Why Is Comerica Incorporated (CMA) Up 8.3% Since Last Earnings Report?",
+        "publisher": " Zacks",
+        "webUrl": "https://finance.yahoo.com/news/why-comerica-incorporated-cma-8-163004796.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Nov-18-22 08:00AM",
+        "title": "Wells Fargo & Company Declares Cash Dividends on Preferred Stock",
+        "publisher": " Business Wire",
+        "webUrl": "https://finance.yahoo.com/news/wells-fargo-company-declares-cash-130000975.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Nov-17-22 01:59PM",
+        "title": "Wells Fargo Hires Credit Suisse Specialty Finance Banker",
+        "publisher": " Bloomberg",
+        "webUrl": "https://finance.yahoo.com/news/wells-fargo-hires-credit-suisse-185904726.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Nov-17-22 10:19AM",
+        "title": "Mortgage Market Upheaval Spurs $17 Billion in Paper Losses for Banks",
+        "publisher": " Bloomberg",
+        "webUrl": "https://finance.yahoo.com/news/mortgage-market-upheaval-sparks-17-151948800.html",
+        "company": "WFC"
+    },
+    {
+        "releaseTime": "Nov-17-22 09:00AM",
+        "title": "Investors Putting Less in the Stock Market to Pay for Everyday Essentials",
+        "publisher": " Business Wire",
+        "webUrl": "https://finance.yahoo.com/news/investors-putting-less-stock-market-140000400.html",
+        "company": "WFC"
+    }
+]
