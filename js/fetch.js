@@ -1,49 +1,95 @@
 const axios = require('axios').default;
 
 const { replaceDotToDash } = require("./util");
-const { requestUrl, stockSymbols, fzHeader } = require("./config");
-
+const { requestUrl, stockSymbols, fzHeader, symbos } = require("./config");
+const iconv = require('iconv-lite');
 
 class FinzService {
-    constructor() {
-        this.requestUrl = requestUrl || ''
-        this.stockSymbols = stockSymbols || []
-        this.index = 0
-        this.errorSymbo = []
-    }
+	constructor() {
+		this.requestUrl = requestUrl || ''
+		this.stockSymbols = stockSymbols || []
+		this.index = 0
+		this.errorSymbo = []
+	}
 
-    getHtml() {
-        if (!this.stockSymbols.length) return Promise.reject('Empty Stock Symbols')
-        if (this.index > this.stockSymbols.length) return Promise.reject({ code: 999, msg: 'all already Fetch' })
+	getHtml() {
+		if (!this.stockSymbols.length) return Promise.reject('Empty Stock Symbols')
+		if (this.index > this.stockSymbols.length) return Promise.reject({ code: 999, msg: 'all already Fetch' })
 
-        let symbo = this.getRequestSymbo()
-        if (!symbo) {
-            return Promise.reject('no symbo!')
-        }
+		let symbo = this.getRequestSymbo()
+		if (!symbo) {
+			return Promise.reject('no symbo!')
+		}
 
-        const url = this.requestUrl + replaceDotToDash(symbo) + '&p=d'
-        if (!url) return Promise.reject('Empty Url')
+		const url = this.requestUrl + replaceDotToDash(symbo) + '&p=d'
+		if (!url) return Promise.reject('Empty Url')
 
-        console.log(`request Url : ${url}`);
-        return axios.get(url, { headers: fzHeader }).then(res => {
-            this.index++
-            return res
-        })
-    }
+		console.log(`request Url : ${url}`);
+		return axios.get(url, { headers: fzHeader }).then(res => {
+			this.index++
+			return res
+		})
+	}
 
-    getRequestSymbo() {
-        return this.stockSymbols[this.index]
-    }
+	getRequestSymbo() {
+		return this.stockSymbols[this.index]
+	}
 
-    pushErrorSymobo() {
-        let sym = this.getRequestSymbo()
-        this.errorSymbo.push(sym)
-    }
+	pushErrorSymbo() {
+		let sym = this.getRequestSymbo()
+		this.errorSymbo.push(sym)
+	}
 
-    getAllErrorSymbo() {
-        return this.errorSymobo
-    }
+	getAllErrorSymbo() {
+		return this.errorSymbo
+	}
+}
+
+class Sp500Service {
+	constructor() {
+		this.requestUrl = process.env.SP500_URL || ''
+		this.stockSymbols = symbos || []
+		this.index = 0
+		this.errorSymbo = []
+	}
+
+	getHtml() {
+		if (!this.stockSymbols.length) return Promise.reject('Empty Stock Symbols')
+		if (this.index > this.stockSymbols.length) return Promise.reject({ code: 999, msg: 'all already Fetch' })
+
+		let symbo = this.getRequestSymbo()
+		if (!symbo) {
+			return Promise.reject('no symbo!')
+		}
+
+		const url = this.requestUrl + replaceDotToDash(symbo)
+		if (!url) return Promise.reject('Empty Url')
+
+		console.log(`request Url : ${url}`);
+		return axios.get(url, { responseType: 'arraybuffer' })
+			.then(response => {
+				this.index++
+				const data = iconv.decode(response.data, 'utf-8');
+				return data
+			})
+	}
+
+	getRequestSymbo() {
+		return this.stockSymbols[this.index]
+	}
+
+	pushErrorSymbo() {
+		let sym = this.getRequestSymbo()
+		this.errorSymbo.push(sym)
+	}
+
+	getAllErrorSymbo() {
+		return this.errorSymbo
+	}
 }
 
 
-module.exports = FinzService
+module.exports = {
+	FinzService,
+	Sp500Service
+}

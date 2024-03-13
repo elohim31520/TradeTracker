@@ -45,7 +45,46 @@ const tcHeader = {
 
 const fzHeader = {}
 
-const successResponse = {code: 1, message: 'Success'}
+const successResponse = { code: 1, message: 'Success' }
+
+const symbos = [
+	"AAPL",
+	"PATH",
+	"ADBE",
+	"ANET",
+	"NOW",
+	"SHOP",
+	"CRM",
+	"HUBS",
+	"SNPS",
+	"CRWD",
+	"PANW",
+	"FTNT",
+	"NVDA",
+	"GOOG",
+	"MSFT",
+	"PLTR",
+	"MDB",
+	"AMZN",
+	"DDOG",
+	"ORCL",
+	"NET",
+	"SNOW",
+	"TSLA",
+	"AMD",
+	"MRVL",
+	"INTC",
+	"LRCX",
+	"MU",
+	"QCOM",
+	"ASML",
+	"AMAT",
+	"ON",
+	"AVGO",
+	"FSLR",
+	"TTD",
+	"META",
+]
 
 module.exports = {
 	dbDir,
@@ -53,5 +92,6 @@ module.exports = {
 	stockSymbols,
 	tcHeader,
 	fzHeader,
-	successResponse
+	successResponse,
+	symbos
 }

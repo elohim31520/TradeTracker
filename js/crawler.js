@@ -4,17 +4,20 @@ const { default: axios } = require('axios')
 const CronJob = require('cron').CronJob
 const dayjs = require('dayjs')
 
-const FinzService = require('./fetch')
-const { tcHeader } = require("./config");
+const { FinzService, Sp500Service } = require('./fetch')
+const { tcHeader, symbos } = require("./config");
 
 const Schedule = require("./schedule");
 const { zhTimeToStandardTime } = require("./util");
-const { sqlWrite, sqlCreateStatements, sqlCreateTechNews } = require("../crud/news")
+const { sqlWrite, sqlCreateStatements, sqlCreateTechNews, sqlCompanyStatements } = require("../crud/news")
 const News = require("../models/news")
 const logger = require("../logger")
 const util = require("./util")
 
-function createCronJob(schedule, mission) {
+const db = require('../models')
+const Company_statements = db.company_statements
+
+function createCronJob({ schedule, mission }) {
 	const job = new CronJob(
 		schedule,
 		mission,
@@ -112,7 +115,7 @@ var map = {
 }
 
 
-async function fetchFinzNews(){
+async function fetchFinzNews() {
 	if (process.env.DEBUG_MODE) return
 	if (process.env.STOP_FETCH_FINZ) return
 
@@ -127,7 +130,7 @@ async function fetchFinzNews(){
 		const scheduleSec = new Schedule({ countdown: 9.5 })
 		const myFetch = new FinzService()
 		const canGet = dayjs().isAfter(dayjs(lastCreatedTime).add(24, 'hour'))
-		if(!canGet) return
+		if (!canGet) return
 
 		scheduleSec.interval(async () => {
 			try {
@@ -156,9 +159,9 @@ async function fetchFinzNews(){
 				// sqlCreateCompany({symbol: symbo, name: companyName})
 			} catch (e) {
 				let httpStatus
-				if(e.response) httpStatus = e.response.status
+				if (e.response) httpStatus = e.response.status
 				logger.error(`Fetch finviz失敗: ${e.message}`)
-				myFetch.pushErrorSymobo()
+				myFetch.pushErrorSymbo()
 				if (e.code == 999 || httpStatus == 403) {
 					scheduleSec.removeInterval()
 					logger.info(`---Request End---`);
@@ -250,12 +253,103 @@ function fetchTnews() {
 	})
 }
 
-createCronJob(process.env.CRONJOB_TECHNEWS, () => {
-	fetchTnews()
+async function fetchStatements() {
+	if (process.env.DEBUG_MODE) return
+
+	const res = await Company_statements.findOne({
+		attributes: ['createdAt'],
+		order: [['createdAt', 'DESC']],
+		limit: 1,
+	})
+	const lastCreatedTime = res.createdAt
+
+	try {
+		const scheduleSec = new Schedule({ countdown: 8 })
+		const myFetch = new Sp500Service()
+
+		const canGet = dayjs().isAfter(dayjs(lastCreatedTime).add(24, 'hour'))
+		if (!canGet) return
+
+		scheduleSec.interval(async () => {
+			try {
+				const symbo = myFetch.getRequestSymbo()
+				if (!symbo) {
+					scheduleSec.removeInterval()
+
+					logger.info(`no more symbo，---Request End---`)
+					logger.warn(`failed symbol: ${myFetch.getAllErrorSymbo()}`)
+					return
+				}
+				const htmlContent = await myFetch.getHtml()
+				const $ = cheerio.load(htmlContent)
+
+				const targetTable = $('.row .col-lg-7 .table')
+				const tdObject = {}
+
+				targetTable.find('tbody tr').each((index, element) => {
+					const tds = $(element).find('td')
+
+					const key1 = $(tds[0]).text().trim()
+					const value1 = $(tds[1]).text().trim()
+					const key2 = $(tds[2]).text().trim()
+					const value2 = $(tds[3]).text().trim()
+
+					if (key1) tdObject[key1] = value1
+					if (key2) tdObject[key2] = value2
+				})
+				const keymap = {
+					'P/E (Trailing)': 'PE_Trailing',
+					'P/E (Forward)': 'PE_Forward',
+					'EPS (Trailing)': 'EPS_Trailing',
+					'Prev Close': 'price',
+					'EPS (Forward)': 'EPS_Forward',
+					'Volume': 'volume',
+					'Market Cap': 'marketCap',
+				}
+				const params = {}
+
+				for (const key in tdObject) {
+					if (keymap.hasOwnProperty(key)) {
+						let newkey = keymap[key]
+						let value = tdObject[key]
+						if (newkey == 'marketCap') {
+							params[newkey] = value
+						} else {
+							//資料庫的值要是decimal
+							params[newkey] = +value
+						}
+
+					}
+				}
+				params.symbo = symbo
+				sqlCompanyStatements(params)
+			} catch (e) {
+				let httpStatus
+				if (e.response) httpStatus = e.response.status
+				logger.error(`Fetch sp500 statements失敗: ${e.message}`)
+				myFetch.pushErrorSymbo()
+				if (e.code == 999 || httpStatus == 403) {
+					scheduleSec.removeInterval()
+					logger.info(`---Request End---`);
+					return
+				}
+				myFetch.index++
+			}
+		})
+
+	} catch (e) {
+		logger.error(e.message);
+	}
+}
+
+createCronJob({
+	schedule: process.env.CRONJOB_TECHNEWS,
+	mission: fetchTnews
 })
 
-createCronJob(process.env.CRONJOB_FINZ, () => {
-	fetchFinzNews()
+createCronJob({
+	schedule: process.env.CRONJOB_SP500,
+	mission: fetchStatements
 })
 
 module.export = {
