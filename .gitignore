@@ -8,3 +8,4 @@ symbol.json
 /log
 .DS_Store
 /config
+strategy.js
