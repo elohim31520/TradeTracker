@@ -15,7 +15,6 @@ const logger = require('../logger')
 const util = require('./util')
 
 const db = require('../models')
-const Company_statements = db.company_statements
 
 function createCronJob({ schedule, mission }) {
 	const job = new CronJob(schedule, mission, null, true, 'Asia/Taipei')
@@ -251,7 +250,7 @@ function fetchTnews() {
 async function fetchStatements() {
 	if (process.env.DEBUG_MODE) return
 
-	const res = await Company_statements.findOne({
+	const res = await db.company_statements.findOne({
 		attributes: ['createdAt'],
 		order: [['createdAt', 'DESC']],
 		limit: 1,

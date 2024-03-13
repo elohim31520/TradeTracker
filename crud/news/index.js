@@ -9,7 +9,6 @@ const Users = require("../../models/users")
 const Company = require("../../models/company")
 
 const db = require('../../models')
-const Company_statements = db.company_statements
 
 const logger = require("../../logger")
 
@@ -152,7 +151,7 @@ function sqlCreateTechNews(arr) {
 
 async function sqlCompanyStatements(params) {
 	try {
-		await Company_statements.create(params)
+		await db.company_statements.create(params)
 	} catch (e) {
 		logger.warn(e.message + '		${params.symbo}')
 	}

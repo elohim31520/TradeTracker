@@ -9,7 +9,6 @@ const { successResponse } = require('../../js/config')
 const logger = require("../../logger.js")
 
 const db = require('../../models')
-const pk_user_technews = db.pk_user_technews
 
 // router.post("/news",
 // 	verifyToken,
@@ -63,7 +62,7 @@ router.post("/technews",
 			const decoded = req.decoded
 			const { userId } = decoded
 			const { newsId } = req.body
-			const data = await pk_user_technews.create({ userId, newsId })
+			const data = await db.pk_user_technews.create({ userId, newsId })
 			res.json(successResponse)
 		} catch (e) {
 			logger.error(e.message)
