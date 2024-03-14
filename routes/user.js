@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const { createUser, userLogin } = require('../crud/user')
-const { validateLogin } = require('./validate')
+const { validateRegister, validateLogin } = require('./validate')
 
 router.post('/register', validateRegister, async (req, res) => {
 	const resp = await createUser(req.body)

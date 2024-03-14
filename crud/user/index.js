@@ -1,17 +1,16 @@
-const Users = require('../../models/users')
-const sequelize = require('../../js/connect')
 const { generateToken, md5Encode, generateSalt, sha256 } = require('../../js/crypto')
 const logger = require('../../logger')
+const db = require('../../models')
 
 async function createUser({ user_name, pwd, email }) {
-	const dup = await Users.findOne({ where: { user_name } })
+	const dup = await db.Users.findOne({ where: { user_name } })
 	if (dup) throw new Error(409101)
 
 	try {
 		let salt = generateSalt(),
 			hashed = sha256(pwd, salt)
 
-		await Users.create({
+		await db.Users.create({
 			user_name,
 			pwd: hashed,
 			salt,
@@ -27,7 +26,7 @@ async function createUser({ user_name, pwd, email }) {
 
 async function userLogin({ user_name, pwd }) {
 	try {
-		const user = await Users.findOne({ where: { user_name } })
+		const user = await db.Users.findOne({ where: { user_name } })
 		const { salt, pwd: storeHash } = user.dataValues
 		if (!user) throw new Error(401100)
 

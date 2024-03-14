@@ -1,5 +1,5 @@
 const axios = require('axios')
-const { headers } = require('./token')
+const { headers } = require('./config')
 
 function getUserSubscribeCompanyNews(data) {
 	axios.post(`http://localhost:1234/news/subscription`, data, headers).then(res => {

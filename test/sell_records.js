@@ -1,5 +1,5 @@
 const axios = require('axios')
-const { headers } = require('./token')
+const { headers } = require('./config')
 
 function addRecords(data) {
     axios.post('http://localhost:1234/sellRecords/add', data, headers).then(res => {

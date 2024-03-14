@@ -1,5 +1,5 @@
 const axios = require('axios')
-const { headers } = require('../token')
+const { headers } = require('../config')
 
 const API_HOST = 'http://localhost:1234/transaction'
 

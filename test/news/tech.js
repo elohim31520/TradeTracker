@@ -1,6 +1,5 @@
 const axios = require('axios')
-const { headers } = require('../token')
-const API_HOST = 'http://localhost:1234'
+const { headers } = require('../config')
 
 const dayjs = require('dayjs')
 let endDate = dayjs().toDate()

@@ -16,7 +16,10 @@ const headers = {
 	},
 }
 
+const API_HOST = 'http://localhost:1234'
+
 module.exports = {
 	token,
-	headers
+	headers,
+	API_HOST
 }
