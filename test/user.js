@@ -1,39 +1,31 @@
-const axios = require('axios')
 const { API_HOST } = require('./config')
 const fs = require('fs')
 const path = require('path')
 const { get } = require('lodash')
+const ajax = require('./ajax')
 
 function register({ user_name, pwd, email }) {
-	axios
+	ajax
 		.post(`${API_HOST}/users/register`, {
 			user_name,
 			pwd,
 			email,
 		})
 		.then((res) => {
-			console.log(res.data)
 			const data = get(res, 'data.token', '')
 			writeToken(data)
-		})
-		.catch((err) => {
-			console.log(err)
 		})
 }
 
 function login({ user_name, pwd }) {
-	axios
+	ajax
 		.post(`${API_HOST}/users/login`, {
 			user_name,
 			pwd,
 		})
 		.then((res) => {
-			console.log(res.data)
 			const data = get(res, 'data.token', '')
 			writeToken(data)
-		})
-		.catch((err) => {
-			console.log(err)
 		})
 }
 
