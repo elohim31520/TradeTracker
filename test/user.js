@@ -1,4 +1,3 @@
-const { API_HOST } = require('./config')
 const fs = require('fs')
 const path = require('path')
 const { get } = require('lodash')
@@ -6,7 +5,7 @@ const ajax = require('./ajax')
 
 function register({ user_name, pwd, email }) {
 	ajax
-		.post(`${API_HOST}/users/register`, {
+		.post(`/users/register`, {
 			user_name,
 			pwd,
 			email,
@@ -19,7 +18,7 @@ function register({ user_name, pwd, email }) {
 
 function login({ user_name, pwd }) {
 	ajax
-		.post(`${API_HOST}/users/login`, {
+		.post(`/users/login`, {
 			user_name,
 			pwd,
 		})
