@@ -1,5 +1,6 @@
 'use strict';
 const { Model } = require('sequelize');
+const TechNews = require('./techNews')
 
 module.exports = (sequelize, DataTypes) => {
 	class Users extends Model {
@@ -16,8 +17,8 @@ module.exports = (sequelize, DataTypes) => {
 			// Users.belongsToMany(models.News, { through: models.User_favorite_news, foreignKey: 'userId' });
 			// models.News.belongsToMany(Users, { through: models.User_favorite_news, foreignKey: 'newsId' });
 
-			// Users.belongsToMany(models.TechNews, { through: models.pk_user_technews, foreignKey: 'userId' });
-			// models.TechNews.belongsToMany(Users, { through: models.pk_user_technews, foreignKey: 'newsId' });
+			models.Users.belongsToMany(TechNews, { through: models.pk_user_technews, foreignKey: 'userId' });
+			TechNews.belongsToMany(models.Users, { through: models.pk_user_technews, foreignKey: 'newsId' });
 		}
 	}
 	Users.init({
