@@ -3,6 +3,7 @@ const { get, isArray } = require('lodash')
 const { default: axios } = require('axios')
 const CronJob = require('cron').CronJob
 const dayjs = require('dayjs')
+const iconv = require('iconv-lite')
 
 const { FinzService, Sp500Service } = require('./fetch')
 const { stockSymbols, symbos, tcHeader, marketIndexHeaders } = require('./config')
@@ -13,7 +14,7 @@ const { sqlWrite, sqlCreateStatements, sqlCreateTechNews, sqlCompanyStatements }
 const News = require('../models/news')
 const logger = require('../logger')
 const util = require('./util')
-const { bulkCreateMarketIndex } = require('../crud/market_index')
+const miCrud = require('../crud/market_index')
 
 const db = require('../models')
 
@@ -356,14 +357,20 @@ async function fetchMarketIndex() {
 					change: +chValue,
 				}
 			}
+
 			let data = []
 			let symbols = ['BTCUSD', 'DXY']
-			symbols.forEach((el) => {
-				const param = getParams(el)
-				data.push(param)
-			})
 
-			bulkCreateMarketIndex(data)
+			symbols.forEach(async (el) => {
+				const param = getParams(el)
+				const lastOne = await miCrud.findLastOne(el)
+
+				const lastPrice = get(lastOne, 'price', null)
+				if (lastPrice) param.volatility = +((param.price - lastPrice) / lastPrice)
+
+				data.push(param)
+				await miCrud.bulkCreateMarketIndex(data)
+			})
 		})
 		.catch((err) => {
 			logger.error(err.message)

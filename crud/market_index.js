@@ -7,6 +7,22 @@ function bulkCreateMarketIndex(params) {
 	})
 }
 
+async function findLastOne(symbol) {
+	try {
+		const lastOne = db.market_index.findOne({
+			where: {
+				symbol,
+			},
+			order: [['createdAt', 'DESC']],
+		})
+		return lastOne
+	} catch (e) {
+		logger.error('findLastOne: ' + e.message)
+		throw new Error(500)
+	}
+}
+
 module.exports = {
 	bulkCreateMarketIndex,
+	findLastOne,
 }
