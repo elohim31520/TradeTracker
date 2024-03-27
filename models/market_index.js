@@ -21,6 +21,7 @@ module.exports = (sequelize, DataTypes) => {
 		{
 			sequelize,
 			modelName: 'market_index',
+			tableName: 'market_index'
 		}
 	)
 	return market_index

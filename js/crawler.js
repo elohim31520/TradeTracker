@@ -5,7 +5,7 @@ const CronJob = require('cron').CronJob
 const dayjs = require('dayjs')
 
 const { FinzService, Sp500Service } = require('./fetch')
-const { stockSymbols, symbos, tcHeader } = require('./config')
+const { stockSymbols, symbos, tcHeader, marketIndexHeaders } = require('./config')
 
 const Schedule = require('./schedule')
 const { zhTimeToStandardTime } = require('./util')
@@ -13,6 +13,7 @@ const { sqlWrite, sqlCreateStatements, sqlCreateTechNews, sqlCompanyStatements }
 const News = require('../models/news')
 const logger = require('../logger')
 const util = require('./util')
+const { bulkCreateMarketIndex } = require('../crud/market_index')
 
 const db = require('../models')
 
@@ -334,6 +335,41 @@ async function fetchStatements() {
 	}
 }
 
+async function fetchMarketIndex() {
+	if (process.env.DEBUG_MODE) return
+
+	const url = process.env.MARKET_URL
+	axios
+		.get(url, { headers: marketIndexHeaders })
+		.then((response) => {
+			const htmlContent = iconv.decode(response.data, 'utf-8')
+			const $ = cheerio.load(htmlContent)
+
+			const getParams = (symbol) => {
+				const row = $(`tr[data-symbol="${symbol}:CUR"]`)
+				const val = row.find('td#p').text().trim()
+				const chValue = row.find('td#pch').text().trim().replace('%', '')
+				console.log(`${symbol}的值: `, +val, '%Chg: ', chValue)
+				return {
+					symbol,
+					price: +val,
+					change: +chValue,
+				}
+			}
+			let data = []
+			let symbols = ['BTCUSD', 'DXY']
+			symbols.forEach((el) => {
+				const param = getParams(el)
+				data.push(param)
+			})
+
+			bulkCreateMarketIndex(data)
+		})
+		.catch((err) => {
+			logger.error(err.message)
+		})
+}
+
 createCronJob({
 	schedule: process.env.CRONJOB_TECHNEWS,
 	mission: fetchTnews,
@@ -342,6 +378,11 @@ createCronJob({
 createCronJob({
 	schedule: process.env.CRONJOB_SP500,
 	mission: fetchStatements,
+})
+
+createCronJob({
+	schedule: process.env.CRONJOB_MARKET_INDEX,
+	mission: fetchMarketIndex,
 })
 
 module.export = {

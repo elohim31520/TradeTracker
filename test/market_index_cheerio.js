@@ -6,7 +6,7 @@ const htmlPath = path.join(__dirname, 'btc.html')
 const htmlContent = fs.readFileSync(htmlPath, 'utf8')
 const $ = cheerio.load(htmlContent)
 
-const btcRow = $('tr[data-symbol="BTCUSD:CUR"]')
+const btcRow = $('tr[data-symbol="BTCUSD:CUR"]').eq(0)
 const btcValue = btcRow.find('td#p').text().trim()
 const pchValue = btcRow.find('td#pch').text().trim()
 
