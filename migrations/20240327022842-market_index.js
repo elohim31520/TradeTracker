@@ -2,18 +2,24 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
 	async up(queryInterface, Sequelize) {
-		await queryInterface.createTable('btcusds', {
+		await queryInterface.createTable('market_index', {
 			id: {
 				allowNull: false,
 				autoIncrement: true,
 				primaryKey: true,
 				type: Sequelize.INTEGER,
 			},
+			symbol: {
+				type: Sequelize.STRING,
+				allowNull: false,
+			},
 			price: {
 				type: Sequelize.FLOAT,
+				allowNull: false,
 			},
 			change: {
 				type: Sequelize.FLOAT,
+				allowNull: false,
 			},
 			volatility: {
 				type: Sequelize.FLOAT,
@@ -29,6 +35,6 @@ module.exports = {
 		})
 	},
 	async down(queryInterface, Sequelize) {
-		await queryInterface.dropTable('btcusds')
+		await queryInterface.dropTable('market_index')
 	},
 }

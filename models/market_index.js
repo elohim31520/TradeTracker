@@ -1,7 +1,7 @@
 'use strict'
 const { Model } = require('sequelize')
 module.exports = (sequelize, DataTypes) => {
-	class btcusd extends Model {
+	class market_index extends Model {
 		/**
 		 * Helper method for defining associations.
 		 * This method is not a part of Sequelize lifecycle.
@@ -11,16 +11,17 @@ module.exports = (sequelize, DataTypes) => {
 			// define association here
 		}
 	}
-	btcusd.init(
+	market_index.init(
 		{
+			symbol: DataTypes.STRING,
 			price: DataTypes.FLOAT,
 			change: DataTypes.FLOAT,
 			volatility: DataTypes.FLOAT,
 		},
 		{
 			sequelize,
-			modelName: 'btcusd',
+			modelName: 'market_index',
 		}
 	)
-	return btcusd
+	return market_index
 }
