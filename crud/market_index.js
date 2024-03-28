@@ -22,7 +22,18 @@ async function findLastOne(symbol) {
 	}
 }
 
+async function findAllMarketIndex() {
+	try {
+		const data = db.market_index.findAll()
+		return data
+	} catch (e) {
+		logger.error('findAllMarketIndex: ' + e.message)
+		throw new Error(500)
+	}
+}
+
 module.exports = {
 	createMarketIndex,
 	findLastOne,
+	findAllMarketIndex,
 }
