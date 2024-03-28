@@ -358,7 +358,6 @@ async function fetchMarketIndex() {
 				}
 			}
 
-			let data = []
 			let symbols = ['BTCUSD', 'DXY']
 
 			symbols.forEach(async (el) => {
@@ -368,8 +367,7 @@ async function fetchMarketIndex() {
 				const lastPrice = get(lastOne, 'price', null)
 				if (lastPrice) param.volatility = +((param.price - lastPrice) / lastPrice)
 
-				data.push(param)
-				await miCrud.bulkCreateMarketIndex(data)
+				await miCrud.createMarketIndex(param)
 			})
 		})
 		.catch((err) => {

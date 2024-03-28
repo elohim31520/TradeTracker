@@ -1,9 +1,9 @@
 const logger = require('../logger')
 const db = require('../models')
 
-function bulkCreateMarketIndex(params) {
-	return db.market_index.bulkCreate(params).catch((e) => {
-		logger.warn('bulkCreateMarketIndex: ' + e.message)
+function createMarketIndex(params) {
+	return db.market_index.create(params).catch((e) => {
+		logger.warn('createMarketIndex: ' + e.message)
 	})
 }
 
@@ -23,6 +23,6 @@ async function findLastOne(symbol) {
 }
 
 module.exports = {
-	bulkCreateMarketIndex,
+	createMarketIndex,
 	findLastOne,
 }
