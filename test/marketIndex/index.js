@@ -4,4 +4,8 @@ function getAll (){
 	ajax.get('/marketindex')
 }
 
-getAll()
+function getMomentum (){
+	ajax.get('/marketindex/momentum')
+}
+
+getMomentum()
