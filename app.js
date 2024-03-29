@@ -43,8 +43,8 @@ if (process.env.DEBUG_MODE) {
 app.use(express.json())
 // 解析表单请求体，类型为：application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
-app.set('view engine', 'ejs');
-app.set("views", path.resolve(__dirname, "views"));
+// app.set('view engine', 'ejs');
+// app.set("views", path.resolve(__dirname, "views"));
 
 app.get('/', function (req, res) {
 	throw Error(403);
