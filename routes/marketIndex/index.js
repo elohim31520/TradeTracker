@@ -40,26 +40,24 @@ router.get('/momentum', verifyToken, async (req, res) => {
 		return acc
 	}, [])
 
-	const momentuns = groupedData
-		.map((group) => {
-			const btcObj = group.find((vo) => vo.symbol == 'BTCUSD')
-			const dxyObj = group.find((vo) => vo.symbol == 'DXY')
+	const momentuns = groupedData.map((group) => {
+		const btcObj = group.find((vo) => vo.symbol == 'BTCUSD')
+		const dxyObj = group.find((vo) => vo.symbol == 'DXY')
 
-			const btcChange = get(btcObj, 'change', null)
-			const dxyChange = get(dxyObj, 'change', null)
+		const btcChange = get(btcObj, 'change', null)
+		const dxyChange = get(dxyObj, 'change', null)
 
-			const momentumValue = computeMomentum(btcChange, dxyChange)
-			return momentumValue
-		})
-		.filter((v) => v !== undefined)
+		const momentumValue = computeMomentum(btcChange, dxyChange)
+		return { momentum: momentumValue, createdAt: btcObj.createdAt }
+	})
 
-	const max = Math.max(...momentuns)
-	const min = Math.min(...momentuns)
+	const max = Math.max(...momentuns.map((vo) => vo.momentum))
+	const min = Math.min(...momentuns.map((vo) => vo.momentum))
 	let ratio = 200 / (max * 10 - min * 10)
 
-	const scaledMomentuns = momentuns.map(num => {
-		let scaledValue = (num - min * 10) * ratio - 100
-		return scaledValue
+	const scaledMomentuns = momentuns.map((vo) => {
+		let scaledValue = (vo.momentum - min * 10) * ratio - 100
+		return { momentum: scaledValue, createdAt: vo.createdAt }
 	})
 
 	res.json(scaledMomentuns)
