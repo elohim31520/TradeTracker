@@ -55,10 +55,10 @@ router.get('/momentum', verifyToken, async (req, res) => {
 
 	const max = Math.max(...momentuns)
 	const min = Math.min(...momentuns)
-	let ratio = 200 / (max - min)
+	let ratio = 200 / (max * 10 - min * 10)
 
 	const scaledMomentuns = momentuns.map(num => {
-		let scaledValue = (num - min) * ratio - 100
+		let scaledValue = (num - min * 10) * ratio - 100
 		return scaledValue
 	})
 
