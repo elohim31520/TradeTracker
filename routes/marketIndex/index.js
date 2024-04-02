@@ -51,12 +51,14 @@ router.get('/momentum', verifyToken, async (req, res) => {
 		return { momentum: momentumValue, createdAt: btcObj.createdAt }
 	})
 
-	const max = Math.max(...momentuns.map((vo) => vo.momentum))
-	const min = Math.min(...momentuns.map((vo) => vo.momentum))
-	let ratio = 200 / (max * 10 - min * 10)
+	// const max = Math.max(...momentuns.map((vo) => vo.momentum))
+	// const min = Math.min(...momentuns.map((vo) => vo.momentum))
+	const max = 20
+	const min = -20
+	let ratio = 200 / (max - min)
 
 	const scaledMomentuns = momentuns.map((vo) => {
-		let scaledValue = (vo.momentum - min * 10) * ratio - 100
+		let scaledValue = (vo.momentum - min) * ratio - 100
 		return { momentum: scaledValue, createdAt: vo.createdAt }
 	})
 
