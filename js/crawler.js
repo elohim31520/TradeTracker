@@ -365,7 +365,7 @@ async function fetchMarketIndex() {
 				const lastOne = await miCrud.findLastOne(el)
 
 				const lastPrice = get(lastOne, 'price', null)
-				if (lastPrice) param.volatility = +((param.price - lastPrice) / lastPrice)
+				if (lastPrice) param.volatility = +((param.price - lastPrice) / lastPrice) * 100
 
 				await miCrud.createMarketIndex(param)
 			})
