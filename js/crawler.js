@@ -347,7 +347,9 @@ async function fetchMarketIndex() {
 			const $ = cheerio.load(htmlContent)
 
 			const getParams = (symbol) => {
-				const row = $(`tr[data-symbol="${symbol}:CUR"]`)
+				let row
+				if(symbol == 'USOIL') row =  $(`tr[data-symbol="CL1:COM"]`)
+				else row = $(`tr[data-symbol="${symbol}:CUR"]`)
 				const val = row.find('td#p').text().trim()
 				const chValue = row.find('td#pch').text().trim().replace('%', '')
 				console.log(`${symbol}的值: `, +val, '%Chg: ', chValue)
@@ -358,7 +360,7 @@ async function fetchMarketIndex() {
 				}
 			}
 
-			let symbols = ['BTCUSD', 'DXY']
+			let symbols = ['BTCUSD', 'DXY', 'USOIL']
 
 			symbols.forEach(async (el) => {
 				const param = getParams(el)
