@@ -1,57 +1,25 @@
-'use strict';
-const { Model } = require('sequelize');
-
+'use strict'
+const { Model } = require('sequelize')
 module.exports = (sequelize, DataTypes) => {
-	class Transactions extends Model {
-		/**
-		 * Helper method for defining associations.
-		 * This method is not a part of Sequelize lifecycle.
-		 * The `models/index` file will call this method automatically.
-		 */
+	class Transaction extends Model {
 		static associate(models) {
-			// define association here
+			Transaction.belongsTo(models.User, { foreignKey: 'user_id' })
 		}
 	}
-	Transactions.init({
-		id: {
-			allowNull: false,
-			autoIncrement: true,
-			primaryKey: true,
-			type: DataTypes.INTEGER
+	Transaction.init(
+		{
+			user_id: DataTypes.INTEGER,
+			stock_id: DataTypes.INTEGER,
+			transaction_type: DataTypes.ENUM('buy', 'sell'),
+			quantity: DataTypes.INTEGER,
+			price: DataTypes.DECIMAL(10, 2),
+			transaction_date: DataTypes.DATE,
 		},
-		user_id: {
-			type: DataTypes.INTEGER,
-			allowNull: false,
-			references: {
-				model: 'users',
-				key: 'id'
-			},
-			onDelete: 'CASCADE',
-			onUpdate: 'CASCADE'
-		},
-		symbol: {
-			type: DataTypes.STRING,
-			allowNull: false,
-		},
-		price: {
-			type: DataTypes.DECIMAL(10, 2),
-			allowNull: false,
-		},
-		share: {
-			type: DataTypes.INTEGER,
-			allowNull: false,
-		},
-		createdAt: {
-			allowNull: false,
-			type: DataTypes.DATE
-		},
-		updatedAt: {
-			allowNull: false,
-			type: DataTypes.DATE
+		{
+			sequelize,
+			modelName: 'Transaction',
+			tableName: 'Transactions',
 		}
-	}, {
-		sequelize,
-		modelName: 'transactions',
-	});
-	return Transactions;
-};
+	)
+	return Transaction
+}
