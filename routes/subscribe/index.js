@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 
-const { verifyToken } = require('../../js/middleware')
+const { verifyToken } = require('../../middleware/auth')
 const validate = require('./validate')
 const Users = require('../../models/users')
 const TechNews = require('../../models/techNews')

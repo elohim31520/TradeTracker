@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const crud = require('../../crud/market_index')
-const { verifyToken } = require('../../js/middleware')
+const { verifyToken } = require('../../middleware/auth')
 const { get } = require('lodash')
 
 function computeMomentum(btc, dxy) {
