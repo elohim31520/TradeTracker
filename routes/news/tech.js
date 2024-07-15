@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const { verifyToken } = require('../../js/middleware');
+const { verifyToken } = require('../../middleware/auth');
 
 const TechNews = require("../../models/techNews")
 const sequelize = require("../../js/connect");
