@@ -16,7 +16,6 @@ function add(data) {
 
 // 假資料
 const transactionData = {
-	user_id: 1,
 	stock_id: 'MSFT',
 	transaction_type: 'buy',
 	quantity: 50,

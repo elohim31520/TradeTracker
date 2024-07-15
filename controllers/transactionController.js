@@ -1,8 +1,13 @@
 const transactionService = require('../services/transactionService')
+const userService = require('../services/userService')
+const _ = require('lodash')
 
 class TransactionController {
 	async create(req, res) {
 		try {
+			const user_name = _.get(req, 'decoded.user_name', '')
+			const user = await userService.getByName(user_name)
+			req.body.user_id = user.id
 			const transaction = await transactionService.create(req.body)
 			res.status(201).json(transaction)
 		} catch (error) {
