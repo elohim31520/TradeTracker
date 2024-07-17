@@ -84,6 +84,7 @@ const symbos = [
 	'FSLR',
 	'TTD',
 	'META',
+	'TSM'
 ]
 
 const marketIndexHeaders = {
