@@ -52,7 +52,7 @@ app.get('/', function (req, res) {
 app.use('/news/tech', require('./routes/news/tech'))
 app.use('/transactions', require('./routes/transactions'));
 app.use('/users', require('./routes/user'))
-app.use('/subscribe', require('./routes/subscribe/index'))
+app.use('/subscribe', require('./routes/subscribe'))
 app.use('/statements', require('./routes/statements'))
 app.use('/marketindex', require('./routes/marketIndex'))
 app.use(errorHandler);
