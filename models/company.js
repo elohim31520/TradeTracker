@@ -1,19 +1,19 @@
-const sequelize = require("../js/connect");
-const { DataTypes } = require("sequelize");
-
-const Company = sequelize.define("Company", {
-	symbol: {
-		type: DataTypes.STRING,
-		allowNull: false,
-		primaryKey: true
-	},
-	name: {
-		type: DataTypes.STRING,
-		allowNll: true
+'use strict'
+module.exports = (sequelize, DataTypes) => {
+	const Company = sequelize.define(
+		'Company',
+		{
+			symbol: {
+				type: DataTypes.STRING,
+				allowNull: false,
+			},
+			name: {
+				type: DataTypes.STRING,
+				allowNull: true,
+			},
+		},
+	)
+	Company.associate = function (models) {
 	}
-}, {
-	tableName: 'Company',
-	timestamps: false
-});
-
-module.exports = Company
+	return Company
+}
