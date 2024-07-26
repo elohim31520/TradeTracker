@@ -1,5 +1,7 @@
 const { Users } = require('../models')
 const { generateToken, generateSalt, sha256 } = require('../js/crypto')
+const { ClientError } = require('../js/errors')
+const logger = require('../logger')
 
 class userService {
 	async getByName(user_name) {
@@ -7,9 +9,6 @@ class userService {
 	}
 
 	async create({ user_name, pwd, email }) {
-		const dup = await Users.findOne({ where: { user_name } })
-		if (dup) throw new Error(409101)
-
 		try {
 			let salt = generateSalt(),
 				hashed = sha256(pwd, salt)
@@ -23,8 +22,12 @@ class userService {
 
 			return Promise.resolve({ code: 1, token: generateToken({ user_name }) })
 		} catch (e) {
+			if (e.name === 'SequelizeUniqueConstraintError') {
+				throw new ClientError('用户或邮箱已存在, user name or email is duplicated')
+			}
+
 			logger.error(e.message)
-			throw new Error(500)
+			throw e
 		}
 	}
 
@@ -32,14 +35,14 @@ class userService {
 		try {
 			const user = await Users.findOne({ where: { user_name } })
 			const { salt, pwd: storeHash } = user.dataValues
-			if (!user) throw new Error(401100)
-	
+			if (!user) throw new ClientError('User not found')
+
 			const currentHash = sha256(pwd, salt)
-			if (currentHash != storeHash) throw new Error(401100)
+			if (currentHash != storeHash) throw new ClientError('Password Is Incorrect')
 			return { code: 1, token: generateToken({ user_name }) }
-		} catch (e) {
-			logger.error(e.message)
-			throw new Error(401100)
+		} catch (err) {
+			logger.error(err.message)
+			throw err
 		}
 	}
 }
