@@ -14,6 +14,12 @@ class ClientError extends AppError {
 	}
 }
 
+class AuthError extends AppError {
+	constructor(message = 'Unauthorized') {
+		super(message, 401)
+	}
+}
+
 class ServerError extends AppError {
 	constructor(message) {
 		super(message, 500)
@@ -23,5 +29,6 @@ class ServerError extends AppError {
 module.exports = {
 	AppError,
 	ClientError,
+	AuthError,
 	ServerError,
 }

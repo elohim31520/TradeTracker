@@ -6,7 +6,6 @@ module.exports = (err, req, res, next) => {
 
 	let httpStatusMsgMap = {
 		400: "Bad Request",
-		401: "Unauthorized",
 		403: "access denied",
 		409: 'Conflict',
 		500: "Internal Error"
