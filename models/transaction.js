@@ -31,7 +31,7 @@ module.exports = (sequelize, DataTypes) => {
 		if (transaction_type === 'buy') {
 			if (portfolio) {
 				// 更新現有持倉
-				const newQuantity = portfolio.quantity + quantity
+				const newQuantity = +portfolio.quantity + +quantity
 				const newAveragePrice = (portfolio.average_price * portfolio.quantity + price * quantity) / newQuantity
 				await portfolio.update({
 					quantity: newQuantity,
@@ -48,7 +48,7 @@ module.exports = (sequelize, DataTypes) => {
 			}
 		} else if (transaction_type === 'sell') {
 			if (portfolio) {
-				const newQuantity = portfolio.quantity - quantity
+				const newQuantity = +portfolio.quantity - +quantity
 				if (newQuantity >= 0) {
 					await portfolio.update({
 						quantity: newQuantity,

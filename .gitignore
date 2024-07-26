@@ -5,8 +5,8 @@ private.key
 public.key
 symbol.json
 /log
-.DS_Store
+**/.DS_Store
 /config
 strategy.js
-test/token.txt
+**/token.txt
 test/marketIndex/momentum_data.xlsx

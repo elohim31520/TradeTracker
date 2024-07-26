@@ -5,7 +5,6 @@ const helmet = require('helmet')
 const { RateLimiterMemory } = require("rate-limiter-flexible");
 
 const app = express()
-const path = require('path');
 const cors = require('cors');
 const logger = require("./logger")
 const errorHandler = require('./js/errorHandler')
