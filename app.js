@@ -48,7 +48,7 @@ app.get('/', function (req, res) {
 })
 
 // app.use('/news/finv', require('./routes/news/finv'))
-app.use('/news/tech', require('./routes/news/tech'))
+app.use('/technews', require('./routes/technews'))
 app.use('/transactions', require('./routes/transactions'));
 app.use('/users', require('./routes/user'))
 app.use('/subscribe', require('./routes/subscribe'))
