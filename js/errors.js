@@ -26,9 +26,23 @@ class ServerError extends AppError {
 	}
 }
 
+class NotFoundError extends AppError {
+	constructor(message = 'Page Not Found') {
+		super(message, 404)
+	}
+}
+
+class ForbiddenError extends AppError {
+	constructor(message = 'Forbidden!') {
+		super(message, 403)
+	}
+}
+
 module.exports = {
 	AppError,
 	ClientError,
 	AuthError,
 	ServerError,
+	NotFoundError,
+	ForbiddenError,
 }

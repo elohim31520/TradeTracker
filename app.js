@@ -9,6 +9,7 @@ const cors = require('cors')
 const logger = require('./logger')
 const errorHandler = require('./middleware/errorHandler')
 require('./js/crawler')
+const { ForbiddenError } = require('./js/errors')
 
 app.use(cors())
 app.use(helmet())
@@ -44,8 +45,8 @@ app.use(express.json())
 // 解析表单请求体，类型为：application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }))
 
-app.get('/', function (req, res) {
-	throw Error(403)
+app.get('/', (req, res, next) => {
+	next(new ForbiddenError())
 })
 
 // app.use('/news/finv', require('./routes/news/finv'))
