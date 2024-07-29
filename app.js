@@ -40,16 +40,13 @@ if (process.env.DEBUG_MODE) {
 	logger.info('In debug mode')
 }
 
-// 配置解析表单请求体，类型为：application/app
 app.use(express.json())
-// 解析表单请求体，类型为：application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }))
 
 app.get('/', (req, res, next) => {
 	next(new ForbiddenError())
 })
 
-// app.use('/news/finv', require('./routes/news/finv'))
 app.use('/technews', require('./routes/technews'))
 app.use('/transactions', require('./routes/transactions'))
 app.use('/users', require('./routes/user'))
