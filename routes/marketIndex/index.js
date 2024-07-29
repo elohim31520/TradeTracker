@@ -21,6 +21,18 @@ function computeMomentum(btc, dxy) {
 	return scaledValue
 }
 
+// 计算均值和标准差的函数
+function calculateMean(values) {
+	const sum = values.reduce((acc, val) => acc + val, 0)
+	return sum / values.length
+}
+
+function calculateStdDev(values, mean) {
+	const squaredDiffs = values.map((val) => (val - mean) ** 2)
+	const avgSquaredDiff = calculateMean(squaredDiffs)
+	return Math.sqrt(avgSquaredDiff)
+}
+
 router.get('/', verifyToken, async (req, res) => {
 	const data = await crud.findAllMarketIndex()
 	res.json(data)
@@ -36,33 +48,43 @@ router.get('/momentum', verifyToken, async (req, res) => {
 		} else {
 			acc.push([obj])
 		}
-
 		return acc
 	}, [])
 
-	const momentuns = groupedData.map((group) => {
-		const btcObj = group.find((vo) => vo.symbol == 'BTCUSD')
-		const dxyObj = group.find((vo) => vo.symbol == 'DXY')
+	const btcData = []
+	const usoilData = []
+	const dxyData = []
 
-		const btcChange = get(btcObj, 'change', null)
-		const dxyChange = get(dxyObj, 'change', null)
-
-		const momentumValue = computeMomentum(btcChange, dxyChange)
-		return { momentum: momentumValue, createdAt: btcObj.createdAt }
+	groupedData.forEach((subArray) => {
+		subArray.forEach((item) => {
+			switch (item.symbol) {
+				case 'BTCUSD':
+					btcData.push(item.price)
+					break
+				case 'USOIL':
+					usoilData.push(item.price)
+					break
+				case 'DXY':
+					dxyData.push(item.price)
+					break
+			}
+		})
 	})
 
-	// const max = Math.max(...momentuns.map((vo) => vo.momentum))
-	// const min = Math.min(...momentuns.map((vo) => vo.momentum))
-	const max = 20
-	const min = -20
-	let ratio = 200 / (max - min)
+	const getStandardizedValue = (values, currentValue) => {
+		const mean = calculateMean(values)
+		const stdDev = calculateStdDev(values, mean)
 
-	const scaledMomentuns = momentuns.map((vo) => {
-		let scaledValue = (vo.momentum - min) * ratio - 100
-		return { momentum: scaledValue, createdAt: vo.createdAt }
-	})
+		// 标准化当前值
+		const standardizedValue = (currentValue - mean) / stdDev
+		return parseFloat(standardizedValue.toFixed(2))
+	}
 
-	res.json(scaledMomentuns)
+	const btc_standardized = btcData.map(price => getStandardizedValue(btcData, price))
+	// const usoil_standardized = usoilData.map(price => getStandardizedValue(usoilData, price))
+	// const dxy_standardized= dxyData.map(price => getStandardizedValue(dxyData, price))
+
+	res.json(btc_standardized)
 })
 
 module.exports = router
