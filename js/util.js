@@ -47,6 +47,17 @@ function getMonthList() {
 	return months
 }
 
+function calculateMean(values) {
+	const sum = values.reduce((acc, val) => acc + val, 0)
+	return sum / values.length
+}
+
+function calculateStdDev(values, mean) {
+	const squaredDiffs = values.map((val) => (val - mean) ** 2)
+	const avgSquaredDiff = calculateMean(squaredDiffs)
+	return Math.sqrt(avgSquaredDiff)
+}
+
 module.exports = {
 	getTimeNow,
 	FileNameToTime,
@@ -54,5 +65,7 @@ module.exports = {
 	replaceDotToDash,
 	generateRandomID,
 	zhTimeToStandardTime,
-	getMonthList
+	getMonthList,
+	calculateMean,
+	calculateStdDev
 }
