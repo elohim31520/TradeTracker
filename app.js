@@ -52,8 +52,7 @@ app.use('/transactions', require('./routes/transactions'))
 app.use('/users', require('./routes/user'))
 app.use('/subscribe', require('./routes/subscribe'))
 app.use('/statements', require('./routes/statements'))
-app.use('/marketindex', require('./routes/marketIndex/index'))
-app.use('/marketindex2', require('./routes/marketIndex'))
+app.use('/marketindex', require('./routes/marketIndex'))
 app.use(errorHandler)
 
 app.listen(1234, () => {

@@ -5,11 +5,11 @@ function getAll() {
 }
 
 function getMomentum() {
-	ajax.get('/marketindex2/momentum')
+	ajax.get('/marketindex/momentum')
 }
 
 function getLastOne(symbol) {
-	ajax.get(`/marketindex2/last/${symbol}`)
+	ajax.get(`/marketindex/last/${symbol}`)
 }
 
 // getAll()

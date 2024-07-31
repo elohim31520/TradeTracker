@@ -5,7 +5,7 @@ const { ClientError } = require('../js/errors')
 class MarketIndexController {
 	async getAll(req, res, next) {
 		try {
-			const data = await marketIndexService.findAll()
+			const data = await marketIndexService.getAll()
 			res.json(data)
 		} catch (error) {
 			next(error)
