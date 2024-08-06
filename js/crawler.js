@@ -15,6 +15,7 @@ const News = require('../models/news')
 const logger = require('../logger')
 const util = require('./util')
 const miCrud = require('../crud/market_index')
+const marketIndexService = require('../services/marketIndexService')
 
 const db = require('../models')
 
@@ -340,41 +341,40 @@ async function fetchMarketIndex() {
 	if (process.env.DEBUG_MODE) return
 
 	const url = process.env.MARKET_URL
-	axios
-		.get(url, { headers: marketIndexHeaders })
-		.then((response) => {
-			const htmlContent = iconv.decode(response.data, 'utf-8')
-			const $ = cheerio.load(htmlContent)
+	try {
+		const response = await axios.get(url, { headers: marketIndexHeaders })
+		const htmlContent = iconv.decode(response.data, 'utf-8')
+		const $ = cheerio.load(htmlContent)
 
-			const getParams = (symbol) => {
-				let row
-				if(symbol == 'USOIL') row =  $(`tr[data-symbol="CL1:COM"]`)
-				else row = $(`tr[data-symbol="${symbol}:CUR"]`)
-				const val = row.find('td#p').text().trim()
-				const chValue = row.find('td#pch').text().trim().replace('%', '')
-				console.log(`${symbol}的值: `, +val, '%Chg: ', chValue)
-				return {
-					symbol,
-					price: +val,
-					change: +chValue,
-				}
+		const getParams = (symbol) => {
+			let row
+			if (symbol == 'USOIL') row = $(`tr[data-symbol="CL1:COM"]`)
+			else row = $(`tr[data-symbol="${symbol}:CUR"]`)
+			const val = row.find('td#p').text().trim()
+			const chValue = row.find('td#pch').text().trim().replace('%', '')
+			console.log(`${symbol}的值: `, +val, '%Chg: ', chValue)
+			return {
+				symbol,
+				price: +val,
+				change: +chValue,
+			}
+		}
+
+		const symbols = ['BTCUSD', 'DXY', 'USOIL']
+		for (const symbol of symbols) {
+			const param = getParams(symbol)
+			const lastOne = await marketIndexService.getLstOne(symbol)
+			const lastPrice = get(lastOne, 'price', null)
+
+			if (lastPrice !== null) {
+				param.volatility = +((param.price - lastPrice) / lastPrice) * 100
 			}
 
-			let symbols = ['BTCUSD', 'DXY', 'USOIL']
-
-			symbols.forEach(async (el) => {
-				const param = getParams(el)
-				const lastOne = await miCrud.findLastOne(el)
-
-				const lastPrice = get(lastOne, 'price', null)
-				if (lastPrice) param.volatility = +((param.price - lastPrice) / lastPrice) * 100
-
-				await miCrud.createMarketIndex(param)
-			})
-		})
-		.catch((err) => {
-			logger.error(err.message)
-		})
+			await marketIndexService.create(param)
+		}
+	} catch (err) {
+		logger.error(err.message)
+	}
 }
 
 createCronJob({
