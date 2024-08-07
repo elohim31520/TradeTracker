@@ -14,7 +14,6 @@ const { sqlWrite, sqlCreateStatements, sqlCreateTechNews, sqlCompanyStatements }
 const News = require('../models/news')
 const logger = require('../logger')
 const util = require('./util')
-const miCrud = require('../crud/market_index')
 const marketIndexService = require('../services/marketIndexService')
 
 const db = require('../models')

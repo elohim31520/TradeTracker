@@ -10,3 +10,4 @@ symbol.json
 strategy.js
 **/token.txt
 test/marketIndex/momentum_data.xlsx
+/dist
