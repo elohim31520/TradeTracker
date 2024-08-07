@@ -3,7 +3,7 @@ const router = express.Router()
 const { verifyToken } = require('../../middleware/auth');
 
 const TechNews = require("../../models/techNews")
-const sequelize = require("../../js/connect");
+const sequelize = require("../../config/database");
 const dayjs = require("dayjs")
 const { Op } = require("sequelize");
 // const Users = require("../../models/users")

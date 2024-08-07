@@ -1,7 +1,7 @@
 const News = require("../../models/news")
 const TechNews = require("../../models/techNews")
 const Statements = require("../../models/statements")
-const sequelize = require("../../js/connect");
+const sequelize = require("../../config/database");
 const { md5Encode } = require("../../js/crypto");
 const dayjs = require("dayjs")
 const { Op } = require("sequelize");

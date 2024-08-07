@@ -1,7 +1,7 @@
 const cheerio = require('cheerio')
 const { get, isArray } = require('lodash')
 const { default: axios } = require('axios')
-const CronJob = require('cron').CronJob
+
 const dayjs = require('dayjs')
 const iconv = require('iconv-lite')
 
@@ -17,11 +17,6 @@ const util = require('./util')
 const marketIndexService = require('../services/marketIndexService')
 
 const db = require('../models')
-
-function createCronJob({ schedule, mission }) {
-	const job = new CronJob(schedule, mission, null, true, 'Asia/Taipei')
-	return job
-}
 
 function parseFinzHtml(html, symbo) {
 	const $ = cheerio.load(html)
@@ -376,21 +371,10 @@ async function fetchMarketIndex() {
 	}
 }
 
-createCronJob({
-	schedule: process.env.CRONJOB_TECHNEWS,
-	mission: fetchTnews,
-})
 
-createCronJob({
-	schedule: process.env.CRONJOB_SP500,
-	mission: fetchStatements,
-})
-
-createCronJob({
-	schedule: process.env.CRONJOB_MARKET_INDEX,
-	mission: fetchMarketIndex,
-})
 
 module.export = {
-	parseHtmlStatementsTable,
+	fetchTnews,
+	fetchStatements,
+	fetchMarketIndex
 }

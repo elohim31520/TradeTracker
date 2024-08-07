@@ -6,7 +6,6 @@ public.key
 symbol.json
 /log
 **/.DS_Store
-/config
 strategy.js
 **/token.txt
 test/marketIndex/momentum_data.xlsx

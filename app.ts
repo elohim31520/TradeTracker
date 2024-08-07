@@ -12,7 +12,6 @@ import errorHandler from './middleware/errorHandler'
 import { ForbiddenError } from './js/errors'
 
 const app = express()
-require('./js/crawler')
 
 const rateLimiter = new RateLimiterMemory({
 	points: 10,
