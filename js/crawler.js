@@ -10,13 +10,16 @@ const { stockSymbols, symbos, tcHeader, marketIndexHeaders } = require('./config
 
 const Schedule = require('./schedule')
 const { zhTimeToStandardTime } = require('./util')
-const { sqlWrite, sqlCreateStatements, sqlCreateTechNews, sqlCompanyStatements } = require('../crud/news')
-const News = require('../models/news')
+
 const logger = require('../logger')
 const util = require('./util')
 const marketIndexService = require('../services/marketIndexService')
 
 const db = require('../models')
+const TechNews = require('../models/techNews')
+const News = require("../models/news")
+const { md5Encode } = require('../js/crypto')
+const Statements = require('../models/statements')
 
 function parseFinzHtml(html, symbo) {
 	const $ = cheerio.load(html)
@@ -105,21 +108,9 @@ var map = {
 }
 
 async function fetchFinzNews() {
-	if (process.env.DEBUG_MODE) return
-	if (process.env.STOP_FETCH_FINZ) return
-
-	const res = await News.findOne({
-		attributes: ['createdAt'],
-		order: [['createdAt', 'DESC']],
-		limit: 1,
-	})
-	const lastCreatedTime = res.createdAt
-
 	try {
 		const scheduleSec = new Schedule({ countdown: 9.5 })
 		const myFetch = new FinzService({ requestUrl: process.env.FINZ_URL, stockSymbols })
-		const canGet = dayjs().isAfter(dayjs(lastCreatedTime).add(24, 'hour'))
-		if (!canGet) return
 
 		scheduleSec.interval(async () => {
 			try {
@@ -141,8 +132,20 @@ async function fetchFinzNews() {
 					return
 				}
 				obj.company = symbo
-				sqlCreateStatements(obj)
-				sqlWrite(arr)
+				await Statements.create(param)
+				arr.forEach(async (vo) => {
+					const md5 = md5Encode(vo.title)
+					try {
+						const res = await News.findOne({
+							where: { md5 },
+						})
+						if (res) return
+						vo.md5 = md5
+						sqlCreateNews(vo)
+					} catch (e) {
+						logger.error(e.message)
+					}
+				})
 			} catch (e) {
 				let httpStatus
 				if (e.response) httpStatus = e.response.status
@@ -202,7 +205,7 @@ function fetchTnews() {
 	let initialPage = 5
 	let techUrl = `${process.env.TECHNEWS_URL}page/${initialPage}/`
 
-	console.log('==== 開始爬Tech news ===');
+	console.log('==== 開始爬Tech news ===')
 
 	scheduleSec.interval(() => {
 		if (initialPage <= 0) {
@@ -219,7 +222,13 @@ function fetchTnews() {
 					logger.error('extract Nothing From Tech, HTML解析錯誤？')
 					return
 				}
-				sqlCreateTechNews(arr)
+				arr.forEach(async (vo) => {
+					try {
+						await TechNews.create(vo)
+					} catch (e) {
+						logger.warn(e.original.sqlMessage)
+					}
+				})
 			})
 			.catch((e) => {
 				logger.error(e.message)
@@ -301,6 +310,7 @@ async function fetchStatements() {
 				}
 				params.symbo = symbo
 				sqlCompanyStatements(params)
+				db.company_statements.create(params)
 			} catch (e) {
 				let httpStatus
 				if (e.response) httpStatus = e.response.status
@@ -357,10 +367,8 @@ async function fetchMarketIndex() {
 	}
 }
 
-
-
 module.exports = {
 	fetchTnews,
 	fetchStatements,
-	fetchMarketIndex
+	fetchMarketIndex,
 }

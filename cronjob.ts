@@ -22,11 +22,11 @@ createCronJob({
 })
 
 createCronJob({
-	schedule: '28 10-20 * * *',
+	schedule: '30 10-20 * * *',
 	mission: fetchStatements,
 })
 
 createCronJob({
-	schedule: '28 * * * *',
+	schedule: '35 * * * *',
 	mission: fetchMarketIndex,
 })
