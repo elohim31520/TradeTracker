@@ -7,7 +7,6 @@
 		"strict": true,
 		"esModuleInterop": true,
 		"skipLibCheck": true,
-		"typeRoots": ["./types", "./node_modules/@types"]
 	},
 	"include": ["*.ts"],
 	"exclude": ["node_modules"]

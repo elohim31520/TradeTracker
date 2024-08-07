@@ -143,9 +143,6 @@ async function fetchFinzNews() {
 				obj.company = symbo
 				sqlCreateStatements(obj)
 				sqlWrite(arr)
-
-				// const companyName = pasreHTMLGetCompanyName(data)
-				// sqlCreateCompany({symbol: symbo, name: companyName})
 			} catch (e) {
 				let httpStatus
 				if (e.response) httpStatus = e.response.status
@@ -180,13 +177,6 @@ function parseHtmlStatementsTable(html) {
 	return obj
 }
 
-function pasreHTMLGetCompanyName(html) {
-	const $ = cheerio.load(html)
-	const name = $('.tab-link')
-	const text = name.eq(1).text()
-	return text
-}
-
 function extractDataFromTechNewsHtml(html) {
 	const $ = cheerio.load(html)
 	let arr = []
@@ -208,11 +198,11 @@ function extractDataFromTechNewsHtml(html) {
 }
 
 function fetchTnews() {
-	if (process.env.DEBUG_MODE) return
-	if (process.env.STOP_FETCH_TNEWS) return
 	const scheduleSec = new Schedule({ countdown: 10 })
 	let initialPage = 5
 	let techUrl = `${process.env.TECHNEWS_URL}page/${initialPage}/`
+
+	console.log('==== 開始爬Tech news ===');
 
 	scheduleSec.interval(() => {
 		if (initialPage <= 0) {
@@ -245,8 +235,6 @@ function fetchTnews() {
 }
 
 async function fetchStatements() {
-	if (process.env.DEBUG_MODE) return
-
 	const res = await db.company_statements.findOne({
 		attributes: ['createdAt'],
 		order: [['createdAt', 'DESC']],
@@ -332,8 +320,6 @@ async function fetchStatements() {
 }
 
 async function fetchMarketIndex() {
-	if (process.env.DEBUG_MODE) return
-
 	const url = process.env.MARKET_URL
 	try {
 		const response = await axios.get(url, { headers: marketIndexHeaders })
@@ -373,7 +359,7 @@ async function fetchMarketIndex() {
 
 
 
-module.export = {
+module.exports = {
 	fetchTnews,
 	fetchStatements,
 	fetchMarketIndex

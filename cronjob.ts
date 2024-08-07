@@ -1,4 +1,4 @@
-import { CronJob as CronJobClass } from 'cron';
+import { CronJob as CronJobClass } from 'cron'
 const CronJob = require('cron').CronJob
 const { fetchTnews, fetchStatements, fetchMarketIndex } = require('./js/crawler')
 
@@ -16,26 +16,17 @@ function createCronJob({ schedule, mission }: CronJobConfig): CronJobClass {
 	return job
 }
 
-// const CRONJOB_FINZ = '57 10-20 * * *'
-
-const CRONJOB_TECHNEWS = '50 11-18/3 * * *'
-
-const CRONJOB_SP500 = '15 10-20 * * *'
-
-const CRONJOB_MARKET_INDEX = '0 * * * *'
-
-
 createCronJob({
-	schedule: CRONJOB_TECHNEWS,
+	schedule: '28 11-18/3 * * *',
 	mission: fetchTnews,
 })
 
 createCronJob({
-	schedule: CRONJOB_SP500,
+	schedule: '28 10-20 * * *',
 	mission: fetchStatements,
 })
 
 createCronJob({
-	schedule: CRONJOB_MARKET_INDEX,
+	schedule: '28 * * * *',
 	mission: fetchMarketIndex,
 })
