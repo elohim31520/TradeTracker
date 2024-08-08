@@ -54,6 +54,7 @@ app.use('/users', require('./routes/user'))
 app.use('/subscribe', require('./routes/subscribe'))
 app.use('/statements', require('./routes/statements'))
 app.use('/marketindex', require('./routes/marketIndex'))
+app.use('/portfolio', require('./routes/portfolio'))
 
 app.listen(1234, () => {
 	logger.info('Server start!')
