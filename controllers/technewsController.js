@@ -30,6 +30,15 @@ class technewsController {
 			next(error)
 		}
 	}
+
+	async searchByKeyword(req, res, next) {
+		const keyword = _.get(req, 'query.keyword', '')
+		if (!keyword) {
+			next(new ClientError('Keyword query parameter is required'))
+		}
+		const news = await technewsService.searchByKeyword(keyword)
+		res.status(200).json(news)
+	}
 }
 
 module.exports = new technewsController()

@@ -1,4 +1,5 @@
 const TechNews = require('../models/techNews')
+const { Op } = require('sequelize')
 
 class TechnewsService {
 	async getById(id) {
@@ -14,6 +15,16 @@ class TechnewsService {
 			limit: size,
 			offset,
 			order: [['createdAt', 'DESC']],
+		})
+	}
+
+	async searchByKeyword(keyword) {
+		return TechNews.findAll({
+			where: {
+				title: {
+					[Op.like]: `%${keyword}%`,
+				},
+			},
 		})
 	}
 }
