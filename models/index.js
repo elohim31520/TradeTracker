@@ -23,10 +23,8 @@ fs
 			![
 				'company.js',
 				'index.js',
-				'news.js',
 				'statements.js',
 				'techNews.js',
-				'user.js'
 			].includes(file) &&
 			file.indexOf('.') !== 0 &&
 			file !== basename &&
