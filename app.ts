@@ -49,6 +49,7 @@ app.get('/', (req: Request, res: Response, next: NextFunction) => {
 })
 
 app.use('/technews', require('./routes/technews'))
+app.use('/company-news', require('./routes/companyNews'))
 app.use('/transactions', require('./routes/transactions'))
 app.use('/users', require('./routes/user'))
 app.use('/subscribe', require('./routes/subscribe'))

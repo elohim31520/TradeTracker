@@ -12,8 +12,11 @@ module.exports = (sequelize, DataTypes) => {
 				allowNull: true,
 			},
 		},
+		{
+			tableName: 'Company',
+			freezeTableName: true, // 防止 Sequelize 自动修改表名称（如添加复数形式）
+		}
 	)
-	Company.associate = function (models) {
-	}
+	Company.associate = function (models) {}
 	return Company
 }

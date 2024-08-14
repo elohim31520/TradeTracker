@@ -21,7 +21,6 @@ fs
 	.filter(file => {
 		return (
 			![
-				'company.js',
 				'index.js',
 				'statements.js',
 				'techNews.js',
