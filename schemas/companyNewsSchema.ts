@@ -9,7 +9,9 @@ const newsSchema = Joi.object({
 })
 
 const bulkCreateSchema = Joi.array().items(newsSchema)
+const createSchema = newsSchema
 
 export {
 	bulkCreateSchema,
+	createSchema
 }

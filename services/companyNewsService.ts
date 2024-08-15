@@ -28,6 +28,23 @@ class companyNewsService {
 			throw new Error(error)
 		}
 	}
+
+	async create(params: CompanyNewsAttributes): Promise<void> {
+		try {
+			const company = await db.Company.findOne({
+				where: {
+					symbol: params.symbol,
+				},
+			})
+			if (!company) {
+				throw new Error(`Company with symbol ${params.symbol} not found`)
+			}
+			params.company_id = company.id
+			await db.CompanyNews.create(params)
+		} catch (error: any) {
+			throw new Error(error)
+		}
+	}
 }
 
 export default new companyNewsService()
