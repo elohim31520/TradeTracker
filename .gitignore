@@ -10,3 +10,5 @@ strategy.js
 **/token.txt
 test/marketIndex/momentum_data.xlsx
 /dist
+/Archive
+scripts/index.html

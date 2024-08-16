@@ -40,10 +40,6 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(errorHandler)
 
-if (process.env.DEBUG_MODE) {
-	logger.info('In debug mode')
-}
-// Routes setup
 app.get('/', (req: Request, res: Response, next: NextFunction) => {
 	next(new ForbiddenError())
 })
