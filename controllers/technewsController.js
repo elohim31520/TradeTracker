@@ -19,13 +19,14 @@ class technewsController {
 
 	async getAll(req, res, next) {
 		try {
-			const page = _.get(req, 'query.page', 1)
-			const size = _.get(req, 'query.size', 10)
-			if (typeof page != 'number' || typeof size != 'number') {
-				throw new ClientError('request params is wrong!')
+			const page = parseInt(req.query.page, 10) || 1
+			const size = parseInt(req.query.size, 10) || 10
+
+			if (page <= 0 || size <= 0) {
+				throw new ClientError(`Invalid request parameters! Page: ${page}, Size: ${size}`)
 			}
 			const news = await technewsService.getAll(page, size)
-			res.status(200).json(news)
+			res.status(200).json(news.reverse())
 		} catch (error) {
 			next(error)
 		}
