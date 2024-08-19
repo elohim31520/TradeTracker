@@ -1,3 +1,5 @@
+import { orderBy } from 'lodash'
+
 const db = require('../models')
 
 interface CompanyNewsAttributes {
@@ -41,6 +43,20 @@ class companyNewsService {
 			}
 			params.company_id = company.id
 			await db.CompanyNews.create(params)
+		} catch (error: any) {
+			throw new Error(error)
+		}
+	}
+
+	async getAll(page: number = 1, size: number = 10): Promise<CompanyNewsAttributes[]> {
+		try {
+			const offset = (page - 1) * size
+			const news = await db.CompanyNews.findAll({
+				limit: size,
+				offset,
+				order: [['createdAt', 'DESC']],
+			})
+			return news
 		} catch (error: any) {
 			throw new Error(error)
 		}
