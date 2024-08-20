@@ -1,4 +1,4 @@
-const db = require('../models')
+const db = require('../../models')
 const { calculateMean, calculateStdDev } = require('../js/util')
 const Sequelize = require('sequelize')
 

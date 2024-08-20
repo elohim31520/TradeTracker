@@ -1,6 +1,6 @@
 import { orderBy } from 'lodash'
 
-const db = require('../models')
+const db = require('../../models')
 
 interface CompanyNewsAttributes {
 	title: string

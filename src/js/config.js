@@ -4,7 +4,7 @@ const fs = require('fs')
 const dbDir = path.join(__dirname, `../DB/`)
 
 function getStockSymbol() {
-	let file = path.join(__dirname, `../symbol.json`)
+	let file = path.join(__dirname, `../../symbol.json`)
 	let obj = JSON.parse(fs.readFileSync(file))
 	let symbols = obj.symbols
 	let arr = []

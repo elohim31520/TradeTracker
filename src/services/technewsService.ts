@@ -1,4 +1,4 @@
-const TechNews = require('../models/techNews')
+const TechNews = require('../../models/techNews')
 import { Op } from 'sequelize'
 
 interface techNewsAttributes {

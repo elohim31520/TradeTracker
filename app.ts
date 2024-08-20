@@ -5,11 +5,11 @@ import cors from 'cors'
 import helmet from 'helmet'
 import { RateLimiterMemory } from 'rate-limiter-flexible'
 //@ts-ignore
-import logger from './logger'
+import logger from './src/logger'
 //@ts-ignore
-import errorHandler from './middleware/errorHandler'
+import errorHandler from './src/middleware/errorHandler'
 //@ts-ignore
-import { ForbiddenError } from './js/errors'
+import { ForbiddenError } from './src/js/errors'
 
 const app = express()
 
@@ -44,14 +44,14 @@ app.get('/', (req: Request, res: Response, next: NextFunction) => {
 	next(new ForbiddenError())
 })
 
-app.use('/technews', require('./routes/technews'))
-app.use('/company-news', require('./routes/companyNews'))
-app.use('/transactions', require('./routes/transactions'))
-app.use('/users', require('./routes/user'))
-app.use('/subscribe', require('./routes/subscribe'))
-app.use('/statements', require('./routes/statements'))
-app.use('/marketindex', require('./routes/marketIndex'))
-app.use('/portfolio', require('./routes/portfolio'))
+app.use('/technews', require('./src/routes/technews'))
+app.use('/company-news', require('./src/routes/companyNews'))
+app.use('/transactions', require('./src/routes/transactions'))
+app.use('/users', require('./src/routes/user'))
+app.use('/subscribe', require('./src/routes/subscribe'))
+app.use('/statements', require('./src/routes/statements'))
+app.use('/marketindex', require('./src/routes/marketIndex'))
+app.use('/portfolio', require('./src/routes/portfolio'))
 
 app.listen(1234, () => {
 	logger.info('Server start!')

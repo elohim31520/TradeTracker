@@ -1,4 +1,4 @@
-const db = require('../models')
+const db = require('../../models')
 
 class PortfolioService {
 	async getById(id: number) {

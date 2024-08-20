@@ -1,6 +1,6 @@
 const fs = require('fs')
 const path = require('path')
-const privateKEY = fs.readFileSync(path.join(__dirname, '../private.key'), 'utf8')
+const privateKEY = fs.readFileSync(path.join(__dirname, '../../private.key'), 'utf8')
 const jwt = require('jsonwebtoken')
 const cryptoJS = require('crypto-js');
 

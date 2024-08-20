@@ -1,4 +1,4 @@
-const { Users } = require('../models')
+const { Users } = require('../../models')
 const { generateToken, generateSalt, sha256 } = require('../js/crypto')
 const { ClientError } = require('../js/errors')
 const logger = require('../logger')

@@ -2,14 +2,14 @@ const express = require('express')
 const router = express.Router()
 
 const { verifyToken } = require('../middleware/auth')
-const Users = require('../models/users')
-const TechNews = require('../models/techNews')
+const Users = require('../../models/users')
+const TechNews = require('../../models/techNews')
 const { successResponse } = require('../js/config')
 const logger = require('../logger.js')
 const _get = require('lodash/get')
 const validate = require('../middleware/validate')
 const { createSchema } = require('../schemas/subscribeSchema')
-const db = require('../models')
+const db = require('../../models')
 
 router.get('/news', verifyToken, async (req, res) => {
 	const decoded = req.decoded

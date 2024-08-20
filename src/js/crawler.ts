@@ -14,7 +14,7 @@ const logger = require('../logger')
 const util = require('./util')
 const marketIndexService = require('../services/marketIndexService')
 
-const db = require('../models')
+const db = require('../../models')
 const TechNews = require('../models/techNews')
 
 interface TechNewsData {

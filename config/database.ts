@@ -1,6 +1,6 @@
 import { Sequelize } from 'sequelize'
 //@ts-ignore
-import logger from '../logger'
+import logger from '../src/logger'
 require('dotenv').config()
 
 const sequelize = new Sequelize(

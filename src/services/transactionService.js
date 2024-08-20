@@ -1,4 +1,4 @@
-const { Transaction } = require('../models')
+const { Transaction } = require('../../models')
 
 class TransactionService {
 	async create(data) {
