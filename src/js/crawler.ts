@@ -2,11 +2,11 @@ import axios, { AxiosResponse } from 'axios'
 import iconv from 'iconv-lite'
 import cheerio from 'cheerio'
 import { get, isArray } from 'lodash'
-
+const https = require('https')
 const dayjs = require('dayjs')
 
 const { Sp500Service } = require('./fetch')
-const { symbos, tcHeader, marketIndexHeaders } = require('./config')
+const { symbos, tcHeader, marketIndexHeaders, CM_Headers } = require('./config')
 
 const Schedule = require('./schedule')
 
@@ -15,18 +15,18 @@ const util = require('./util')
 const marketIndexService = require('../services/marketIndexService')
 
 const db = require('../../models')
-const TechNews = require('../models/techNews')
+const TechNews = require('../../models/techNews')
 
-interface TechNewsData {
+interface Article {
 	title: string
 	web_url: string
 	release_time: string
 	publisher: string
 }
 
-function extractDataFromTechNewsHtml(html: string): TechNewsData[] {
+function extractDataFromTechNewsHtml(html: string): Article[] {
 	const $ = cheerio.load(html)
-	const arr: TechNewsData[] = []
+	const arr: Article[] = []
 
 	$('table').each((index, element) => {
 		let title = $(element).find('.maintitle h1.entry-title a').text()
@@ -250,8 +250,81 @@ async function fetchMarketIndex(): Promise<void> {
 	}
 }
 
+function extractCMData(data: string): Article[] {
+	const $ = cheerio.load(data)
+	const articles: Article[] = []
+
+	$('article').each((index, element) => {
+		const html = $(element)
+		const title = html.find('.read-title a').text().trim()
+		const publisher = html.find('.author-links .posts-author a').text().trim()
+		const release_time = html.find('.posts-date').text().trim()
+		const web_url = html.find('.read-title a').attr('href') || ''
+
+		articles.push({
+			title,
+			release_time,
+			publisher,
+			web_url,
+		})
+	})
+
+	return articles
+}
+
+function fetchCMNews(): void {
+	const scheduleSec = new Schedule({ countdown: 10 })
+	let initialPage = 5
+	let url: string = `${process.env.CM_NEWS_URL}page/${initialPage}/`
+
+	if (!url) {
+		logger.error('CM_NEWS_URL environment variable is not defined.')
+		return
+	}
+
+	const agent = new https.Agent({ rejectUnauthorized: false })
+
+	scheduleSec.interval(async () => {
+		if (initialPage <= 0) {
+			scheduleSec.removeInterval()
+			logger.info('---request CM News End---')
+			return
+		}
+
+		try {
+			const res = await axios.get(url, { headers: CM_Headers, httpsAgent: agent })
+			const data = get(res, 'data', {})
+			let arr = extractCMData(data)
+
+			if (!isArray(arr) || !arr.length) {
+				logger.error('extract Nothing From Tech, HTML解析錯誤？')
+				return
+			}
+
+			for (const vo of arr) {
+				try {
+					await TechNews.create(vo)
+				} catch (e: any) {
+					console.warn((e as Error).message)
+				}
+			}
+		} catch (e: any) {
+			console.error((e as Error).message)
+		}
+
+		if (initialPage > 2) {
+			initialPage -= 1
+			url = `${process.env.CM_NEWS_URL}page/${initialPage}/`
+		} else if (initialPage <= 2) {
+			initialPage -= 1
+			url = process.env.CM_NEWS_URL || ''
+		}
+	})
+}
+
 module.exports = {
 	fetchTnews,
 	fetchStatements,
 	fetchMarketIndex,
+	fetchCMNews,
 }
