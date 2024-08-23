@@ -69,6 +69,10 @@ function fetchTnews(): void {
 
 			for (const vo of arr) {
 				try {
+					const parsedDate = dayjs.utc(vo.release_time, 'YYYY-MM-DD HH:mm').toDate()
+					const release_time = dayjs(parsedDate).toISOString()
+
+					await db.tech_investment_news.create({ ...vo, release_time })
 					await TechNews.create(vo)
 				} catch (e: any) {
 					console.warn((e as Error).message)
@@ -303,6 +307,10 @@ function fetchCMNews(): void {
 
 			for (const vo of arr) {
 				try {
+					const parsedDate = util.parseChineseDate(vo.release_time)
+					const release_time = dayjs(parsedDate).toISOString()
+
+					await db.tech_investment_news.create({ ...vo, release_time })
 					await TechNews.create(vo)
 				} catch (e: any) {
 					console.warn((e as Error).message)
