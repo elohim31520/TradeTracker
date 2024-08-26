@@ -5,7 +5,7 @@ import { get, isArray } from 'lodash'
 const https = require('https')
 const dayjs = require('dayjs')
 
-const { Sp500Service } = require('./fetch')
+const { Sp500Fetcher } = require('./financialDataFetcher')
 const { symbos, tcHeader, marketIndexHeaders, CM_Headers } = require('./config')
 
 const Schedule = require('./schedule')
@@ -119,7 +119,7 @@ async function fetchStatements(): Promise<void> {
 
 		const lastCreatedTime = res.createdAt
 		const scheduleSec = new Schedule({ countdown: 8 })
-		const myFetch = new Sp500Service({ requestUrl: process.env.SP500_URL, stockSymbols: symbos })
+		const myFetch = new Sp500Fetcher({ requestUrl: process.env.SP500_URL, stockSymbols: symbos })
 
 		const canGet = dayjs().isAfter(dayjs(lastCreatedTime).add(24, 'hour'))
 		if (!canGet) return
