@@ -8,7 +8,7 @@ const dayjs = require('dayjs')
 const { Sp500Fetcher } = require('./financialDataFetcher')
 const { symbos, tcHeader, marketIndexHeaders, CM_Headers } = require('./config')
 
-const Schedule = require('./schedule')
+import Schedule from './schedule'
 
 const logger = require('../logger')
 const util = require('./util')
@@ -50,7 +50,7 @@ function fetchTnews(): void {
 	let initialPage = 5
 	let techUrl: string = `${process.env.TECHNEWS_URL}page/${initialPage}/`
 
-	scheduleSec.interval(async () => {
+	scheduleSec.startInterval(async () => {
 		if (initialPage <= 0) {
 			scheduleSec.removeInterval()
 			logger.info('---request Technews End---')
@@ -124,17 +124,17 @@ async function fetchStatements(): Promise<void> {
 		const canGet = dayjs().isAfter(dayjs(lastCreatedTime).add(24, 'hour'))
 		if (!canGet) return
 
-		scheduleSec.interval(async () => {
+		scheduleSec.startInterval(async () => {
 			try {
-				const symbo = myFetch.getRequestSymbo()
+				const symbo = myFetch.getCurrentSymbol()
 				if (!symbo) {
 					scheduleSec.removeInterval()
 
 					logger.info(`no more symbo，---Request End---`)
-					logger.warn(`failed symbol: ${myFetch.getAllErrorSymbo()}`)
+					logger.warn(`failed symbol: ${myFetch.getAllErrorSymbols()}`)
 					return
 				}
-				const htmlContent = await myFetch.getHtml()
+				const htmlContent = await myFetch.fetchHtml()
 				const $ = cheerio.load(htmlContent)
 
 				const targetTable = $('.row .col-lg-7 .table')
@@ -186,7 +186,7 @@ async function fetchStatements(): Promise<void> {
 				let httpStatus: number | undefined
 				if (e.response) httpStatus = e.response.status
 				logger.error(`Fetch sp500 statements失敗: ${e.message}`)
-				myFetch.pushErrorSymbo()
+				myFetch.addErrorSymbol()
 				if (e.code == 999 || httpStatus == 403) {
 					scheduleSec.removeInterval()
 					logger.info(`---Request End---`)
@@ -288,7 +288,7 @@ function fetchCMNews(): void {
 
 	const agent = new https.Agent({ rejectUnauthorized: false })
 
-	scheduleSec.interval(async () => {
+	scheduleSec.startInterval(async () => {
 		if (initialPage <= 0) {
 			scheduleSec.removeInterval()
 			logger.info('---request CM News End---')
