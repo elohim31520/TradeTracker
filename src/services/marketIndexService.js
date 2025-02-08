@@ -2,6 +2,17 @@ const db = require('../../models')
 const { calculateMean, calculateStdDev } = require('../js/util')
 const Sequelize = require('sequelize')
 
+const MOVING_AVERAGE = 10
+const BTCUSD = 'BTCUSD'
+const USOIL = 'USOIL'
+const DXY = 'DXY'
+
+const KEY_MAP = {
+	BTCUSD: 'btc',
+	USOIL: 'usoil',
+	DXY: 'dxy'
+}
+
 const getStandardizedValue = (values, currentValue) => {
 	const mean = calculateMean(values)
 	const stdDev = calculateStdDev(values, mean)
@@ -61,19 +72,17 @@ class MarketIndexService {
 
 		data.forEach((item) => {
 			switch (item.symbol) {
-				case 'BTCUSD':
+				case BTCUSD:
 					btcData.push(item)
 					break
-				case 'USOIL':
+				case USOIL:
 					usoilData.push(item)
 					break
-				case 'DXY':
+				case DXY:
 					dxyData.push(item)
 					break
 			}
 		})
-
-		const MOVING_AVERAGE = 10
 
 		const getMAPrices = (arr = [], movingAverage, currentIndex) => {
 			return arr.slice(Math.max(0, currentIndex - movingAverage), currentIndex)
@@ -93,34 +102,23 @@ class MarketIndexService {
 
 		const consolidatedData = new Map()
 
-		const addDataToMap = (data) => {
-			data.forEach((item) => {
-				const existingItem = consolidatedData.get(item.createdAt) || {
-					createdAt: item.createdAt,
-					btc: 0,
-					usoil: 0,
-					dxy: 0,
+		const addDataToMap = (data, key) => {
+			data.forEach(({ createdAt, volume }) => {
+				if (!consolidatedData.has(createdAt)) {
+					consolidatedData.set(createdAt, { createdAt, btc: 0, usoil: 0, dxy: 0 })
 				}
-				if (item.symbol === 'BTCUSD') {
-					existingItem.btc = item.volume
-				} else if (item.symbol === 'USOIL') {
-					existingItem.usoil = item.volume
-				} else if (item.symbol === 'DXY') {
-					existingItem.dxy = item.volume
-				}
-				consolidatedData.set(item.createdAt, existingItem)
+				consolidatedData.get(createdAt)[key] = volume
 			})
 		}
 
-		addDataToMap(btc_standardized)
-		addDataToMap(usoil_standardized)
-		addDataToMap(dxy_standardized)
+		addDataToMap(btc_standardized, KEY_MAP[BTCUSD])
+		addDataToMap(usoil_standardized, KEY_MAP[USOIL])
+		addDataToMap(dxy_standardized, KEY_MAP[DXY])
 
-		const finalResult = Array.from(consolidatedData.values()).map((item) => {
-			const { createdAt, btc, usoil, dxy } = item
-			const volume = btc - 0.1 * dxy - 0.1 * usoil
-			return { createdAt, volume: parseFloat(volume.toFixed(2)) }
-		})
+		const finalResult = Array.from(consolidatedData.values()).map(({ createdAt, btc, usoil, dxy }) => ({
+			createdAt,
+			volume: parseFloat((btc - 0.1 * dxy - 0.1 * usoil).toFixed(2)),
+		}))
 
 		return finalResult
 	}
