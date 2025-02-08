@@ -31,7 +31,7 @@ createCronJob({
 	mission: fetchMarketIndex,
 })
 
-createCronJob({
-	schedule: '48 11-18/3 * * *',
-	mission: fetchCMNews,
-})
+// createCronJob({
+// 	schedule: '48 11-18/3 * * *',
+// 	mission: fetchCMNews,
+// })

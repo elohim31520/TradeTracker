@@ -73,35 +73,23 @@ class MarketIndexService {
 			}
 		})
 
-		const MA = 10
+		const MOVING_AVERAGE = 10
 
 		const getMAPrices = (arr = [], movingAverage, currentIndex) => {
-			const startIndex = Math.max(0, currentIndex - movingAverage)
-			const endIndex = Math.min(arr.length, currentIndex + movingAverage)
-			const windowPrices = arr.slice(startIndex, endIndex)
-			return windowPrices
+			return arr.slice(Math.max(0, currentIndex - movingAverage), currentIndex)
 		}
 
-		const btc_prices = btcData.map((vo) => vo.price)
-		const btc_standardized = btcData.map((btcItem, currentIndex) => {
-			const windowPrices = getMAPrices(btc_prices, MA, currentIndex)
-			const volume = getStandardizedValue(windowPrices, btcItem.price)
-			return { ...btcItem, volume }
-		})
+		const standardizeData = (data, movingAverage) => {
+			const prices = data.map((item) => item.price)
+			return data.map((item, index) => {
+				const windowPrices = getMAPrices(prices, movingAverage, index)
+				return { ...item, volume: getStandardizedValue(windowPrices, item.price) }
+			})
+		}
 
-		const dxy_prices = dxyData.map((vo) => vo.price)
-		const dxy_standardized = dxyData.map((dxyItem, currentIndex) => {
-			const windowPrices = getMAPrices(dxy_prices, MA, currentIndex)
-			const volume = getStandardizedValue(windowPrices, dxyItem.price)
-			return { ...dxyItem, volume }
-		})
-
-		const usoil_prices = usoilData.map((vo) => vo.price)
-		const usoil_standardized = usoilData.map((usoilItem, currentIndex) => {
-			const windowPrices = getMAPrices(usoil_prices, MA, currentIndex)
-			const volume = getStandardizedValue(usoil_prices, usoilItem.price)
-			return { ...usoilItem, volume }
-		})
+		const btc_standardized = standardizeData(btcData, MOVING_AVERAGE)
+		const dxy_standardized = standardizeData(dxyData, MOVING_AVERAGE)
+		const usoil_standardized = standardizeData(usoilData, MOVING_AVERAGE)
 
 		const consolidatedData = new Map()
 
