@@ -31,8 +31,10 @@ module.exports = (sequelize, DataTypes) => {
 		if (transaction_type === 'buy') {
 			if (portfolio) {
 				// 更新現有持倉
-				const newQuantity = +portfolio.quantity + +quantity
-				const newAveragePrice = (portfolio.average_price * portfolio.quantity + price * quantity) / newQuantity
+				const newQuantity = portfolio.quantity + quantity
+				const newAveragePrice =
+					newQuantity > 0 ? (portfolio.average_price * portfolio.quantity + price * quantity) / newQuantity : price
+
 				await portfolio.update({
 					quantity: newQuantity,
 					average_price: newAveragePrice,
@@ -48,11 +50,13 @@ module.exports = (sequelize, DataTypes) => {
 			}
 		} else if (transaction_type === 'sell') {
 			if (portfolio) {
-				const newQuantity = +portfolio.quantity - +quantity
-				if (newQuantity >= 0) {
+				const newQuantity = portfolio.quantity - quantity
+				if (newQuantity > 0) {
 					await portfolio.update({
 						quantity: newQuantity,
 					})
+				} else if (newQuantity == 0) {
+					await portfolio.destroy()
 				} else {
 					throw new Error('賣出的股票數量超過持倉')
 				}
