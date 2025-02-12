@@ -27,7 +27,7 @@ createCronJob({
 })
 
 createCronJob({
-	schedule: '35 * * * *',
+	schedule: '*/30 * * * *',
 	mission: fetchMarketIndex,
 })
 

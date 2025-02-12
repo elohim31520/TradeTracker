@@ -14,7 +14,7 @@ class MarketIndexController {
 
 	async getMomentum(req, res, next) {
 		try {
-			const data = await marketIndexService.getMomentumData()
+			const data = await marketIndexService.getAllMomentum()
 			res.json(data)
 		} catch (error) {
 			next(error)
@@ -28,6 +28,19 @@ class MarketIndexController {
 				next(new ClientError('Missing or invalid symbol parameter'))
 			}
 			const data = await marketIndexService.getLstOne(symbol)
+			res.json(data)
+		} catch (error) {
+			next(error)
+		}
+	}
+
+	async getMarketIndicesByDays (req, res, next) {
+		try {
+			const days = +_.get(req, 'params.days')
+			if (isNaN(days)) {
+				next(new ClientError('Missing or invalid days parameter'))
+			}
+			const data = await marketIndexService.getMomentumByDateRange(days)
 			res.json(data)
 		} catch (error) {
 			next(error)

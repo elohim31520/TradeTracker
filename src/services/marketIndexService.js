@@ -1,6 +1,7 @@
 const db = require('../../models')
 const { calculateMean, calculateStdDev } = require('../js/util')
 const Sequelize = require('sequelize')
+const dayjs = require('dayjs')
 
 const MOVING_AVERAGE = 10
 const BTCUSD = 'BTCUSD'
@@ -58,9 +59,7 @@ class MarketIndexService {
 		}
 	}
 
-	async getMomentumData() {
-		const data = await this.getGroupedDataByTime()
-
+	async getMomentumData(data) {
 		const consolidatedData = new Map()
 		const addDataToMap = (data, key) => {
 			data.forEach(({ createdAt, volume }) => {
@@ -123,6 +122,47 @@ class MarketIndexService {
 		} catch (error) {
 			throw error
 		}
+	}
+
+	async getByDateRange(rangeInDays) {
+		try {
+			const startDate = dayjs().subtract(rangeInDays, 'day').format('YYYY-MM-DD HH:mm:ss')
+			const data = await db.market_index.findAll({
+				attributes: [
+					'symbol',
+					[
+						Sequelize.literal(
+							'(SELECT price FROM market_index AS mi2 WHERE mi2.symbol = market_index.symbol AND mi2.createdAt = market_index.createdAt AND mi2.change = MAX(market_index.change) LIMIT 1)'
+						),
+						'price',
+					],
+					[Sequelize.fn('MAX', Sequelize.col('change')), 'change'],
+					[Sequelize.literal("DATE_FORMAT(createdAt, '%Y-%m-%d %H')"), 'createdAt'],
+				],
+				where: {
+					createdAt: {
+						[Sequelize.Op.gte]: startDate,
+					},
+				},
+
+				raw: true,
+				group: ['symbol', 'createdAt'],
+				order: ['createdAt'],
+			})
+			return data
+		} catch (error) {
+			throw new Error(error)
+		}
+	}
+
+	async getMomentumByDateRange(rangeInDays) {
+		const data = await this.getByDateRange(rangeInDays)
+		return this.getMomentumData(data)
+	}
+
+	async getAllMomentum() {
+		const data = await this.getGroupedDataByTime()
+		return this.getMomentumData(data)
 	}
 }
 
