@@ -209,6 +209,8 @@ interface MarketIndexParams {
 
 async function fetchMarketIndex(): Promise<void> {
 	const url = process.env.MARKET_URL
+	const USOIL = 'USOIL'
+	const US10Y = 'US10Y'
 
 	if (!url) {
 		logger.error('MARKET_URL environment variable is not defined.')
@@ -221,12 +223,15 @@ async function fetchMarketIndex(): Promise<void> {
 		const $ = cheerio.load(htmlContent)
 
 		const getParams = (symbol: string): MarketIndexParams => {
-			let row
-			if (symbol === 'USOIL') {
-				row = $(`tr[data-symbol="CL1:COM"]`)
+			let template
+			if (symbol === USOIL) {
+				template = `tr[data-symbol="CL1:COM"]`
+			} else if (symbol === US10Y) {
+				template = 'tr[data-symbol="USGG10YR:IND"]'
 			} else {
-				row = $(`tr[data-symbol="${symbol}:CUR"]`)
+				template = `tr[data-symbol="${symbol}:CUR"]`
 			}
+			const row = $(template)
 			const val = row.find('td#p').text().trim()
 			const chValue = row.find('td#pch').text().trim().replace('%', '')
 			console.log(`${symbol}的值: `, +val, '%Chg: ', chValue)
@@ -237,7 +242,7 @@ async function fetchMarketIndex(): Promise<void> {
 			}
 		}
 
-		const symbols: string[] = ['BTCUSD', 'DXY', 'USOIL']
+		const symbols: string[] = ['BTCUSD', 'DXY', USOIL, US10Y]
 		for (const symbol of symbols) {
 			const param = getParams(symbol)
 			const lastOne = await marketIndexService.getLstOne(symbol)
