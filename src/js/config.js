@@ -47,7 +47,7 @@ const fzHeader = {}
 
 const successResponse = { code: 1, message: 'Success' }
 
-const symbos = [
+const SYMBOLS = new Set([
 	'AAPL',
 	'PATH',
 	'ADBE',
@@ -85,8 +85,8 @@ const symbos = [
 	'TTD',
 	'META',
 	'TSM',
-	'ARM'
-]
+	'ARM',
+])
 
 const marketIndexHeaders = {
 	'authority': 'tradingeconomics.com',
@@ -112,7 +112,8 @@ const marketIndexHeaders = {
 }
 
 const CM_Headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+	'Accept':
+		'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
 	'Accept-Encoding': 'gzip, deflate, br, zstd',
 	'Accept-Language': 'zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7',
 	'Cache-Control': 'no-cache',
@@ -127,7 +128,8 @@ const CM_Headers = {
 	'Sec-Fetch-Site': 'none',
 	'Sec-Fetch-User': '?1',
 	'Upgrade-Insecure-Requests': '1',
-	'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36'
+	'User-Agent':
+		'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36',
 }
 
 module.exports = {
@@ -136,7 +138,7 @@ module.exports = {
 	tcHeader,
 	fzHeader,
 	successResponse,
-	symbos,
+	SYMBOLS,
 	marketIndexHeaders,
-	CM_Headers
+	CM_Headers,
 }

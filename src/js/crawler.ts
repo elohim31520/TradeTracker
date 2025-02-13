@@ -6,7 +6,7 @@ const https = require('https')
 const dayjs = require('dayjs')
 
 const { Sp500Fetcher } = require('./financialDataFetcher')
-const { symbos, tcHeader, marketIndexHeaders, CM_Headers } = require('./config')
+const { SYMBOLS, tcHeader, marketIndexHeaders, CM_Headers } = require('./config')
 
 import Schedule from './schedule'
 
@@ -119,7 +119,8 @@ async function fetchStatements(): Promise<void> {
 
 		const lastCreatedTime = res.createdAt
 		const scheduleSec = new Schedule({ countdown: 8 })
-		const myFetch = new Sp500Fetcher({ requestUrl: process.env.SP500_URL, stockSymbols: symbos })
+		const symbols = Array.from(SYMBOLS)
+		const myFetch = new Sp500Fetcher({ requestUrl: process.env.SP500_URL, stockSymbols: symbols })
 
 		const canGet = dayjs().isAfter(dayjs(lastCreatedTime).add(24, 'hour'))
 		if (!canGet) return
