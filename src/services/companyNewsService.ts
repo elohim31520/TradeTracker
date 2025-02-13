@@ -1,6 +1,5 @@
-import { orderBy } from 'lodash'
-
 const db = require('../../models')
+const _ = require('lodash')
 
 interface CompanyNewsAttributes {
 	title: string
@@ -9,6 +8,7 @@ interface CompanyNewsAttributes {
 	publisher?: string
 	web_url?: string
 	company_id?: number
+	companyName?: string
 }
 
 class companyNewsService {
@@ -55,8 +55,24 @@ class companyNewsService {
 				limit: size,
 				offset,
 				order: [['createdAt', 'DESC']],
+				include: [
+					{
+						model: db.Company,
+						as: 'Company',
+						attributes: ['name'],
+						require: false,
+					},
+				],
+				raw: true,
 			})
-			return news
+
+			return news.map((vo: any) => {
+				const { 'Company.name': companyName, ...rest } = vo
+				return {
+					...rest,
+					companyName,
+				}
+			})
 		} catch (error: any) {
 			throw new Error(error)
 		}
