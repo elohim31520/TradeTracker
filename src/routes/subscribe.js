@@ -43,9 +43,9 @@ router.post('/technews', verifyToken, validate(createSchema), async (req, res) =
 		const user_name = _get(req.decoded, 'user_name', '')
 		const { newsId } = req.body
 		const user = await db.Users.findOne({
-			where: {
-				user_name,
-			},
+			where: { user_name },
+			attributes: ['id'],
+			rejectOnEmpty: true
 		})
 		await db.pk_user_technews.create({ userId: user.id, newsId })
 		res.json(successResponse)
@@ -57,19 +57,19 @@ router.post('/technews', verifyToken, validate(createSchema), async (req, res) =
 
 router.get('/technews', verifyToken, async (req, res) => {
 	const user_name = _get(req.decoded, 'user_name', '')
-	const user = await db.Users.findOne({
-		where: {
-			user_name,
-		},
-	})
 	try {
-		const result = await db.Users.findByPk(user.id, {
+		const result = await db.Users.findOne({
+			where: { user_name },
 			attributes: ['id'],
 			include: [
 				{
 					model: TechNews,
 					attributes: ['id', 'title', 'release_time', 'publisher', 'web_url'],
-					through: 'pk_user_technews',
+					through: {
+						model: db.pk_user_technews,
+						attributes: [],
+					},
+					require: false,
 				},
 			],
 		})
