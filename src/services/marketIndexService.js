@@ -102,10 +102,19 @@ class MarketIndexService {
 		addDataToMap(dxy_standardized, KEY_MAP[DXY])
 		addDataToMap(us10y_standardized, KEY_MAP[US10Y])
 
-		const finalResult = Array.from(consolidatedData.values()).map(({ createdAt, btc, usoil, dxy, us10y }) => ({
-			createdAt,
-			volume: parseFloat((btc * 0.8 - 0.05 * dxy - 0.05 * usoil - 0.1 * us10y).toFixed(2)),
-		}))
+		const finalResult = Array.from(consolidatedData.values()).map(({ createdAt, btc, usoil, dxy, us10y }) => {
+			let us10Weight = 0.1
+			let btcWeight = 0.8
+			if (us10y > 4.8) {
+				us10Weight *= 2
+				btcWeight -= 0.1
+			}
+
+			return {
+				createdAt,
+				volume: parseFloat((btc * btcWeight - 0.05 * dxy - 0.05 * usoil - us10Weight * us10y).toFixed(2)),
+			}
+		})
 
 		return finalResult
 	}
