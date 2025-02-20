@@ -74,7 +74,11 @@ class MarketIndexService {
 			const mean = calculateMean(values)
 			const stdDev = calculateStdDev(values, mean)
 			const diff = currentValue - mean
+
 			if (diff == 0) return 0
+			const epsilon = 1e-6
+			if (Math.abs(stdDev) < epsilon) return 0
+
 			const standardizedValue = diff / stdDev
 			return parseFloat(standardizedValue.toFixed(2))
 		}
