@@ -24,16 +24,31 @@ class CompanyNewsController {
 		}
 	}
 
-	async getAll (req: Request, res: Response, next: NextFunction): Promise<void>{
+	async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
-			const page = Math.max(parseInt(req.query.page as string, 10) || 1, 1);
-			const size = Math.max(parseInt(req.query.size as string, 10) || 10, 1);
+			const page = Math.max(parseInt(req.query.page as string, 10) || 1, 1)
+			const size = Math.max(parseInt(req.query.size as string, 10) || 10, 1)
 
 			if (page <= 0 || size <= 0) {
 				throw new ClientError(`Invalid request parameters! Page: ${page}, Size: ${size}`)
 			}
 			const news = await companyNewsService.getAll(page, size)
-			res.status(200).json(news);
+			res.status(200).json(news)
+		} catch (error) {
+			next(error)
+		}
+	}
+	async searchByKeyword(req: Request, res: Response, next: NextFunction): Promise<void> {
+		try {
+			const page = Math.max(parseInt(req.query.page as string, 10) || 1, 1)
+			const size = Math.max(parseInt(req.query.size as string, 10) || 10, 1)
+			const keyword = req.query.keyword as string
+
+			if (page <= 0 || size <= 0) {
+				throw new ClientError(`Invalid request parameters! Page: ${page}, Size: ${size}`)
+			}
+			const news = await companyNewsService.searchByKeyword({ page, size, keyword })
+			res.status(200).json(news)
 		} catch (error) {
 			next(error)
 		}

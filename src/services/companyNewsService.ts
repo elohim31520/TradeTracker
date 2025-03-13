@@ -1,5 +1,6 @@
 const db = require('../../models')
 const _ = require('lodash')
+import { Op } from 'sequelize'
 
 interface CompanyNewsAttributes {
 	title: string
@@ -9,6 +10,12 @@ interface CompanyNewsAttributes {
 	web_url?: string
 	company_id?: number
 	companyName?: string
+}
+
+interface searchParams {
+	page: number
+	size: number
+	keyword: string
 }
 
 class companyNewsService {
@@ -60,7 +67,42 @@ class companyNewsService {
 						model: db.Company,
 						as: 'Company',
 						attributes: ['name'],
-						require: false,
+						required: false,
+					},
+				],
+				raw: true,
+			})
+
+			return news.map((vo: any) => {
+				const { 'Company.name': companyName, ...rest } = vo
+				return {
+					...rest,
+					companyName,
+				}
+			})
+		} catch (error: any) {
+			throw new Error(error)
+		}
+	}
+
+	async searchByKeyword({ page, size, keyword }: searchParams): Promise<CompanyNewsAttributes[]> {
+		try {
+			const offset = (page - 1) * size
+			const news = await db.CompanyNews.findAll({
+				limit: size,
+				offset,
+				order: [['createdAt', 'DESC']],
+				where: {
+					title: {
+						[Op.like]: `%${keyword}%`,
+					},
+				},
+				include: [
+					{
+						model: db.Company,
+						as: 'Company',
+						attributes: ['name'],
+						required: false,
 					},
 				],
 				raw: true,

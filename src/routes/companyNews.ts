@@ -9,5 +9,6 @@ const router = express.Router()
 router.post('/bulk', verifyToken, validate(bulkCreateSchema), companyNewsController.bulkCreate)
 router.post('/', verifyToken, validate(createSchema), companyNewsController.create)
 router.get('/', companyNewsController.getAll)
+router.get('/query', verifyToken, companyNewsController.searchByKeyword)
 
 module.exports = router
