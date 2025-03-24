@@ -49,17 +49,6 @@ function getMonthList() {
 	return months
 }
 
-function calculateMean(values) {
-	const sum = values.reduce((acc, val) => acc + val, 0)
-	return sum / values.length
-}
-
-function calculateStdDev(values, mean) {
-	const squaredDiffs = values.map((val) => (val - mean) ** 2)
-	const avgSquaredDiff = calculateMean(squaredDiffs)
-	return Math.sqrt(avgSquaredDiff)
-}
-
 function parseChineseDate(dateString) {
 	const regex = /(\d{4}) 年 (\d{1,2}) 月 (\d{1,2}) 日/
 	const match = dateString.match(regex)
@@ -80,7 +69,5 @@ module.exports = {
 	generateRandomID,
 	zhTimeToStandardTime,
 	getMonthList,
-	calculateMean,
-	calculateStdDev,
 	parseChineseDate
 }

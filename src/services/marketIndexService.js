@@ -1,5 +1,5 @@
 const db = require('../../models')
-const { calculateMean, calculateStdDev } = require('../js/util')
+const { calculateMean, calculateStdDev, calculateCorrelation } = require('../js/math')
 const Sequelize = require('sequelize')
 const dayjs = require('dayjs')
 
@@ -106,17 +106,35 @@ class MarketIndexService {
 		addDataToMap(dxy_standardized, KEY_MAP[DXY])
 		addDataToMap(us10y_standardized, KEY_MAP[US10Y])
 
+		const btcVolumes = btc_standardized.map((item) => item.volume)
+		const dxyVolumes = dxy_standardized.map((item) => item.volume)
+		const usoilVolumes = usoil_standardized.map((item) => item.volume)
+		const us10yVolumes = us10y_standardized.map((item) => item.volume)
+
+		// 動態權重
+		const baseWeight = 0.1
+		const btcWeight = Math.max(
+			0.6,
+			0.8 + baseWeight * calculateCorrelation(btcVolumes.slice(-MOVING_AVERAGE), btcVolumes.slice(-MOVING_AVERAGE))
+		)
+		const dxyWeight =
+			baseWeight * calculateCorrelation(btcVolumes.slice(-MOVING_AVERAGE), dxyVolumes.slice(-MOVING_AVERAGE))
+		const usoilWeight =
+			baseWeight * calculateCorrelation(btcVolumes.slice(-MOVING_AVERAGE), usoilVolumes.slice(-MOVING_AVERAGE))
+		let us10Weight =
+			baseWeight *
+			Math.abs(calculateCorrelation(btcVolumes.slice(-MOVING_AVERAGE), us10yVolumes.slice(-MOVING_AVERAGE)))
+
+		console.log(`權重 btc: ${btcWeight}, dxy: ${dxyWeight}, usoil: ${usoilWeight}, us10y: ${us10Weight}`)
+
 		const finalResult = Array.from(consolidatedData.values()).map(({ createdAt, btc, usoil, dxy, us10y }) => {
-			let us10Weight = 0.1
-			let btcWeight = 0.8
-			if (us10y > 4.8) {
-				us10Weight *= 2
-				btcWeight -= 0.1
-			}
+			// 高利率情景
+			if (us10y > 2) us10Weight *= 1.5
+			const volume = btc * btcWeight + dxyWeight * dxy + usoilWeight * usoil + us10Weight * us10y
 
 			return {
 				createdAt,
-				volume: parseFloat((btc * btcWeight - 0.05 * dxy - 0.05 * usoil - us10Weight * us10y).toFixed(2)),
+				volume: parseFloat(volume.toFixed(2)),
 			}
 		})
 
