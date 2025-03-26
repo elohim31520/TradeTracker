@@ -46,6 +46,15 @@ class MarketIndexController {
 			next(error)
 		}
 	}
+
+	async getWeights (req, res, next) {
+		try {
+			const data = await marketIndexService.getWeights()
+			res.json(data)
+		} catch (error) {
+			next(error)
+		}
+	}
 }
 
 module.exports = new MarketIndexController()

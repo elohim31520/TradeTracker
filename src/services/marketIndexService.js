@@ -8,6 +8,7 @@ const BTCUSD = 'BTCUSD'
 const USOIL = 'USOIL'
 const DXY = 'DXY'
 const US10Y = 'US10Y'
+const XAUUSD = 'XAUUSD'
 
 const KEY_MAP = {
 	BTCUSD: 'btc',
@@ -194,6 +195,31 @@ class MarketIndexService {
 	async getAllMomentum() {
 		const data = await this.getGroupedDataByTime()
 		return this.getMomentumData(data)
+	}
+
+	async getWeights() {
+		const data = await this.getByDateRange(MOVING_AVERAGE)
+		const getPrices = (symbol) => data.filter((d) => d.symbol === symbol).map((d) => d.price)
+
+		const prices = {
+			[BTCUSD]: getPrices(BTCUSD),
+			[DXY]: getPrices(DXY),
+			[USOIL]: getPrices(USOIL),
+			[US10Y]: getPrices(US10Y),
+			[XAUUSD]: getPrices(XAUUSD),
+		}
+
+		const btcSlice = prices.BTCUSD.slice(-MOVING_AVERAGE)
+		const baseWeight = 0.1
+		const getCorrelation = (values, values2) => baseWeight * calculateCorrelation(values, values2)
+
+		return {
+			[BTCUSD]: Number(Math.max(0.6, 0.8 + getCorrelation(btcSlice, btcSlice)).toFixed(3)),
+			[DXY]: Number(getCorrelation(btcSlice, prices.DXY.slice(-MOVING_AVERAGE)).toFixed(3)),
+			[USOIL]: Number(getCorrelation(btcSlice, prices.USOIL.slice(-MOVING_AVERAGE)).toFixed(3)),
+			[US10Y]: Number(getCorrelation(btcSlice, prices.US10Y.slice(-MOVING_AVERAGE)).toFixed(3)),
+			[XAUUSD]: Number(getCorrelation(btcSlice, prices.XAUUSD.slice(-MOVING_AVERAGE)).toFixed(3)),
+		}
 	}
 }
 
