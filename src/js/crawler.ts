@@ -212,6 +212,7 @@ async function fetchMarketIndex(): Promise<void> {
 	const url = process.env.MARKET_URL
 	const USOIL = 'USOIL'
 	const US10Y = 'US10Y'
+	const XAUUSD = 'XAUUSD'
 
 	if (!url) {
 		logger.error('MARKET_URL environment variable is not defined.')
@@ -243,7 +244,7 @@ async function fetchMarketIndex(): Promise<void> {
 			}
 		}
 
-		const symbols: string[] = ['BTCUSD', 'DXY', USOIL, US10Y]
+		const symbols: string[] = ['BTCUSD', 'DXY', USOIL, US10Y, XAUUSD]
 		for (const symbol of symbols) {
 			const param = getParams(symbol)
 			const lastOne = await marketIndexService.getLstOne(symbol)
