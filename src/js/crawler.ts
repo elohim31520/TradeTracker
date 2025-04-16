@@ -337,9 +337,95 @@ function fetchCMNews(): void {
 	})
 }
 
+interface StockPriceData {
+	company: string
+	price: number
+	dayChg: string
+	yearChg: string
+	MCap: string
+	date: Date
+}
+
+async function fetchStockPrices(): Promise<void> {
+	try {
+		const res = await db.StockPrice.findOne({
+			attributes: ['createdAt'],
+			order: [['createdAt', 'DESC']],
+			limit: 1,
+		})
+
+		let canGet = false
+		if (!res) {
+			logger.warn('No StockPrices found in  table')
+			canGet = true
+		} else {
+			const lastCreatedTime = res.createdAt
+			canGet = dayjs().isAfter(dayjs(lastCreatedTime).add(24, 'hour'))
+		}
+
+		if (!canGet) {
+			logger.info('Skipping fetch: Data fetched within last 24 hours.')
+			return
+		}
+
+		const url: string = process.env.STOCK_PRICES_URL || ''
+		console.log('request url:', url)
+		const resp = await axios.get(url, { headers: marketIndexHeaders, responseType: 'arraybuffer' })
+		const htmlContent = iconv.decode(resp.data, 'utf-8')
+		const $ = cheerio.load(htmlContent)
+
+		const componentsTable = $('.table-minimize').eq(1).find('table')
+
+		const stockPrices: StockPriceData[] = []
+
+		componentsTable.find('tbody tr').each((_, row) => {
+			const $row = $(row)
+
+			const company = $row.find('td').eq(0).text().trim()
+			const priceText = $row.find('td#p').text().trim().replace(/,/g, '')
+			const dayChg = $row.find('td#pch').text().trim()
+			const yearChg = $row.find('td').eq(5).text().trim()
+			const MCap = $row.find('td').eq(6).text().trim()
+			const dateText = $row.find('td#date').text().trim()
+
+			const price = parseFloat(priceText)
+			if (isNaN(price)) {
+				logger.warn(`Invalid price for ${company}: ${priceText}`)
+				return
+			}
+
+			const currentYear = new Date().getFullYear()
+			const date = dayjs(`${dateText}/${currentYear}`, 'MMM/DD/YYYY').toDate()
+			if (!dayjs(date).isValid()) {
+				logger.warn(`Invalid date for ${company}: ${dateText}`)
+				return
+			}
+
+			stockPrices.push({
+				company,
+				price,
+				dayChg,
+				yearChg,
+				MCap,
+				date,
+			})
+		})
+
+		if (stockPrices.length > 0) {
+			await db.StockPrice.bulkCreate(stockPrices)
+			logger.info(`Successfully saved ${stockPrices.length} stock price records.`)
+		} else {
+			logger.warn('No stock price data extracted.')
+		}
+	} catch (e: any) {
+		logger.error(`Error fetching stock prices: ${(e as Error).message}`)
+	}
+}
+
 module.exports = {
 	fetchTnews,
 	fetchStatements,
 	fetchMarketIndex,
 	fetchCMNews,
+	fetchStockPrices,
 }

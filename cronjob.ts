@@ -1,6 +1,6 @@
 import { CronJob as CronJobClass } from 'cron'
 const CronJob = require('cron').CronJob
-const { fetchTnews, fetchStatements, fetchMarketIndex, fetchCMNews } = require('./src/js/crawler')
+const { fetchTnews, fetchStatements, fetchMarketIndex, fetchStockPrices } = require('./src/js/crawler')
 
 // 定义参数类型
 interface CronJobConfig {
@@ -31,7 +31,7 @@ createCronJob({
 	mission: fetchMarketIndex,
 })
 
-// createCronJob({
-// 	schedule: '48 11-18/3 * * *',
-// 	mission: fetchCMNews,
-// })
+createCronJob({
+	schedule: '0 * * * *',
+	mission: fetchStockPrices,
+})
