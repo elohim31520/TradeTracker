@@ -221,6 +221,30 @@ class MarketIndexService {
 			[XAUUSD]: Number(getCorrelation(btcSlice, prices.XAUUSD.slice(-MOVING_AVERAGE)).toFixed(3)),
 		}
 	}
+
+	async getStockPrices() {
+		try {
+			const latestPrices = await db.StockPrice.findAll({
+				attributes: ['company', 'price', 'MCap', 'date', 'createdAt'],
+				where: {
+					id: {
+						[Sequelize.Op.in]: Sequelize.literal(`
+							(SELECT id
+								FROM StockPrices
+									WHERE (company, createdAt) IN (
+									SELECT company, MAX(createdAt)
+									FROM StockPrices
+									GROUP BY company
+							))
+						`),
+					},
+				},
+			})
+			return latestPrices
+		} catch (error) {
+			throw error
+		}
+	}
 }
 
 module.exports = new MarketIndexService()

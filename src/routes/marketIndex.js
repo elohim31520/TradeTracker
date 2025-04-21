@@ -8,5 +8,7 @@ router.get('/momentum', verifyToken, marketIndexController.getMomentum)
 router.get('/last/:symbol', marketIndexController.getLstOne)
 router.get('/momentum/range/:days', verifyToken, marketIndexController.getMarketIndicesByDays)
 router.get('/weights', verifyToken, marketIndexController.getWeights)
+router.get('/stock/prices', verifyToken, marketIndexController.getStockPrices)
+
 
 module.exports = router
