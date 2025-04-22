@@ -344,6 +344,7 @@ interface StockPriceData {
 	yearChg: string
 	MCap: string
 	date: Date
+	symbol?: string
 }
 
 async function fetchStockPrices(): Promise<void> {
@@ -368,6 +369,8 @@ async function fetchStockPrices(): Promise<void> {
 			return
 		}
 
+		const symbols = await await db.Company.findAll()
+
 		const url: string = process.env.STOCK_PRICES_URL || ''
 		console.log('request url:', url)
 		const resp = await axios.get(url, { headers: marketIndexHeaders, responseType: 'arraybuffer' })
@@ -387,6 +390,9 @@ async function fetchStockPrices(): Promise<void> {
 			const yearChg = $row.find('td').eq(5).text().trim()
 			const MCap = $row.find('td').eq(6).text().trim()
 			const dateText = $row.find('td#date').text().trim()
+
+			const regex = new RegExp(company, 'i')
+			const symbol = symbols.find((vo: any) => regex.test(vo.name))?.symbol
 
 			const price = parseFloat(priceText)
 			if (isNaN(price)) {
@@ -408,6 +414,7 @@ async function fetchStockPrices(): Promise<void> {
 				yearChg,
 				MCap,
 				date,
+				symbol,
 			})
 		})
 
