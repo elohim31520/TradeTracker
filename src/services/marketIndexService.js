@@ -225,7 +225,7 @@ class MarketIndexService {
 	async getStockPrices() {
 		try {
 			const latestPrices = await db.StockPrice.findAll({
-				attributes: ['company', 'price', 'MCap', 'date', 'createdAt'],
+				attributes: ['company', 'symbol', 'price', 'MCap', 'date', 'createdAt'],
 				where: {
 					id: {
 						[Sequelize.Op.in]: Sequelize.literal(`
@@ -246,7 +246,7 @@ class MarketIndexService {
 		}
 	}
 
-	async getStockSymbol (){
+	async getStockSymbol() {
 		try {
 			const symbols = await db.Company.findAll({
 				attributes: ['symbol', 'name'],
