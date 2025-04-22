@@ -8,14 +8,14 @@
         "build": "tsc",
         "start": "node dist/index.js",
         "dev": "ts-node app.ts",
-		"crawl": "ts-node cronJob.ts"
+        "crawl": "ts-node cronJob.ts"
     },
     "keywords": [],
     "author": "",
     "license": "ISC",
     "dependencies": {
         "axios": "^0.27.2",
-        "cheerio": "^1.0.0-rc.12",
+        "cheerio": "^1.0.0",
         "cors": "^2.8.5",
         "cron": "^2.4.4",
         "crypto-js": "^4.1.1",
@@ -42,6 +42,7 @@
         "@types/cors": "^2.8.17",
         "@types/cron": "^2.4.0",
         "@types/express": "^4.17.21",
+        "@types/lodash": "^4.17.16",
         "@types/node": "^22.1.0",
         "nodemon": "^2.0.16",
         "sequelize-cli": "^6.6.2",
