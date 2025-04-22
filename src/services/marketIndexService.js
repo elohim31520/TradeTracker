@@ -2,13 +2,7 @@ const db = require('../../models')
 const { calculateMean, calculateStdDev, calculateCorrelation } = require('../js/math')
 const Sequelize = require('sequelize')
 const dayjs = require('dayjs')
-
-const MOVING_AVERAGE = 10
-const BTCUSD = 'BTCUSD'
-const USOIL = 'USOIL'
-const DXY = 'DXY'
-const US10Y = 'US10Y'
-const XAUUSD = 'XAUUSD'
+const { MOVING_AVERAGE, BTCUSD, USOIL, DXY, US10Y, XAUUSD } = require('../constant/market')
 
 const KEY_MAP = {
 	BTCUSD: 'btc',

@@ -7,6 +7,7 @@ const dayjs = require('dayjs')
 
 const { Sp500Fetcher } = require('./financialDataFetcher')
 const { SYMBOLS, tcHeader, marketIndexHeaders, CM_Headers } = require('./config')
+const { BTCUSD, USOIL, DXY, US10Y, XAUUSD } = require('../constant/market')
 
 import Schedule from './schedule'
 
@@ -210,9 +211,6 @@ interface MarketIndexParams {
 
 async function fetchMarketIndex(): Promise<void> {
 	const url = process.env.MARKET_URL
-	const USOIL = 'USOIL'
-	const US10Y = 'US10Y'
-	const XAUUSD = 'XAUUSD'
 
 	if (!url) {
 		logger.error('MARKET_URL environment variable is not defined.')
@@ -244,7 +242,7 @@ async function fetchMarketIndex(): Promise<void> {
 			}
 		}
 
-		const symbols: string[] = ['BTCUSD', 'DXY', USOIL, US10Y, XAUUSD]
+		const symbols: string[] = [BTCUSD, DXY, USOIL, US10Y, XAUUSD]
 		for (const symbol of symbols) {
 			const param = getParams(symbol)
 			const lastOne = await marketIndexService.getLstOne(symbol)
