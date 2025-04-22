@@ -1,6 +1,6 @@
 import { CronJob as CronJobClass } from 'cron'
 const CronJob = require('cron').CronJob
-const { fetchTnews, fetchStatements, fetchMarketIndex, fetchStockPrices } = require('./src/js/crawler')
+const { migrateTechNews, fetchTnews, fetchStatements, fetchMarketIndex, fetchStockPrices } = require('./src/js/crawler')
 
 // 定义参数类型
 interface CronJobConfig {

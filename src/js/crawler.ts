@@ -430,10 +430,75 @@ async function fetchStockPrices(): Promise<void> {
 	}
 }
 
+async function migrateTechNews(filePath: string) {
+	const fs = require('fs')
+	try {
+		let rawData: Buffer
+		try {
+			rawData = fs.readFileSync(filePath)
+		} catch (error) {
+			throw new Error(`Failed to read file ${filePath}: ${(error as Error).message}`)
+		}
+
+		interface News {
+			id?: number
+			title: string
+			web_url: string
+			release_time: string
+			publisher: string
+			createdAt: Date
+			updatedAt: Date
+		}
+
+		let news: News[]
+		try {
+			news = JSON.parse(rawData.toString())
+			if (!Array.isArray(news)) {
+				throw new Error('JSON data is not an array')
+			}
+		} catch (error) {
+			throw new Error(`Failed to parse JSON: ${(error as Error).message}`)
+		}
+
+		const results = await Promise.all(
+			news.map(async (vo, index) => {
+				try {
+					const parsedDate = dayjs.utc(vo.release_time, 'YYYY-MM-DD HH:mm')
+					if (!parsedDate.isValid()) {
+						throw new Error(`Invalid date format for release_time: ${vo.release_time}`)
+					}
+					const release_time = parsedDate.toISOString()
+
+					const { id, ...restOfVo } = vo
+					await db.tech_investment_news.create({ ...restOfVo, release_time })
+
+					return { status: 'success', data: vo }
+				} catch (error) {
+					logger.warn(`Error processing item at index ${index}: ${(error as Error).message}`, {
+						item: vo,
+					})
+					return { status: 'failed', data: vo, error: (error as Error).message }
+				}
+			})
+		)
+
+		const successCount = results.filter((r) => r.status === 'success').length
+		const failedCount = results.length - successCount
+
+		logger.info(`Migration completed: ${successCount} succeeded, ${failedCount} failed`)
+
+		return { successCount, failedCount, failedItems: results.filter((r) => r.status === 'failed') }
+	} catch (error) {
+		logger.error(`Migration failed: ${(error as Error).message}`)
+		throw error
+	}
+}
+
 module.exports = {
 	fetchTnews,
 	fetchStatements,
 	fetchMarketIndex,
 	fetchCMNews,
 	fetchStockPrices,
+	migrateTechNews,
 }
