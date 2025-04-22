@@ -3,7 +3,6 @@ const router = express.Router()
 
 const { verifyToken } = require('../middleware/auth')
 const Users = require('../../models/users')
-const TechNews = require('../../models/techNews')
 const { successResponse } = require('../js/config')
 const logger = require('../logger.js')
 const _get = require('lodash/get')
@@ -63,7 +62,7 @@ router.get('/technews', verifyToken, async (req, res) => {
 			attributes: ['id'],
 			include: [
 				{
-					model: TechNews,
+					model: db.tech_investment_news,
 					attributes: ['id', 'title', 'release_time', 'publisher', 'web_url'],
 					through: {
 						model: db.pk_user_technews,
@@ -74,7 +73,7 @@ router.get('/technews', verifyToken, async (req, res) => {
 			],
 		})
 		let resData = successResponse
-		resData.data = result.dataValues.TechNews
+		resData.data = result.dataValues.tech_investment_news
 		res.json(resData)
 	} catch (e) {
 		logger.error(e.message)

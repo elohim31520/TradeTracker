@@ -1,6 +1,5 @@
 'use strict';
 const { Model } = require('sequelize');
-const TechNews = require('./techNews')
 
 module.exports = (sequelize, DataTypes) => {
 	class Users extends Model {
@@ -10,8 +9,8 @@ module.exports = (sequelize, DataTypes) => {
 		 * The `models/index` file will call this method automatically.
 		 */
 		static associate(models) {
-			models.Users.belongsToMany(TechNews, { through: models.pk_user_technews, foreignKey: 'userId' });
-			TechNews.belongsToMany(models.Users, { through: models.pk_user_technews, foreignKey: 'newsId' });
+			models.Users.belongsToMany(models.tech_investment_news, { through: models.pk_user_technews, foreignKey: 'userId' });
+			models.tech_investment_news.belongsToMany(models.Users, { through: models.pk_user_technews, foreignKey: 'newsId' });
 		}
 	}
 	Users.init({

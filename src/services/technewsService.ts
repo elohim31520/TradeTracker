@@ -1,5 +1,5 @@
-const TechNews = require('../../models/techNews')
 import { Op } from 'sequelize'
+const db = require('../../models')
 
 interface techNewsAttributes {
 	id: number
@@ -13,12 +13,12 @@ interface techNewsAttributes {
 
 class TechnewsService {
 	async getById(id: number): Promise<techNewsAttributes | null> {
-		return TechNews.findByPk(id)
+		return db.tech_investment_news.findByPk(id)
 	}
 
 	async getAll(page: number, size: number): Promise<techNewsAttributes[]> {
 		const offset = (page - 1) * size
-		return TechNews.findAll({
+		return db.tech_investment_news.findAll({
 			limit: size,
 			offset,
 			order: [['createdAt', 'DESC']],
@@ -26,7 +26,7 @@ class TechnewsService {
 	}
 
 	async searchByKeyword(keyword: string): Promise<techNewsAttributes[] | null> {
-		return TechNews.findAll({
+		return db.tech_investment_news.findAll({
 			where: {
 				title: {
 					[Op.like]: `%${keyword}%`,

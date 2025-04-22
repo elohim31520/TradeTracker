@@ -23,7 +23,6 @@ fs
 			![
 				'index.js',
 				'statements.js',
-				'techNews.js',
 			].includes(file) &&
 			file.indexOf('.') !== 0 &&
 			file !== basename &&

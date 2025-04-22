@@ -16,7 +16,6 @@ const util = require('./util')
 const marketIndexService = require('../services/marketIndexService')
 
 const db = require('../../models')
-const TechNews = require('../../models/techNews')
 
 interface Article {
 	title: string
@@ -74,7 +73,6 @@ function fetchTnews(): void {
 					const release_time = dayjs(parsedDate).toISOString()
 
 					await db.tech_investment_news.create({ ...vo, release_time })
-					await TechNews.create(vo)
 				} catch (e: any) {
 					console.warn((e as Error).message)
 				}
@@ -319,7 +317,6 @@ function fetchCMNews(): void {
 					const release_time = dayjs(parsedDate).toISOString()
 
 					await db.tech_investment_news.create({ ...vo, release_time })
-					await TechNews.create(vo)
 				} catch (e: any) {
 					console.warn((e as Error).message)
 				}
