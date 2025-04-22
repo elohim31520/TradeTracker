@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from 'axios'
 import iconv from 'iconv-lite'
-import cheerio from 'cheerio'
+const cheerio = require('cheerio')
 import { get, isArray } from 'lodash'
 const https = require('https')
 const dayjs = require('dayjs')
@@ -29,7 +29,7 @@ function extractDataFromTechNewsHtml(html: string): Article[] {
 	const $ = cheerio.load(html)
 	const arr: Article[] = []
 
-	$('table').each((index, element) => {
+	$('table').each((index: number, element: cheerio.Element) => {
 		let title = $(element).find('.maintitle h1.entry-title a').text()
 		let web_url = $(element).find('.maintitle h1.entry-title a').attr('href') || ''
 		let release_time = $(element).find('.head:contains("發布日期")').next().text()
@@ -145,7 +145,7 @@ async function fetchStatements(): Promise<void> {
 				const targetTable = $('.row .col-lg-7 .table')
 				const tdObject: { [key: string]: string } = {}
 
-				targetTable.find('tbody tr').each((index, element) => {
+				targetTable.find('tbody tr').each((index: number, element: cheerio.Element) => {
 					const tds = $(element).find('td')
 
 					const key1 = $(tds[0]).text().trim()
@@ -266,7 +266,7 @@ function extractCMData(data: string): Article[] {
 	const $ = cheerio.load(data)
 	const articles: Article[] = []
 
-	$('article').each((index, element) => {
+	$('article').each((index: number, element: cheerio.Element) => {
 		const html = $(element)
 		const title = html.find('.read-title a').text().trim()
 		const publisher = html.find('.author-links .posts-author a').text().trim()
@@ -382,7 +382,7 @@ async function fetchStockPrices(): Promise<void> {
 
 		const stockPrices: StockPriceData[] = []
 
-		componentsTable.find('tbody tr').each((_, row) => {
+		componentsTable.find('tbody tr').each((_: any, row: cheerio.Element) => {
 			const $row = $(row)
 
 			const company = $row.find('td').eq(0).text().trim()
