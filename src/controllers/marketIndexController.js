@@ -64,6 +64,15 @@ class MarketIndexController {
 			next(error)
 		}
 	}
+
+	async getStockSymbol  (req, res, next) {
+		try {
+			const data = await marketIndexService.getStockSymbol()
+			res.json(data)
+		} catch (error) {
+			next(error)
+		}
+	}
 }
 
 module.exports = new MarketIndexController()

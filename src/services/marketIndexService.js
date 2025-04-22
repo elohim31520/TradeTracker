@@ -245,6 +245,17 @@ class MarketIndexService {
 			throw error
 		}
 	}
+
+	async getStockSymbol (){
+		try {
+			const symbols = await db.Company.findAll({
+				attributes: ['symbol', 'name'],
+			})
+			return symbols
+		} catch (error) {
+			throw error
+		}
+	}
 }
 
 module.exports = new MarketIndexService()
