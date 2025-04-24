@@ -3,25 +3,6 @@ const fs = require('fs')
 
 const dbDir = path.join(__dirname, `../DB/`)
 
-function getStockSymbol() {
-	let file = path.join(__dirname, `../../symbol.json`)
-	let obj = JSON.parse(fs.readFileSync(file))
-	let symbols = obj.symbols
-	let arr = []
-	symbols.forEach((vo) => {
-		let sym = vo.split(':')
-		if (sym.length == 1) arr.push(sym[0])
-		else arr.push(sym[1])
-	})
-	return arr
-}
-
-/**
- * 配置
- */
-
-const stockSymbols = getStockSymbol()
-
 const tcHeader = {
 	'Accept':
 		'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
@@ -93,7 +74,6 @@ const CM_Headers = {
 
 module.exports = {
 	dbDir,
-	stockSymbols,
 	tcHeader,
 	fzHeader,
 	successResponse,
