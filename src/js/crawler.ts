@@ -4,6 +4,7 @@ const cheerio = require('cheerio')
 import { get, isArray } from 'lodash'
 const https = require('https')
 const dayjs = require('dayjs')
+require('dotenv').config()
 
 const { Sp500Fetcher } = require('./financialDataFetcher')
 const { tcHeader, marketIndexHeaders, CM_Headers } = require('./config')

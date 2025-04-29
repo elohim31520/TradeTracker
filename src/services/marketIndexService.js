@@ -253,19 +253,18 @@ class MarketIndexService {
 
 	async getMarketBreadth() {
 		try {
-			const today = dayjs().startOf('day')
-			const tomarrow = today.add(1, 'day')
+			const todayStart = dayjs().startOf('day').toDate()
+			const todayEnd = dayjs().endOf('day').toDate()
 			const stocks = await db.StockPrice.findAll({
 				where: {
-					date: {
-						[Sequelize.Op.gte]: today.toDate(),
-						[Sequelize.Op.lt]: tomarrow.toDate(),
+					createdAt: {
+						[Sequelize.Op.between]: [todayStart, todayEnd],
 					},
 				},
 			})
 
 			const totalStocks = stocks.length
-			if(!totalStocks) return 0
+			if (!totalStocks) return 0
 			const positiveStocks = stocks.filter((stock) => {
 				const dayChg = parseFloat(stock.dayChg.replace('%', ''))
 				return dayChg > 0
