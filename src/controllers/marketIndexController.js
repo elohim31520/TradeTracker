@@ -34,7 +34,7 @@ class MarketIndexController {
 		}
 	}
 
-	async getMarketIndicesByDays (req, res, next) {
+	async getMarketIndicesByDays(req, res, next) {
 		try {
 			const days = +_.get(req, 'params.days')
 			if (isNaN(days)) {
@@ -47,7 +47,7 @@ class MarketIndexController {
 		}
 	}
 
-	async getWeights (req, res, next) {
+	async getWeights(req, res, next) {
 		try {
 			const data = await marketIndexService.getWeights()
 			res.json(data)
@@ -56,7 +56,7 @@ class MarketIndexController {
 		}
 	}
 
-	async getStockPrices (req, res, next) {
+	async getStockPrices(req, res, next) {
 		try {
 			const data = await marketIndexService.getStockPrices()
 			res.json(data)
@@ -65,9 +65,18 @@ class MarketIndexController {
 		}
 	}
 
-	async getStockSymbol  (req, res, next) {
+	async getStockSymbol(req, res, next) {
 		try {
 			const data = await marketIndexService.getStockSymbol()
+			res.json(data)
+		} catch (error) {
+			next(error)
+		}
+	}
+
+	async getMarketBreadth(req, res, next) {
+		try {
+			const data = await marketIndexService.getMarketBreadth()
 			res.json(data)
 		} catch (error) {
 			next(error)

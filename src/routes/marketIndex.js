@@ -10,5 +10,6 @@ router.get('/momentum/range/:days', verifyToken, marketIndexController.getMarket
 router.get('/weights', verifyToken, marketIndexController.getWeights)
 router.get('/stock/prices', verifyToken, marketIndexController.getStockPrices)
 router.get('/stock/symbols', verifyToken, marketIndexController.getStockSymbol)
+router.get('/stock/breadth', verifyToken, marketIndexController.getMarketBreadth)
 
 module.exports = router
