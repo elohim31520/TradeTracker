@@ -124,7 +124,7 @@ class MarketIndexService {
 
 		const finalResult = Array.from(consolidatedData.values()).map(({ createdAt, btc, usoil, dxy, us10y }) => {
 			// 高利率情景
-			if (us10y > 2) us10Weight *= 1.5
+			if (us10y > 4.5) us10Weight *= 2
 			const volume = btc * btcWeight + dxyWeight * dxy + usoilWeight * usoil + us10Weight * us10y
 
 			return {

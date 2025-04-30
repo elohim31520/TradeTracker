@@ -349,18 +349,19 @@ interface StockPriceData {
 async function fetchStockPrices(): Promise<void> {
 	try {
 		const res = await db.StockPrice.findOne({
-			attributes: ['createdAt'],
-			order: [['createdAt', 'DESC']],
+			attributes: ['date'],
+			order: [['date', 'DESC']],
 			limit: 1,
 		})
 
 		let canGet = false
 		if (!res) {
-			logger.warn('No StockPrices found in  table')
+			logger.warn('No StockPrices found in table')
 			canGet = true
 		} else {
-			const lastCreatedTime = res.createdAt
-			canGet = dayjs().isAfter(dayjs(lastCreatedTime).add(24, 'hour'))
+			const lastDateTime = res.date
+			console.log('lastDateTime', lastDateTime);
+			canGet = dayjs().isAfter(dayjs(lastDateTime).add(24, 'hour'))
 		}
 
 		if (!canGet) {
@@ -371,7 +372,6 @@ async function fetchStockPrices(): Promise<void> {
 		const symbols = await await db.Company.findAll()
 
 		const url: string = process.env.STOCK_PRICES_URL || ''
-		console.log('request url:', url)
 		const resp = await axios.get(url, { headers: marketIndexHeaders, responseType: 'arraybuffer' })
 		const htmlContent = iconv.decode(resp.data, 'utf-8')
 		const $ = cheerio.load(htmlContent)
