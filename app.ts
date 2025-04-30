@@ -50,7 +50,7 @@ app.use('/transactions', require('./src/routes/transactions'))
 app.use('/users', require('./src/routes/user'))
 app.use('/subscribe', require('./src/routes/subscribe'))
 app.use('/statements', require('./src/routes/statements'))
-app.use('/marketindex', require('./src/routes/marketIndex'))
+app.use('/market', require('./src/routes/marketIndex'))
 app.use('/portfolio', require('./src/routes/portfolio'))
 
 app.listen(1234, () => {
