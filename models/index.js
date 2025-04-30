@@ -28,7 +28,6 @@ fs
 		return (
 			![
 				'index.js',
-				'statements.js',
 			].includes(file) &&
 			file.indexOf('.') !== 0 &&
 			file !== basename &&
