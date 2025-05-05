@@ -1,6 +1,7 @@
 const dayjs = require('dayjs')
 const utc = require('dayjs/plugin/utc')
 dayjs.extend(utc)
+const _ = require('lodash')
 
 function getTimeNow() {
 	return dayjs().format('YYYY-MM-DD HH_mm_ss')
@@ -61,6 +62,10 @@ function parseChineseDate(dateString) {
 	return null
 }
 
+function getUserNameFromReq(req) {
+	return _.get(req, 'decoded.user_name', '')
+}
+
 module.exports = {
 	getTimeNow,
 	FileNameToTime,
@@ -69,5 +74,6 @@ module.exports = {
 	generateRandomID,
 	zhTimeToStandardTime,
 	getMonthList,
-	parseChineseDate
+	parseChineseDate,
+	getUserNameFromReq
 }

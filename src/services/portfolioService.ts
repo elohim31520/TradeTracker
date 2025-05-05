@@ -14,7 +14,7 @@ class PortfolioService {
 		return db.Portfolio.findByPk(id)
 	}
 
-	async getByUserId(userName: string) {
+	async getAllByUserId(userName: string) {
 		const userId = await getUserIdByUsername(db, userName)
 		return db.Portfolio.findAll({
 			where: {

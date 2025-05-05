@@ -1,12 +1,13 @@
 import { Request, Response, NextFunction } from 'express'
 import portfolioService from '../services/portfolioService'
 import _ from 'lodash'
+const { getUserNameFromReq } = require('../js/util')
 
 class PorfolioController {
-	async getByUserId(req: Request, res: Response, next: NextFunction): Promise<void> {
+	async getAllByUserId(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
-			const userName: string = _.get(req, 'decoded.user_name', '')
-			const transactions = await portfolioService.getByUserId(userName)
+			const userName: string = getUserNameFromReq(req)
+			const transactions = await portfolioService.getAllByUserId(userName)
 			res.status(200).json(transactions)
 		} catch (error: any) {
 			next(error)
@@ -15,9 +16,9 @@ class PorfolioController {
 
 	async updatePortfolio(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
-			const user_name: string = _.get(req, 'decoded.user_name', '')
+			const userName: string = getUserNameFromReq(req)
 			const data = _.get(req, 'body', {})
-			await portfolioService.updateByUser(user_name, data)
+			await portfolioService.updateByUser(userName, data)
 			res.status(200).json({ success: true })
 		} catch (error: any) {
 			console.log(error)
