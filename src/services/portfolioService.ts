@@ -1,6 +1,7 @@
 import dayjs from 'dayjs'
 
 const db = require('../../models')
+const { getUserIdByUsername } = require('../js/dbUtils')
 
 interface updateParams {
 	stock_id?: string
@@ -13,7 +14,8 @@ class PortfolioService {
 		return db.Portfolio.findByPk(id)
 	}
 
-	async getByUserId(userId: number) {
+	async getByUserId(userName: string) {
+		const userId = await getUserIdByUsername(db, userName)
 		return db.Portfolio.findAll({
 			where: {
 				user_id: userId,
@@ -23,12 +25,7 @@ class PortfolioService {
 
 	async updateByUser(userName: string, data: updateParams): Promise<void> {
 		try {
-			const user = await db.Users.findOne({ where: { user_name: userName } })
-			if (!user) {
-				throw new Error(`User with username "${userName}" not found.`)
-			}
-
-			const userId = user.id
+			const userId = await getUserIdByUsername(db, userName)
 			const now = dayjs().format('YYYY-MM-DD HH:mm:ss')
 
 			const [affectedRows] = await db.Portfolio.update(
@@ -45,7 +42,7 @@ class PortfolioService {
 			)
 
 			if (affectedRows === 0) {
-				throw new Error(`Portfolio not found for userName ${userName} and stock_id ${data.stock_id}`);
+				throw new Error(`Portfolio not found for userName ${userName} and stock_id ${data.stock_id}`)
 			}
 
 			return
