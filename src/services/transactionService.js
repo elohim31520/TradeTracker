@@ -1,20 +1,26 @@
-const { Transaction } = require('../../models')
+const db = require('../../models')
+const { getUserIdByUsername } = require('../js/dbUtils')
 
 class TransactionService {
 	async create(data) {
-		return Transaction.create(data)
+		return db.Transaction.create(data)
 	}
 
-	async getAll() {
-		return Transaction.findAll()
+	async getAll(userName) {
+		const userId = await getUserIdByUsername(db, userName)
+		return db.Transaction.findAll({
+			where: {
+				user_id: userId,
+			},
+		})
 	}
 
 	async getById(id) {
-		return Transaction.findByPk(id)
+		return db.Transaction.findByPk(id)
 	}
 
 	async update(id, data) {
-		const transaction = await Transaction.findByPk(id)
+		const transaction = await db.Transaction.findByPk(id)
 		if (!transaction) {
 			throw new Error('Transaction not found')
 		}
@@ -22,7 +28,7 @@ class TransactionService {
 	}
 
 	async delete(id) {
-		const transaction = await Transaction.findByPk(id)
+		const transaction = await db.Transaction.findByPk(id)
 		if (!transaction) {
 			throw new Error('Transaction not found')
 		}
