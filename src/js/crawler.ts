@@ -112,10 +112,7 @@ async function fetchStatements(): Promise<void> {
 			limit: 1,
 		})
 
-		if (!res) {
-			logger.warn('No company statements found.')
-			return
-		}
+		if (!res) logger.warn('No company statements found.')
 
 		const lastCreatedTime = res.createdAt
 		const canGet = dayjs().isAfter(dayjs(lastCreatedTime).add(24, 'hour'))
@@ -124,10 +121,9 @@ async function fetchStatements(): Promise<void> {
 			return
 		}
 
-		const scheduleSec = new Schedule({ countdown: 8 })
-		const companyData = await db.Company.findAll({ raw: true })
+		const scheduleSec = new Schedule({ countdown: 6 })
+		const companyData = await db.Company.findAll({ raw: true, attributes: ['symbol'] })
 		const symbols = new Set(companyData.map((vo: any) => vo.symbol))
-
 		const myFetch = new Sp500Fetcher({ requestUrl: process.env.SP500_URL, stockSymbols: Array.from(symbols) })
 
 		scheduleSec.startInterval(async () => {
@@ -191,14 +187,14 @@ async function fetchStatements(): Promise<void> {
 			} catch (e: any) {
 				let httpStatus: number | undefined
 				if (e.response) httpStatus = e.response.status
-				logger.error(`Fetch sp500 statements失敗: ${e.message}`)
+				logger.error(`Fetch sp500 statements失敗: ${e.message} symbol: ${myFetch.getCurrentSymbol()}`)
 				myFetch.addErrorSymbol()
 				if (e.code == 999 || httpStatus == 403) {
 					scheduleSec.removeInterval()
 					logger.info(`---Request End---`)
 					return
 				}
-				myFetch.index++
+				myFetch.currentIndex++
 			}
 		})
 	} catch (e: any) {

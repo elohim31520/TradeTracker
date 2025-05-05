@@ -19,7 +19,7 @@ class BasicFetcher {
 		this.errorSymbols = []
 	}
 
-	protected getCurrentSymbol(): string {
+	getCurrentSymbol(): string {
 		return this.stockSymbols[this.currentIndex]
 	}
 
