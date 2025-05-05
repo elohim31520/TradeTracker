@@ -118,15 +118,17 @@ async function fetchStatements(): Promise<void> {
 		}
 
 		const lastCreatedTime = res.createdAt
-		const scheduleSec = new Schedule({ countdown: 8 })
-		const companyData = await db.Company.findAll()
+		const canGet = dayjs().isAfter(dayjs(lastCreatedTime).add(24, 'hour'))
+		if (!canGet) {
+			logger.warn('Skipping fetch Sp500 Statements: Data fetched within last 24 hours.')
+			return
+		}
 
+		const scheduleSec = new Schedule({ countdown: 8 })
+		const companyData = await db.Company.findAll({ raw: true })
 		const symbols = new Set(companyData.map((vo: any) => vo.symbol))
 
-		const myFetch = new Sp500Fetcher({ requestUrl: process.env.SP500_URL, stockSymbols: symbols })
-
-		const canGet = dayjs().isAfter(dayjs(lastCreatedTime).add(24, 'hour'))
-		if (!canGet) return
+		const myFetch = new Sp500Fetcher({ requestUrl: process.env.SP500_URL, stockSymbols: Array.from(symbols) })
 
 		scheduleSec.startInterval(async () => {
 			try {
@@ -360,7 +362,7 @@ async function fetchStockPrices(): Promise<void> {
 			canGet = true
 		} else {
 			const lastDateTime = res.date
-			console.log('lastDateTime', lastDateTime);
+			console.log('lastDateTime', lastDateTime)
 			canGet = dayjs().isAfter(dayjs(lastDateTime).add(24, 'hour'))
 		}
 
