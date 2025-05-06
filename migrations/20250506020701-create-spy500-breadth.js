@@ -3,7 +3,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
 	async up(queryInterface, Sequelize) {
-		await queryInterface.createTable('spy500_breadths', {
+		await queryInterface.createTable('spy500_breadth', {
 			id: {
 				allowNull: false,
 				autoIncrement: true,
@@ -16,7 +16,7 @@ module.exports = {
 				unique: true,
 			},
 			breath: {
-				type: Sequelize.INTEGER,
+				type: Sequelize.DOUBLE,
 			},
 			advancingIssues: {
 				type: Sequelize.INTEGER,
@@ -38,6 +38,6 @@ module.exports = {
 		})
 	},
 	async down(queryInterface, Sequelize) {
-		await queryInterface.dropTable('spy500_breadths')
+		await queryInterface.dropTable('spy500_breadth')
 	},
 }

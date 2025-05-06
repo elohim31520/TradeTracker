@@ -281,59 +281,6 @@ function extractCMData(data: string): Article[] {
 	return articles
 }
 
-function fetchCMNews(): void {
-	const scheduleSec = new Schedule({ countdown: 10 })
-	let initialPage = 5
-	let url: string = `${process.env.CM_NEWS_URL}page/${initialPage}/`
-
-	if (!url) {
-		logger.error('CM_NEWS_URL environment variable is not defined.')
-		return
-	}
-
-	const agent = new https.Agent({ rejectUnauthorized: false })
-
-	scheduleSec.startInterval(async () => {
-		if (initialPage <= 0) {
-			scheduleSec.removeInterval()
-			logger.info('---request CM News End---')
-			return
-		}
-
-		try {
-			const res = await axios.get(url, { headers: CM_Headers, httpsAgent: agent })
-			const data = get(res, 'data', {})
-			let arr = extractCMData(data)
-
-			if (!isArray(arr) || !arr.length) {
-				logger.error('extract Nothing From Tech, HTML解析錯誤？')
-				return
-			}
-
-			for (const vo of arr) {
-				try {
-					const parsedDate = util.parseChineseDate(vo.release_time)
-					const release_time = dayjs(parsedDate).toISOString()
-
-					await db.tech_investment_news.create({ ...vo, release_time })
-				} catch (e: any) {
-					console.warn((e as Error).message)
-				}
-			}
-		} catch (e: any) {
-			console.error((e as Error).message)
-		}
-
-		if (initialPage > 2) {
-			initialPage -= 1
-			url = `${process.env.CM_NEWS_URL}page/${initialPage}/`
-		} else if (initialPage <= 2) {
-			initialPage -= 1
-			url = process.env.CM_NEWS_URL || ''
-		}
-	})
-}
-
 interface StockPriceData {
 	company: string
 	price: number
@@ -417,6 +364,28 @@ async function fetchStockPrices(): Promise<void> {
 
 		if (stockPrices.length > 0) {
 			await db.StockPrice.bulkCreate(stockPrices)
+			const date = stockPrices[0]?.date
+			let advancingIssues = 0
+			let decliningIssues = 0
+			let unChangedIssues = 0
+			stockPrices.forEach((vo) => {
+				const chg = parseFloat(vo.dayChg.replace('%', '')) || 0
+				if (chg > 0) {
+					advancingIssues += 1
+				} else if (chg === 0) {
+					unChangedIssues += 1
+				} else {
+					decliningIssues += 1
+				}
+			})
+			const breath =  advancingIssues / stockPrices.length
+			await db.Spy500Breadth.create({
+				date,
+				breath,
+				advancingIssues,
+				decliningIssues,
+				unChangedIssues,
+			})
 			logger.info(`Successfully saved ${stockPrices.length} stock price records.`)
 		} else {
 			logger.warn('No stock price data extracted.')
@@ -494,7 +463,6 @@ module.exports = {
 	fetchTnews,
 	fetchStatements,
 	fetchMarketIndex,
-	fetchCMNews,
 	fetchStockPrices,
 	migrateTechNews,
 }

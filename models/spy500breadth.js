@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
 				allowNull: false,
 				unique: true,
 			},
-			breath: DataTypes.INTEGER,
+			breath: DataTypes.DOUBLE,
 			advancingIssues: DataTypes.INTEGER,
 			decliningIssues: DataTypes.INTEGER,
 			unChangedIssues: DataTypes.INTEGER,
@@ -26,6 +26,7 @@ module.exports = (sequelize, DataTypes) => {
 		{
 			sequelize,
 			modelName: 'Spy500Breadth',
+			tableName: 'Spy500_breadth',
 		}
 	)
 	return Spy500Breadth
