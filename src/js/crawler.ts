@@ -2,12 +2,11 @@ import axios, { AxiosResponse } from 'axios'
 import iconv from 'iconv-lite'
 const cheerio = require('cheerio')
 import { get, isArray } from 'lodash'
-const https = require('https')
 const dayjs = require('dayjs')
 require('dotenv').config()
 
 const { Sp500Fetcher } = require('./financialDataFetcher')
-const { tcHeader, marketIndexHeaders, CM_Headers } = require('./config')
+const { tcHeader, marketIndexHeaders } = require('./config')
 const { BTCUSD, USOIL, DXY, US10Y, XAUUSD } = require('../constant/market')
 
 import Schedule from './schedule'
@@ -378,7 +377,7 @@ async function fetchStockPrices(): Promise<void> {
 					decliningIssues += 1
 				}
 			})
-			const breath =  advancingIssues / stockPrices.length
+			const breath = advancingIssues / stockPrices.length
 			await db.Spy500Breadth.create({
 				date,
 				breath,
