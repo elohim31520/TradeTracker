@@ -264,16 +264,7 @@ class MarketIndexService {
 			if (spyBreadth?.breath) return spyBreadth?.breath
 
 			// 沒有的話從另一個table去算
-			const todayStart = dayjs().startOf('day').toDate()
-			const todayEnd = dayjs().endOf('day').toDate()
-			const stocks = await db.StockPrice.findAll({
-				where: {
-					createdAt: {
-						[Sequelize.Op.between]: [todayStart, todayEnd],
-					},
-				},
-			})
-
+			const stocks = await this.getTodayStocks()
 			const totalStocks = stocks.length
 			if (!totalStocks) return 0
 			const positiveStocks = stocks.filter((stock) => {
@@ -282,6 +273,36 @@ class MarketIndexService {
 			}).length
 
 			return positiveStocks / totalStocks
+		} catch (error) {
+			throw error
+		}
+	}
+
+	async getTodayStocks() {
+		const todayStart = dayjs().startOf('day').toDate()
+		const todayEnd = dayjs().endOf('day').toDate()
+		const stocks = await db.StockPrice.findAll({
+			where: {
+				createdAt: {
+					[Sequelize.Op.between]: [todayStart, todayEnd],
+				},
+			},
+			raw: true,
+		})
+		return stocks
+	}
+
+	async getStockWinners() {
+		try {
+			const stocks = await this.getTodayStocks()
+			const winners = stocks
+				.map((stock) => ({
+					...stock,
+					dayChg: parseFloat(stock.dayChg.replace('%', '')),
+				}))
+				.sort((a, b) => b.dayChg - a.dayChg)
+				.slice(0, 5)
+			return winners
 		} catch (error) {
 			throw error
 		}
