@@ -253,6 +253,17 @@ class MarketIndexService {
 
 	async getMarketBreadth() {
 		try {
+			const now = dayjs()
+			const yesterday = now.subtract(24, 'hour').toDate()
+			const spyBreadth = await db.Spy500Breadth.findOne({
+				where: {
+					date: yesterday,
+				},
+				raw: true,
+			})
+			if (spyBreadth?.breath) return spyBreadth?.breath
+
+			// 沒有的話從另一個table去算
 			const todayStart = dayjs().startOf('day').toDate()
 			const todayEnd = dayjs().endOf('day').toDate()
 			const stocks = await db.StockPrice.findAll({
