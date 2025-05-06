@@ -86,8 +86,20 @@ class MarketIndexController {
 
 	async getStockWinners(req, res, next) {
 		try {
-			const data = await marketService.getStockWinners()
-			res.json(responseHelper.success(data))
+			const data = await marketService.getStockDayChgSorted()
+			const top5 = data.slice(0, 5)
+			res.json(responseHelper.success(top5))
+		} catch (error) {
+			next(error)
+		}
+	}
+
+	async getStockLosers(req, res, next) {
+		try {
+			const data = await marketService.getStockDayChgSorted()
+			const len = data.length
+			const last5 = data.slice(len - 5, len)
+			res.json(responseHelper.success(last5))
 		} catch (error) {
 			next(error)
 		}

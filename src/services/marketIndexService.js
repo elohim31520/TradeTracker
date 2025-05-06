@@ -283,26 +283,41 @@ class MarketIndexService {
 		const todayEnd = dayjs().endOf('day').toDate()
 		const stocks = await db.StockPrice.findAll({
 			where: {
-				createdAt: {
-					[Sequelize.Op.between]: [todayStart, todayEnd],
-				},
+				[Sequelize.Op.and]: [
+					{
+						createdAt: {
+							[Sequelize.Op.between]: [todayStart, todayEnd],
+						},
+					},
+					Sequelize.literal(`
+							(company, createdAt) IN (
+							SELECT company, MAX(createdAt)
+							FROM StockPrices
+							WHERE createdAt BETWEEN :todayStart AND :todayEnd
+							GROUP BY company
+							)
+						`),
+				],
+			},
+			replacements: {
+				todayStart: todayStart,
+				todayEnd: todayEnd,
 			},
 			raw: true,
 		})
 		return stocks
 	}
 
-	async getStockWinners() {
+	async getStockDayChgSorted() {
 		try {
 			const stocks = await this.getTodayStocks()
-			const winners = stocks
+			const sortedStocks = stocks
 				.map((stock) => ({
 					...stock,
 					dayChg: parseFloat(stock.dayChg.replace('%', '')),
 				}))
 				.sort((a, b) => b.dayChg - a.dayChg)
-				.slice(0, 5)
-			return winners
+			return sortedStocks
 		} catch (error) {
 			throw error
 		}
