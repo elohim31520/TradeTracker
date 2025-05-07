@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 import portfolioService from '../services/portfolioService'
 import _ from 'lodash'
+const responseHelper = require('../js/responseHelper')
 const { getUserNameFromReq } = require('../js/util')
 
 class PorfolioController {
@@ -8,7 +9,7 @@ class PorfolioController {
 		try {
 			const userName: string = getUserNameFromReq(req)
 			const transactions = await portfolioService.getAllByUserId(userName)
-			res.status(200).json(transactions)
+			res.status(200).json(responseHelper.success(transactions))
 		} catch (error: any) {
 			next(error)
 		}
@@ -19,7 +20,7 @@ class PorfolioController {
 			const userName: string = getUserNameFromReq(req)
 			const data = _.get(req, 'body', {})
 			await portfolioService.updateByUser(userName, data)
-			res.status(200).json({ success: true })
+			res.status(200).json(responseHelper.success())
 		} catch (error: any) {
 			console.log(error)
 			next(error)

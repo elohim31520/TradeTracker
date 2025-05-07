@@ -1,6 +1,7 @@
 const technewsService = require('../services/technewsService')
 const _ = require('lodash')
 const { ClientError } = require('../js/errors')
+const responseHelper = require('../js/responseHelper')
 
 class technewsController {
 	async getById(req, res, next) {
@@ -11,7 +12,7 @@ class technewsController {
 				throw new ClientError('Missing or invalid id parameter')
 			}
 			const news = await technewsService.getById(id)
-			res.status(200).json(news)
+			res.status(200).json(responseHelper.success([news]))
 		} catch (error) {
 			next(error)
 		}
@@ -26,19 +27,23 @@ class technewsController {
 				throw new ClientError(`Invalid request parameters! Page: ${page}, Size: ${size}`)
 			}
 			const news = await technewsService.getAll(page, size)
-			res.status(200).json(news.reverse())
+			res.status(200).json(responseHelper.success(news.reverse()))
 		} catch (error) {
 			next(error)
 		}
 	}
 
 	async searchByKeyword(req, res, next) {
-		const keyword = _.get(req, 'query.keyword', '')
-		if (!keyword) {
-			next(new ClientError('Keyword query parameter is required'))
+		try {
+			const keyword = _.get(req, 'query.keyword', '')
+			if (!keyword) {
+				throw new ClientError('Keyword query parameter is required')
+			}
+			const news = await technewsService.searchByKeyword(keyword)
+			res.status(200).json(responseHelper.success(news))
+		} catch (error) {
+			next(error)
 		}
-		const news = await technewsService.searchByKeyword(keyword)
-		res.status(200).json(news)
 	}
 }
 

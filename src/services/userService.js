@@ -33,8 +33,8 @@ class userService {
 
 	async login({ user_name, pwd }) {
 		try {
-			const user = await Users.findOne({ where: { user_name } })
-			const { salt, pwd: storeHash } = user.dataValues
+			const user = await Users.findOne({ where: { user_name }, raw: true })
+			const { salt, pwd: storeHash } = user
 			if (!user) throw new ClientError('User not found')
 
 			const currentHash = sha256(pwd, salt)

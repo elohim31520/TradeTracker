@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 import companyNewsService from '../services/companyNewsService'
 import _ from 'lodash'
+const responseHelper = require('../js/responseHelper')
 const { ClientError } = require('../js/errors')
 
 class CompanyNewsController {
@@ -8,7 +9,7 @@ class CompanyNewsController {
 		try {
 			const data = req.body
 			await companyNewsService.bulkCreate(data)
-			res.status(201).json({ message: 'Company news created successfully.' })
+			res.status(201).json(responseHelper.success([], 'Company news created successfully.'))
 		} catch (error: any) {
 			next(error)
 		}
@@ -18,7 +19,7 @@ class CompanyNewsController {
 		try {
 			const data = req.body
 			await companyNewsService.create(data)
-			res.status(201).json({ message: 'Company news created successfully.' })
+			res.status(201).json(responseHelper.success(undefined, 'Company news created successfully.'))
 		} catch (error: any) {
 			next(error)
 		}
@@ -33,7 +34,7 @@ class CompanyNewsController {
 				throw new ClientError(`Invalid request parameters! Page: ${page}, Size: ${size}`)
 			}
 			const news = await companyNewsService.getAll(page, size)
-			res.status(200).json(news)
+			res.status(200).json(responseHelper.success(news))
 		} catch (error) {
 			next(error)
 		}
@@ -48,7 +49,7 @@ class CompanyNewsController {
 				throw new ClientError(`Invalid request parameters! Page: ${page}, Size: ${size}`)
 			}
 			const news = await companyNewsService.searchByKeyword({ page, size, keyword })
-			res.status(200).json(news)
+			res.status(200).json(responseHelper.success(news))
 		} catch (error) {
 			next(error)
 		}
