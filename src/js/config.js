@@ -26,8 +26,6 @@ const tcHeader = {
 
 const fzHeader = {}
 
-const successResponse = { code: 1, message: 'Success' }
-
 const marketIndexHeaders = {
 	'authority': 'tradingeconomics.com',
 	'method': 'GET',
@@ -55,6 +53,5 @@ module.exports = {
 	dbDir,
 	tcHeader,
 	fzHeader,
-	successResponse,
 	marketIndexHeaders,
 }
