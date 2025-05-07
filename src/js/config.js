@@ -1,5 +1,4 @@
 const path = require('path')
-const fs = require('fs')
 
 const dbDir = path.join(__dirname, `../DB/`)
 
@@ -23,8 +22,6 @@ const tcHeader = {
 	'User-Agent':
 		'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36',
 }
-
-const fzHeader = {}
 
 const marketIndexHeaders = {
 	'authority': 'tradingeconomics.com',
@@ -52,6 +49,5 @@ const marketIndexHeaders = {
 module.exports = {
 	dbDir,
 	tcHeader,
-	fzHeader,
 	marketIndexHeaders,
 }
