@@ -5,7 +5,7 @@ module.exports = (sequelize, DataTypes) => {
 		{
 			symbol: {
 				type: DataTypes.STRING,
-				allowNull: false,
+				allowNull: false
 			},
 			name: {
 				type: DataTypes.STRING,
@@ -17,6 +17,8 @@ module.exports = (sequelize, DataTypes) => {
 			freezeTableName: true, // 防止 Sequelize 自动修改表名称（如添加复数形式）
 		}
 	)
-	Company.associate = function (models) {}
+	Company.associate = function (models) {
+		Company.hasMany(models.Portfolio, { foreignKey: 'stock_id', sourceKey: 'symbol' })
+	}
 	return Company
 }

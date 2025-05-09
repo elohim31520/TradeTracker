@@ -20,6 +20,15 @@ class PortfolioService {
 			where: {
 				user_id: userId,
 			},
+			include: [
+				{
+					model: db.Company,
+					as: 'Company',
+					attributes: ['name', 'symbol'],
+					required: false,
+				},
+			],
+			nest: true,
 		})
 	}
 
