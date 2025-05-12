@@ -56,7 +56,6 @@ class TransactionController {
 
 	async clone(req, res, next) {
 		try {
-			console.log('clone')
 			const transactions = await transactionService.getAll()
 			const fs = require('fs')
 			const path = require('path')

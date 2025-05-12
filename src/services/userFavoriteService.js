@@ -32,7 +32,6 @@ const getUserFavoriteNews = async (userId) => {
  * @returns {Promise<void>}
  */
 const createUserFavoriteTechNews = async (userName, newsId) => {
-	console.log(userName, newsId);
 	const userId = await getUserIdByUsername(db, userName)
 	await db.pk_user_technews.create({ userId, newsId })
 }

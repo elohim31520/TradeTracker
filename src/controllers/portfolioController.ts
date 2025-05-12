@@ -22,7 +22,6 @@ class PorfolioController {
 			await portfolioService.updateByUser(userName, data)
 			res.status(200).json(responseHelper.success())
 		} catch (error: any) {
-			console.log(error)
 			next(error)
 		}
 	}

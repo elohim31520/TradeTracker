@@ -2,7 +2,8 @@ export default {
 	SUCCESS: { code: 200, message: '成功' },
 	MISSING_PARAMS: { code: 401, message: '缺少參數' },
 	UNAUTHORIZED: { code: 400, message: '請先登入' },
+	MISSING_REQUIRED_PARAM: { code: 400, message: '缺少必要參數' },
 	SERVER_ERROR: { code: 500, message: '伺服器錯誤' },
 	DUPLICATE_ACCOUNT: { code: 409, message: '帳號已存在' },
-	TOO_MANY_REQUESTS: { code: 429, message: 'Too Many Requests' }
+	TOO_MANY_REQUESTS: { code: 429, message: 'Too Many Requests' },
 }
