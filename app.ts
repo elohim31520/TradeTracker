@@ -38,7 +38,6 @@ app.use(helmet())
 app.use(rateLimiterMiddleware)
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-app.use(errorHandler)
 
 app.get('/', (req: Request, res: Response, next: NextFunction) => {
 	next(new ForbiddenError())
@@ -52,6 +51,8 @@ app.use('/userFavorite', require('./src/routes/userFavorite'))
 app.use('/statements', require('./src/routes/statements'))
 app.use('/market', require('./src/routes/marketIndex'))
 app.use('/portfolio', require('./src/routes/portfolio'))
+
+app.use(errorHandler)
 
 app.listen(1234, () => {
 	logger.info('Server start!')

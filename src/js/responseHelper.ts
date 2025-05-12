@@ -10,7 +10,7 @@ export function success(data: any[], message: string | undefined) {
 
 export function fail(code: number | null, message: string = 'error') {
 	return {
-		...errorCodes.SUCCESS,
+		success: false,
 		data: null,
 		code,
 		message,
