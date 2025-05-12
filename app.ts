@@ -10,6 +10,10 @@ import logger from './src/logger'
 import errorHandler from './src/middleware/errorHandler'
 //@ts-ignore
 import { ForbiddenError } from './src/js/errors'
+//@ts-ignore
+import errorCodes from './src/constant/errorCodes'
+//@ts-ignore
+import responseHelper from './src/js/responseHelper'
 
 const app = express()
 
@@ -28,7 +32,7 @@ const rateLimiterMiddleware = (req: Request, res: Response, next: NextFunction) 
 		})
 		.catch(() => {
 			// Request limit exceeded, respond with an appropriate error message
-			res.status(429).send('Too Many Requests')
+			res.json(responseHelper.fail(errorCodes.TOO_MANY_REQUESTS.code, errorCodes.TOO_MANY_REQUESTS.message))
 		})
 }
 
