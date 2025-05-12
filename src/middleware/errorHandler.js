@@ -1,11 +1,13 @@
-const { AppError, ClientError } = require('../js/errors')
+const { AppError, ClientError, AuthError } = require('../js/errors')
 const responseHelper = require('../js/responseHelper')
 const errorCodes = require('../constant/errorCodes').default
 
 const errHandler = (err, req, res, next) => {
 	err.statusCode = err.statusCode
 	err.status = err.status
-	if (err instanceof ClientError) {
+	if (err instanceof AuthError) {
+		res.json(responseHelper.fail(errorCodes.UNAUTHORIZED.code, err.message))
+	} else if (err instanceof ClientError) {
 		res.json(responseHelper.fail(errorCodes.MISSING_REQUIRED_PARAM.code, err.message))
 	} else if (err instanceof AppError) {
 		res.status(err.statusCode).json(responseHelper.fail(err.statusCode, err.message))
