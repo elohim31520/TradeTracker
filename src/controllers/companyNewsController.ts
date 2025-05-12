@@ -2,7 +2,6 @@ import { Request, Response, NextFunction } from 'express'
 import companyNewsService from '../services/companyNewsService'
 import _ from 'lodash'
 const responseHelper = require('../js/responseHelper')
-const { ClientError } = require('../js/errors')
 
 class CompanyNewsController {
 	async bulkCreate(req: Request, res: Response, next: NextFunction) {
@@ -27,12 +26,8 @@ class CompanyNewsController {
 
 	async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
-			const page = Math.max(parseInt(req.query.page as string, 10) || 1, 1)
-			const size = Math.max(parseInt(req.query.size as string, 10) || 10, 1)
-
-			if (page <= 0 || size <= 0) {
-				throw new ClientError(`Invalid request parameters! Page: ${page}, Size: ${size}`)
-			}
+			const page = Number(req.query.page)
+			const size = Number(req.query.size)
 			const news = await companyNewsService.getAll(page, size)
 			res.status(200).json(responseHelper.success(news))
 		} catch (error) {
@@ -41,14 +36,14 @@ class CompanyNewsController {
 	}
 	async searchByKeyword(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
-			const page = Math.max(parseInt(req.query.page as string, 10) || 1, 1)
-			const size = Math.max(parseInt(req.query.size as string, 10) || 10, 1)
-			const keyword = req.query.keyword as string
-
-			if (page <= 0 || size <= 0) {
-				throw new ClientError(`Invalid request parameters! Page: ${page}, Size: ${size}`)
-			}
-			const news = await companyNewsService.searchByKeyword({ page, size, keyword })
+			const page = Number(req.query.page)
+			const size = Number(req.query.size)
+			const keyword = String(req.query.keyword)
+			const news = await companyNewsService.searchByKeyword({
+				page,
+				size,
+				keyword,
+			})
 			res.status(200).json(responseHelper.success(news))
 		} catch (error) {
 			next(error)

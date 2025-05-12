@@ -1,6 +1,5 @@
 const technewsService = require('../services/technewsService')
 const _ = require('lodash')
-const { ClientError } = require('../js/errors')
 const responseHelper = require('../js/responseHelper')
 
 class technewsController {
@@ -16,9 +15,8 @@ class technewsController {
 
 	async getAll(req, res, next) {
 		try {
-			const page = parseInt(req.query.page, 10) || 1
-			const size = parseInt(req.query.size, 10) || 10
-			
+			const page = Number(req.query.page)
+			const size = Number(req.query.size)
 			const news = await technewsService.getAll(page, size)
 			res.status(200).json(responseHelper.success(news.reverse()))
 		} catch (error) {

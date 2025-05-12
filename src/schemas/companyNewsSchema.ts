@@ -11,7 +11,20 @@ const newsSchema = Joi.object({
 const bulkCreateSchema = Joi.array().items(newsSchema)
 const createSchema = newsSchema
 
+const getAllSchema = Joi.object({
+	page: Joi.number().integer().min(1).default(1),
+	size: Joi.number().integer().min(1).max(100).default(10)
+})
+
+const searchByKeywordSchema = Joi.object({
+	page: Joi.number().integer().min(1).default(1),
+	size: Joi.number().integer().min(1).max(100).default(10),
+	keyword: Joi.string().required().min(1)
+})
+
 export {
 	bulkCreateSchema,
-	createSchema
+	createSchema,
+	getAllSchema,
+	searchByKeywordSchema
 }
