@@ -4,6 +4,11 @@ const cheerio = require('cheerio')
 import { get, isArray } from 'lodash'
 const dayjs = require('dayjs')
 require('dotenv').config()
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 const { Sp500Fetcher } = require('./financialDataFetcher')
 const { tcHeader, marketIndexHeaders } = require('./config')
@@ -53,7 +58,6 @@ function fetchTnews(): void {
 	scheduleSec.startInterval(async () => {
 		if (initialPage <= 0) {
 			scheduleSec.removeInterval()
-			logger.info('---request Technews End---')
 			return
 		}
 
@@ -130,8 +134,6 @@ async function fetchStatements(): Promise<void> {
 				const symbo = myFetch.getCurrentSymbol()
 				if (!symbo) {
 					scheduleSec.removeInterval()
-
-					logger.info(`no more symbo，---Request End---`)
 					logger.warn(`failed symbol: ${myFetch.getAllErrorSymbols()}`)
 					return
 				}
@@ -190,7 +192,6 @@ async function fetchStatements(): Promise<void> {
 				myFetch.addErrorSymbol()
 				if (e.code == 999 || httpStatus == 403) {
 					scheduleSec.removeInterval()
-					logger.info(`---Request End---`)
 					return
 				}
 				myFetch.currentIndex++
@@ -297,23 +298,9 @@ async function fetchStockPrices(): Promise<void> {
 			order: [['date', 'DESC']],
 			limit: 1,
 		})
+		const lastDateTime = res?.date
 
-		let canGet = false
-		if (!res) {
-			logger.warn('No StockPrices found in table')
-			canGet = true
-		} else {
-			const lastDateTime = res.date
-			console.log('lastDateTime', lastDateTime)
-			canGet = dayjs().isAfter(dayjs(lastDateTime).add(24, 'hour'))
-		}
-
-		if (!canGet) {
-			logger.info('Skipping fetch: Data fetched within last 24 hours.')
-			return
-		}
-
-		const symbols = await await db.Company.findAll()
+		const symbols = await db.Company.findAll()
 
 		const url: string = process.env.STOCK_PRICES_URL || ''
 		const resp = await axios.get(url, { headers: marketIndexHeaders, responseType: 'arraybuffer' })
@@ -338,17 +325,14 @@ async function fetchStockPrices(): Promise<void> {
 			const symbol = symbols.find((vo: any) => regex.test(vo.name))?.symbol
 
 			const price = parseFloat(priceText)
-			if (isNaN(price)) {
-				logger.warn(`Invalid price for ${company}: ${priceText}`)
-				return
-			}
 
 			const currentYear = new Date().getFullYear()
-			const date = dayjs(`${dateText}/${currentYear}`, 'MMM/DD/YYYY').toDate()
-			if (!dayjs(date).isValid()) {
-				logger.warn(`Invalid date for ${company}: ${dateText}`)
+			if (!/^[A-Za-z]{3}\/\d{2}$/.test(dateText)) {
+				logger.warn(`無效的 dateText 格式: ${dateText}`)
 				return
 			}
+			const formattedDate = `${dateText}/${currentYear}`
+			const date = dayjs.tz(formattedDate, 'MMM/DD/YYYY', 'America/New_York').toDate()
 
 			stockPrices.push({
 				company,
@@ -363,7 +347,6 @@ async function fetchStockPrices(): Promise<void> {
 
 		if (stockPrices.length > 0) {
 			await db.StockPrice.bulkCreate(stockPrices)
-			const date = stockPrices[0]?.date
 			let advancingIssues = 0
 			let decliningIssues = 0
 			let unChangedIssues = 0
@@ -377,15 +360,18 @@ async function fetchStockPrices(): Promise<void> {
 					decliningIssues += 1
 				}
 			})
-			const breath = advancingIssues / stockPrices.length
-			await db.Spy500Breadth.create({
-				date,
-				breath,
-				advancingIssues,
-				decliningIssues,
-				unChangedIssues,
-			})
-			logger.info(`Successfully saved ${stockPrices.length} stock price records.`)
+			const breath = advancingIssues == 0 ? 0 : advancingIssues / stockPrices.length
+
+			const date = stockPrices[0]?.date
+			if (!lastDateTime || dayjs(date).isAfter(dayjs(lastDateTime))) {
+				await db.Spy500Breadth.create({
+					date,
+					breath,
+					advancingIssues,
+					decliningIssues,
+					unChangedIssues,
+				})
+			}
 		} else {
 			logger.warn('No stock price data extracted.')
 		}
