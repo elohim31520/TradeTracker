@@ -29,7 +29,7 @@ class CompanyNewsController {
 			const page = Number(req.query.page)
 			const size = Number(req.query.size)
 			const news = await companyNewsService.getAll(page, size)
-			res.status(200).json(responseHelper.success(news))
+			res.json(responseHelper.success(news))
 		} catch (error) {
 			next(error)
 		}
@@ -44,7 +44,7 @@ class CompanyNewsController {
 				size,
 				keyword,
 			})
-			res.status(200).json(responseHelper.success(news))
+			res.json(responseHelper.success(news))
 		} catch (error) {
 			next(error)
 		}

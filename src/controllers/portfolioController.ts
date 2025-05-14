@@ -9,7 +9,7 @@ class PorfolioController {
 		try {
 			const userName: string = getUserNameFromReq(req)
 			const transactions = await portfolioService.getAllByUserId(userName)
-			res.status(200).json(responseHelper.success(transactions))
+			res.json(responseHelper.success(transactions))
 		} catch (error: any) {
 			next(error)
 		}
@@ -20,7 +20,7 @@ class PorfolioController {
 			const userName: string = getUserNameFromReq(req)
 			const data = _.get(req, 'body', {})
 			await portfolioService.updateByUser(userName, data)
-			res.status(200).json(responseHelper.success())
+			res.json(responseHelper.success())
 		} catch (error: any) {
 			next(error)
 		}

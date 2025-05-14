@@ -18,7 +18,7 @@ class technewsController {
 			const page = Number(req.query.page)
 			const size = Number(req.query.size)
 			const news = await technewsService.getAll(page, size)
-			res.status(200).json(responseHelper.success(news.reverse()))
+			res.json(responseHelper.success(news.reverse()))
 		} catch (error) {
 			next(error)
 		}
@@ -28,7 +28,7 @@ class technewsController {
 		try {
 			const keyword = _.get(req, 'query.keyword', '')
 			const news = await technewsService.searchByKeyword(keyword)
-			res.status(200).json(responseHelper.success(news))
+			res.json(responseHelper.success(news))
 		} catch (error) {
 			next(error)
 		}

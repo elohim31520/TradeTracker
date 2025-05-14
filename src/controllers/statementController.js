@@ -7,7 +7,7 @@ class statementController {
 		try {
 			const symbol = _.get(req, 'params.symbol', null)
 			const data = await statementService.getBySymbol(symbol)
-			res.status(200).json(responseHelper.success(data))
+			res.json(responseHelper.success(data))
 		} catch (error) {
 			next(error)
 		}
