@@ -8,7 +8,9 @@ const errHandler = (err, req, res, next) => {
 	if (err instanceof AuthError) {
 		res.json(responseHelper.fail(errorCodes.UNAUTHORIZED.code, err.message))
 	} else if (err instanceof ClientError) {
-		res.json(responseHelper.fail(errorCodes.MISSING_REQUIRED_PARAM.code, err.message))
+		res
+			.status(errorCodes.MISSING_REQUIRED_PARAM.code)
+			.json(responseHelper.fail(errorCodes.MISSING_REQUIRED_PARAM.code, err.message))
 	} else if (err instanceof AppError) {
 		res.status(err.statusCode).json(responseHelper.fail(err.statusCode, err.message))
 	} else if (err.name == 'SequelizeUniqueConstraintError') {
