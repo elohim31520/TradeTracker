@@ -13,45 +13,33 @@ const KEY_MAP = {
 
 class MarketIndexService {
 	async create(params) {
-		try {
-			const data = await db.market_index.create(params)
-			return data
-		} catch (error) {
-			throw new Error(error)
-		}
+		const data = await db.market_index.create(params)
+		return data
 	}
 
 	async getAll() {
-		try {
-			const data = db.market_index.findAll()
-			return data
-		} catch (error) {
-			throw new Error(error)
-		}
+		const data = db.market_index.findAll()
+		return data
 	}
 
 	async getGroupedDataByTime() {
-		try {
-			const data = await db.market_index.findAll({
-				attributes: [
-					'symbol',
-					[
-						Sequelize.literal(
-							'(SELECT price FROM market_index AS mi2 WHERE mi2.symbol = market_index.symbol AND mi2.createdAt = market_index.createdAt AND mi2.change = MAX(market_index.change) LIMIT 1)'
-						),
-						'price',
-					],
-					[Sequelize.fn('MAX', Sequelize.col('change')), 'change'],
-					[Sequelize.literal("DATE_FORMAT(createdAt, '%Y-%m-%d %H')"), 'createdAt'],
+		const data = await db.market_index.findAll({
+			attributes: [
+				'symbol',
+				[
+					Sequelize.literal(
+						'(SELECT price FROM market_index AS mi2 WHERE mi2.symbol = market_index.symbol AND mi2.createdAt = market_index.createdAt AND mi2.change = MAX(market_index.change) LIMIT 1)'
+					),
+					'price',
 				],
-				raw: true,
-				group: ['symbol', 'createdAt'],
-				order: ['createdAt'],
-			})
-			return data
-		} catch (error) {
-			throw new Error(error)
-		}
+				[Sequelize.fn('MAX', Sequelize.col('change')), 'change'],
+				[Sequelize.literal("DATE_FORMAT(createdAt, '%Y-%m-%d %H')"), 'createdAt'],
+			],
+			raw: true,
+			group: ['symbol', 'createdAt'],
+			order: ['createdAt'],
+		})
+		return data
 	}
 
 	async getMomentumData(data) {
@@ -137,48 +125,40 @@ class MarketIndexService {
 	}
 
 	async getLstOne(symbol) {
-		try {
-			const lastOne = await db.market_index.findOne({
-				where: {
-					symbol,
-				},
-				order: [['createdAt', 'DESC']],
-			})
-			return lastOne
-		} catch (error) {
-			throw error
-		}
+		const lastOne = await db.market_index.findOne({
+			where: {
+				symbol,
+			},
+			order: [['createdAt', 'DESC']],
+		})
+		return lastOne
 	}
 
 	async getByDateRange(rangeInDays) {
-		try {
-			const startDate = dayjs().subtract(rangeInDays, 'day').format('YYYY-MM-DD HH:mm:ss')
-			const data = await db.market_index.findAll({
-				attributes: [
-					'symbol',
-					[
-						Sequelize.literal(
-							'(SELECT price FROM market_index AS mi2 WHERE mi2.symbol = market_index.symbol AND mi2.createdAt = market_index.createdAt AND mi2.change = MAX(market_index.change) LIMIT 1)'
-						),
-						'price',
-					],
-					[Sequelize.fn('MAX', Sequelize.col('change')), 'change'],
-					[Sequelize.literal("DATE_FORMAT(createdAt, '%Y-%m-%d %H')"), 'createdAt'],
+		const startDate = dayjs().subtract(rangeInDays, 'day').format('YYYY-MM-DD HH:mm:ss')
+		const data = await db.market_index.findAll({
+			attributes: [
+				'symbol',
+				[
+					Sequelize.literal(
+						'(SELECT price FROM market_index AS mi2 WHERE mi2.symbol = market_index.symbol AND mi2.createdAt = market_index.createdAt AND mi2.change = MAX(market_index.change) LIMIT 1)'
+					),
+					'price',
 				],
-				where: {
-					createdAt: {
-						[Sequelize.Op.gte]: startDate,
-					},
+				[Sequelize.fn('MAX', Sequelize.col('change')), 'change'],
+				[Sequelize.literal("DATE_FORMAT(createdAt, '%Y-%m-%d %H')"), 'createdAt'],
+			],
+			where: {
+				createdAt: {
+					[Sequelize.Op.gte]: startDate,
 				},
+			},
 
-				raw: true,
-				group: ['symbol', 'createdAt'],
-				order: ['createdAt'],
-			})
-			return data
-		} catch (error) {
-			throw new Error(error)
-		}
+			raw: true,
+			group: ['symbol', 'createdAt'],
+			order: ['createdAt'],
+		})
+		return data
 	}
 
 	async getMomentumByDateRange(rangeInDays) {
@@ -217,65 +197,53 @@ class MarketIndexService {
 	}
 
 	async getStockPrices() {
-		try {
-			const latestPrices = await db.StockPrice.findAll({
-				attributes: ['company', 'symbol', 'price', 'MCap', 'date', 'createdAt'],
-				where: {
-					id: {
-						[Sequelize.Op.in]: Sequelize.literal(`
-							(SELECT id
+		const latestPrices = await db.StockPrice.findAll({
+			attributes: ['company', 'symbol', 'price', 'MCap', 'date', 'createdAt'],
+			where: {
+				id: {
+					[Sequelize.Op.in]: Sequelize.literal(`
+						(SELECT id
+							FROM StockPrices
+								WHERE (company, createdAt) IN (
+								SELECT company, MAX(createdAt)
 								FROM StockPrices
-									WHERE (company, createdAt) IN (
-									SELECT company, MAX(createdAt)
-									FROM StockPrices
-									GROUP BY company
-							))
-						`),
-					},
+								GROUP BY company
+						))
+					`),
 				},
-			})
-			return latestPrices
-		} catch (error) {
-			throw error
-		}
+			},
+		})
+		return latestPrices
 	}
 
 	async getStockSymbol() {
-		try {
-			const symbols = await db.Company.findAll({
-				attributes: ['symbol', 'name'],
-			})
-			return symbols
-		} catch (error) {
-			throw error
-		}
+		const symbols = await db.Company.findAll({
+			attributes: ['symbol', 'name'],
+		})
+		return symbols
 	}
 
 	async getMarketBreadth() {
-		try {
-			const now = dayjs()
-			const yesterday = now.subtract(24, 'hour').toDate()
-			const spyBreadth = await db.Spy500Breadth.findOne({
-				where: {
-					date: yesterday,
-				},
-				raw: true,
-			})
-			if (spyBreadth?.breath) return spyBreadth?.breath
+		const now = dayjs()
+		const yesterday = now.subtract(24, 'hour').toDate()
+		const spyBreadth = await db.Spy500Breadth.findOne({
+			where: {
+				date: yesterday,
+			},
+			raw: true,
+		})
+		if (spyBreadth?.breath) return spyBreadth?.breath
 
-			// 沒有的話從另一個table去算
-			const stocks = await this.getTodayStocks()
-			const totalStocks = stocks.length
-			if (!totalStocks) return 0
-			const positiveStocks = stocks.filter((stock) => {
-				const dayChg = parseFloat(stock.dayChg.replace('%', ''))
-				return dayChg > 0
-			}).length
+		// 沒有的話從另一個table去算
+		const stocks = await this.getTodayStocks()
+		const totalStocks = stocks.length
+		if (!totalStocks) return 0
+		const positiveStocks = stocks.filter((stock) => {
+			const dayChg = parseFloat(stock.dayChg.replace('%', ''))
+			return dayChg > 0
+		}).length
 
-			return positiveStocks / totalStocks
-		} catch (error) {
-			throw error
-		}
+		return positiveStocks / totalStocks
 	}
 
 	async getTodayStocks() {
@@ -309,18 +277,14 @@ class MarketIndexService {
 	}
 
 	async getStockDayChgSorted() {
-		try {
-			const stocks = await this.getTodayStocks()
-			const sortedStocks = stocks
-				.map((stock) => ({
-					...stock,
-					dayChg: parseFloat(stock.dayChg.replace('%', '')),
-				}))
-				.sort((a, b) => b.dayChg - a.dayChg)
-			return sortedStocks
-		} catch (error) {
-			throw error
-		}
+		const stocks = await this.getTodayStocks()
+		const sortedStocks = stocks
+			.map((stock) => ({
+				...stock,
+				dayChg: parseFloat(stock.dayChg.replace('%', '')),
+			}))
+			.sort((a, b) => b.dayChg - a.dayChg)
+		return sortedStocks
 	}
 }
 
