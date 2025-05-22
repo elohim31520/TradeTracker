@@ -55,6 +55,7 @@ app.use('/userFavorite', require('./src/routes/userFavorite'))
 app.use('/statements', require('./src/routes/statements'))
 app.use('/market', require('./src/routes/marketIndex'))
 app.use('/portfolio', require('./src/routes/portfolio'))
+app.use('/comment', require('./src/routes/comments'))
 
 app.use(errorHandler)
 
