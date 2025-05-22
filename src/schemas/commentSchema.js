@@ -2,9 +2,9 @@ const Joi = require('joi')
 
 const createCommentSchema = Joi.object({
     content: Joi.string().required().min(1).max(1000),
-    postId: Joi.string().required(),
-    toUserId: Joi.string().allow(null, ''),
-    parentId: Joi.string().allow(null, '')
+    postId: Joi.alternatives().try(Joi.string(), Joi.number()).required(),
+    toUserId: Joi.alternatives().try(Joi.string(), Joi.number()).allow(null, ''),
+    parentId: Joi.alternatives().try(Joi.string(), Joi.number()).allow(null, '')
 })
 
 const updateCommentSchema = Joi.object({
