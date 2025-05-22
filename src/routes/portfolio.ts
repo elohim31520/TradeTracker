@@ -7,6 +7,6 @@ import { updateSchema } from '../schemas/portfolioSchema'
 const router = express.Router()
 
 router.get('/', verifyToken, portfolioController.getAllByUserId)
-router.put('/', verifyToken, validate(updateSchema), portfolioController.updatePortfolio)
+router.post('/', verifyToken, validate(updateSchema), portfolioController.updatePortfolio)
 
 module.exports = router
