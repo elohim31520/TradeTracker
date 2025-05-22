@@ -32,8 +32,7 @@ class CommentController {
 			const comments = await commentService.getCommentsByPostId(postId, options)
 			return res.json(success(comments))
 		} catch (error) {
-			const code = errorCodes.SERVER_ERROR.code
-			return res.status(code).json(fail(code, error.message))
+			next(error)
 		}
 	}
 

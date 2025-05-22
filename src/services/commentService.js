@@ -1,6 +1,6 @@
 'use strict'
 const db = require('../../models')
-const { Comments, Users, CompanyNews } = db
+const { Comments, Users, tech_investment_news } = db
 const { getUserIdByUsername } = require('../js/dbUtils')
 
 class CommentService {
@@ -39,7 +39,7 @@ class CommentService {
 					as: 'parent',
 				},
 				{
-					model: CompanyNews,
+					model: tech_investment_news,
 					as: 'newsPost',
 					attributes: ['id', 'title', 'web_url'],
 				},
@@ -68,13 +68,14 @@ class CommentService {
 				{
 					model: Users,
 					as: 'author',
-					attributes: ['id', 'name'],
+					attributes: ['id', 'user_name', 'email'],
 				},
-				{
-					model: Comments,
-					as: 'parent',
-				},
+				// {
+				// 	model: Comments,
+				// 	as: 'parent',
+				// },
 			],
+			nest: true,
 			raw: true,
 		})
 		return comments
