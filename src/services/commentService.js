@@ -11,7 +11,8 @@ class CommentService {
 	 */
 	async createComment(data) {
 		const userId = await getUserIdByUsername(db, data.userName)
-		const comment = await Comments.create({ ...data, userId })
+		const { userName, ...rest } = data
+		const comment = await Comments.create({ ...rest, userId })
 		return comment
 	}
 

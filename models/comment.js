@@ -8,7 +8,6 @@ module.exports = (sequelize, DataTypes) => {
 		 * The `models/index` file will call this method automatically.
 		 */
 		static associate(models) {
-			// define association here
 			Comment.belongsTo(models.Users, {
 				foreignKey: 'userId',
 				as: 'author',
@@ -21,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
 				foreignKey: 'parentId',
 				as: 'parent',
 			})
-			Comment.belongsTo(models.CompanyNews, {
+			Comment.belongsTo(models.tech_investment_news, {
 				foreignKey: 'postId',
 				as: 'newsPost',
 			})

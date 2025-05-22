@@ -18,7 +18,7 @@ module.exports = {
 				type: Sequelize.INTEGER,
 				allowNull: false,
 				references: {
-					model: 'company_news', // Changed from 'CompanyNews' to 'company_news'
+					model: 'tech_investment_news',
 					key: 'id',
 				},
 				comment: '新聞id',
