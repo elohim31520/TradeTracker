@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
 				foreignKey: 'toUserId',
 				as: 'toUser',
 			})
-			Comment.belongsTo(models.Comment, {
+			Comment.belongsTo(models.Comments, {
 				foreignKey: 'parentId',
 				as: 'parent',
 			})
