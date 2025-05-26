@@ -12,3 +12,4 @@ test/marketIndex/momentum_data.xlsx
 /dist
 /Archive
 src/scripts/index.html
+src/scripts/token
