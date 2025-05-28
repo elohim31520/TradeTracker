@@ -100,14 +100,15 @@ class CommentService {
 				{
 					model: Users,
 					as: 'author',
-					attributes: ['id', 'name'],
+					attributes: ['id', 'user_name'],
 				},
 				{
 					model: Users,
 					as: 'toUser',
-					attributes: ['id', 'name'],
+					attributes: ['id', 'user_name'],
 				},
 			],
+			nest: true,
 			raw: true,
 		})
 		return replies
