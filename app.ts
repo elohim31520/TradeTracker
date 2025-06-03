@@ -60,6 +60,7 @@ const initApp = async () => {
     app.use('/market', require('./src/routes/marketIndex'))
     app.use('/portfolio', require('./src/routes/portfolio'))
     app.use('/comment', require('./src/routes/comments'))
+	app.use('/admin', require('./src/routes/admin'))
     
     app.use(errorHandler) //所有的api錯誤處理, 擺最後
     
