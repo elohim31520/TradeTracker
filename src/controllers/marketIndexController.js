@@ -1,7 +1,6 @@
 const marketService = require('../services/marketIndexService')
 const _ = require('lodash')
 const responseHelper = require('../js/responseHelper')
-const redisClient = require('../js/redis').default
 
 class MarketIndexController {
 	async getAll(req, res, next) {
@@ -44,25 +43,7 @@ class MarketIndexController {
 
 	async getWeights(req, res, next) {
 		try {
-			if (redisClient && redisClient.isReady) {
-				// 嘗試從 Redis 獲取數據
-				const cachedData = await redisClient.get('marketWeight')
-				if (cachedData) {
-					return res.json(responseHelper.success(JSON.parse(cachedData)))
-				}
-			}
-
-			// 從服務獲取數據
 			const data = await marketService.getWeights()
-
-			if (redisClient && redisClient.isReady) {
-				redisClient
-					.set('marketWeight', JSON.stringify(data), {
-						EX: 3600,
-					})
-					.catch((e) => console.error('Redis 存儲錯誤:', e))
-			}
-
 			res.json(responseHelper.success(data))
 		} catch (error) {
 			next(error)
