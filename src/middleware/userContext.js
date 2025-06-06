@@ -1,5 +1,4 @@
 const { Users } = require('../../models')
-const { getUserNameFromReq } = require('../js/util')
 const { AuthError } = require('../js/errors')
 
 /**
@@ -9,7 +8,7 @@ const { AuthError } = require('../js/errors')
  */
 async function userContext(req, res, next) {
     try {
-        const userName = getUserNameFromReq(req)
+        const userName = req.decoded?.user_name
         if (!userName) {
             throw new AuthError('找不到用戶名稱')
         }

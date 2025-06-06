@@ -1,6 +1,5 @@
 const Users = require('../../models/users')
 const db = require('../../models')
-const { getUserIdByUsername } = require('../js/dbUtils')
 
 /**
  * 獲取用戶收藏新聞
@@ -31,8 +30,7 @@ const getUserFavoriteNews = async (userId) => {
  * @param {number} newsId - 新聞ID
  * @returns {Promise<void>}
  */
-const createUserFavoriteTechNews = async (userName, newsId) => {
-	const userId = await getUserIdByUsername(db, userName)
+const createUserFavoriteTechNews = async ({ userId, newsId }) => {
 	await db.pk_user_technews.create({ userId, newsId })
 }
 
@@ -41,9 +39,9 @@ const createUserFavoriteTechNews = async (userName, newsId) => {
  * @param {string} userName - 用戶名
  * @returns {Promise<Array>} 收藏技術新聞列表
  */
-const getUserFavoriteTechNews = async (userName) => {
+const getUserFavoriteTechNews = async (userId) => {
 	const result = await db.Users.findOne({
-		where: { user_name: userName },
+		where: { id: userId },
 		attributes: ['id'],
 		include: [
 			{

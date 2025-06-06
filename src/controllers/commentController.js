@@ -1,7 +1,7 @@
 'use strict'
 const commentService = require('../services/commentService')
 const { success, fail } = require('../js/responseHelper')
-const { getUserNameFromReq } = require('../js/util')
+const _get = require('lodash/get')
 
 class CommentController {
 	/**
@@ -12,8 +12,7 @@ class CommentController {
 	async createComment(req, res, next) {
 		try {
 			const data = req.body
-			const userName = getUserNameFromReq(req)
-			const comments = await commentService.createComment({ ...data, userName })
+			const comments = await commentService.createComment({ ...data, userId: _get(req, 'user.id') })
 			return res.status(201).json(success(comments, '評論創建成功'))
 		} catch (error) {
 			next(error)

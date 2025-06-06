@@ -62,10 +62,6 @@ function parseChineseDate(dateString) {
 	return null
 }
 
-function getUserNameFromReq(req) {
-	return _.get(req, 'decoded.user_name', '')
-}
-
 module.exports = {
 	getTimeNow,
 	FileNameToTime,
@@ -74,6 +70,5 @@ module.exports = {
 	generateRandomID,
 	zhTimeToStandardTime,
 	getMonthList,
-	parseChineseDate,
-	getUserNameFromReq
+	parseChineseDate
 }

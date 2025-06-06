@@ -1,7 +1,6 @@
 'use strict'
 const db = require('../../models')
 const { Comments, Users, tech_investment_news } = db
-const { getUserIdByUsername } = require('../js/dbUtils')
 
 class CommentService {
 	/**
@@ -9,10 +8,8 @@ class CommentService {
 	 * @param {Object} data - 評論數據
 	 * @returns {Promise<Object>} 創建的評論
 	 */
-	async createComment(data) {
-		const userId = await getUserIdByUsername(db, data.userName)
-		const { userName, ...rest } = data
-		const comment = await Comments.create({ ...rest, userId })
+	async createComment(data, userId) {
+		const comment = await Comments.create({ ...data, userId })
 		return comment
 	}
 

@@ -4,8 +4,11 @@ const { verifyToken } = require('../middleware/auth')
 const validate = require('../middleware/validate')
 const { createSchema } = require('../schemas/subscribeSchema')
 const userFavoriteController = require('../controllers/userFavoriteController')
+const { userContext } = require('../middleware/userContext')
 
-router.post('/technews', verifyToken, validate(createSchema), userFavoriteController.createUserFavoriteTechNews)
-router.get('/technews', verifyToken, userFavoriteController.getUserFavoriteTechNews)
+router.use(verifyToken, userContext)
+
+router.post('/technews', validate(createSchema), userFavoriteController.createUserFavoriteTechNews)
+router.get('/technews', userFavoriteController.getUserFavoriteTechNews)
 
 module.exports = router 

@@ -1,7 +1,6 @@
 'use strict'
 const db = require('../../models')
 const { Users, Admin } = db
-const { getUserIdByUsername } = require('../js/dbUtils')
 
 class AdminService {
 	/**

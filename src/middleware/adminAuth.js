@@ -1,12 +1,10 @@
 const { AuthError } = require('../js/errors')
 const db = require('../../models')
-const { getUserNameFromReq } = require('../js/util')
 
 async function verifyAdmin(req, res, next) {
 	try {
-		const userName = getUserNameFromReq(req)
 		const user = await db.Users.findOne({
-			where: { user_name: userName },
+			where: { user_name: req.user.user_name },
 			include: [
 				{
 					model: db.Admin,
