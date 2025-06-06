@@ -4,7 +4,7 @@ const db = require('../../models')
 async function verifyAdmin(req, res, next) {
 	try {
 		const user = await db.Users.findOne({
-			where: { user_name: req.user.user_name },
+			where: { user_name: req.user?.user_name },
 			include: [
 				{
 					model: db.Admin,

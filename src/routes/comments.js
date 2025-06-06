@@ -12,6 +12,7 @@ const {
 } = require('../schemas/commentSchema')
 const { verifyToken } = require('../middleware/auth')
 const { userContext } = require('../middleware/userContext')
+const { verifyAdmin } = require('../middleware/adminAuth')
 
 router.use(verifyToken, userContext)
 
@@ -38,14 +39,9 @@ router.get(
 router.get('/:id', validate(getByIdSchema, 'params'), commentController.getCommentById)
 
 // 更新評論
-router.put(
-	'/:id',
-	validate(getByIdSchema, 'params'),
-	validate(updateCommentSchema),
-	commentController.updateComment
-)
+router.put('/:id', validate(getByIdSchema, 'params'), validate(updateCommentSchema), commentController.updateComment)
 
 // 刪除評論
-router.delete('/:id', validate(getByIdSchema, 'params'), commentController.deleteComment)
+router.delete('/:id', verifyAdmin, validate(getByIdSchema, 'params'), commentController.deleteComment)
 
 module.exports = router
