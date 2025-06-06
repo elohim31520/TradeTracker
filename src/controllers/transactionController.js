@@ -1,15 +1,10 @@
 const transactionService = require('../services/transactionService')
-const userService = require('../services/userService')
-const _ = require('lodash')
 const responseHelper = require('../js/responseHelper')
-const { getUserNameFromReq } = require('../js/util')
 
 class TransactionController {
 	async create(req, res, next) {
 		try {
-			const userName = getUserNameFromReq(req)
-			const user = await userService.getByName(userName)
-			req.body.user_id = user.id
+			req.body.user_id = req.user.id
 			const transaction = await transactionService.create(req.body)
 			res.status(201).json(responseHelper.success(transaction))
 		} catch (error) {
@@ -19,7 +14,7 @@ class TransactionController {
 
 	async getAll(req, res, next) {
 		try {
-			const userName = getUserNameFromReq(req)
+			const userName = req.user.user_name
 			const transactions = await transactionService.getAll(userName)
 			res.status(200).json(responseHelper.success(transactions))
 		} catch (error) {

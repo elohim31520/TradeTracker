@@ -2,13 +2,17 @@ const express = require('express')
 const router = express.Router()
 const transactionController = require('../controllers/transactionController')
 const { verifyToken } = require('../middleware/auth')
+const { userContext } = require('../middleware/userContext')
 const validate = require('../middleware/validate')
 const { createSchema } = require('../schemas/transactionSchema')
 
-router.post('/', verifyToken, validate(createSchema), transactionController.create)
-router.get('/', verifyToken, transactionController.getAll)
-router.get('/:id', verifyToken, transactionController.getById)
-router.put('/:id', verifyToken, transactionController.update)
-router.delete('/:id', verifyToken, transactionController.delete)
+// 所有交易相關的路由都需要驗證 token 和用戶上下文
+router.use(verifyToken, userContext)
+
+router.post('/', validate(createSchema), transactionController.create)
+router.get('/', transactionController.getAll)
+router.get('/:id', transactionController.getById)
+router.put('/:id', transactionController.update)
+router.delete('/:id', transactionController.delete)
 
 module.exports = router
