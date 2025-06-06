@@ -2,7 +2,7 @@ const redisClient = require('../js/redis').default
 const responseHelper = require('../js/responseHelper')
 const logger = require('../logger')
 
-const redisCacheMiddleware = (expirationTime = 3600) => {
+const redisCache = (expirationTime = 3600) => {
 	return async (req, res, next) => {
 		if (!redisClient || !redisClient.isReady) {
 			logger.warn('Redis client not ready')
@@ -10,7 +10,7 @@ const redisCacheMiddleware = (expirationTime = 3600) => {
 		}
 
 		const cacheKey = req.originalUrl || req.url
-		logger.info(`Attempting to get cache for key: ${cacheKey}`)
+		logger.info(`Get Cache: ${cacheKey}`)
 
 		try {
 			const cachedData = await redisClient.get(cacheKey)
@@ -44,4 +44,4 @@ const redisCacheMiddleware = (expirationTime = 3600) => {
 	}
 }
 
-module.exports = redisCacheMiddleware
+module.exports = redisCache

@@ -1,25 +1,35 @@
 const express = require('express')
 const router = express.Router()
 const { verifyToken } = require('../middleware/auth')
-const marketIndexController = require('../controllers/marketIndexController')
+const marketController = require('../controllers/marketIndexController')
 const validate = require('../middleware/validate')
 const { getLastOneSchema, getByDaysSchema } = require('../schemas/marketIndexSchema')
-const redisCacheMiddleware = require('../middleware/redisCacheMiddleware')
+const redisCache = require('../middleware/redisCache')
 
-router.get('/', marketIndexController.getAll)
-router.get('/momentum', verifyToken, marketIndexController.getMomentum)
-router.get('/last/:symbol', validate(getLastOneSchema, 'params'), marketIndexController.getLstOne)
+// 不需要驗證的路由
+router.get('/', marketController.getAll)
+router.get('/last/:symbol', validate(getLastOneSchema, 'params'), marketController.getLstOne)
+
+// 設置驗證中間件
+router.use(verifyToken)
+
+// 需要驗證但不需要快取的路由
+router.get('/momentum', marketController.getMomentum)
 router.get(
 	'/momentum/range/:days',
-	verifyToken,
 	validate(getByDaysSchema, 'params'),
-	marketIndexController.getMarketIndicesByDays
+	marketController.getMarketIndicesByDays
 )
-router.get('/weights', verifyToken, redisCacheMiddleware(3600), marketIndexController.getWeights)
-router.get('/stock/prices', verifyToken, redisCacheMiddleware(3600), marketIndexController.getStockPrices)
-router.get('/stock/symbols', verifyToken, redisCacheMiddleware(3600), marketIndexController.getStockSymbol)
-router.get('/stock/breadth', verifyToken, redisCacheMiddleware(3600), marketIndexController.getMarketBreadth)
-router.get('/stock/winners', verifyToken, redisCacheMiddleware(3600), marketIndexController.getStockWinners)
-router.get('/stock/losers', verifyToken, redisCacheMiddleware(3600), marketIndexController.getStockLosers)
+
+// 設置快取中間件
+router.use(redisCache(3600))
+
+// 需要驗證和快取的路由
+router.get('/weights', marketController.getWeights)
+router.get('/stock/prices', marketController.getStockPrices)
+router.get('/stock/symbols', marketController.getStockSymbol)
+router.get('/stock/breadth', marketController.getMarketBreadth)
+router.get('/stock/winners', marketController.getStockWinners)
+router.get('/stock/losers', marketController.getStockLosers)
 
 module.exports = router
