@@ -3,6 +3,15 @@ import companyNewsService from '../services/companyNewsService'
 import _ from 'lodash'
 const responseHelper = require('../js/responseHelper')
 
+interface PaginationQuery {
+	page: number;
+	size: number;
+}
+
+interface SearchQuery extends PaginationQuery {
+	keyword: string;
+}
+
 class CompanyNewsController {
 	async bulkCreate(req: Request, res: Response, next: NextFunction) {
 		try {
@@ -26,23 +35,21 @@ class CompanyNewsController {
 
 	async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
-			const page = Number(req.query.page)
-			const size = Number(req.query.size)
-			const news = await companyNewsService.getAll(page, size)
+			const query = req.query as unknown as PaginationQuery
+			const news = await companyNewsService.getAll(query.page, query.size)
 			res.json(responseHelper.success(news))
 		} catch (error) {
 			next(error)
 		}
 	}
+
 	async searchByKeyword(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
-			const page = Number(req.query.page)
-			const size = Number(req.query.size)
-			const keyword = String(req.query.keyword)
+			const query = req.query as unknown as SearchQuery
 			const news = await companyNewsService.searchByKeyword({
-				page,
-				size,
-				keyword,
+				page: query.page,
+				size: query.size,
+				keyword: query.keyword,
 			})
 			res.json(responseHelper.success(news))
 		} catch (error) {
