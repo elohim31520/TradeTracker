@@ -287,7 +287,7 @@ interface StockPriceData {
 	dayChg: string
 	yearChg: string
 	MCap: string
-	date: Date
+	date: string
 	symbol?: string
 }
 
@@ -309,6 +309,12 @@ async function fetchStockPrices(): Promise<void> {
 
 		const componentsTable = $('.table-minimize').eq(1).find('table')
 
+		const firstDate = componentsTable.find('tbody tr:first td#date').text().trim()
+		if (firstDate === lastDateTime) {
+			logger.warn('stock Prices 今日已寫入！')
+			return
+		}
+
 		const stockPrices: StockPriceData[] = []
 
 		componentsTable.find('tbody tr').each((_: any, row: cheerio.Element) => {
@@ -319,20 +325,12 @@ async function fetchStockPrices(): Promise<void> {
 			const dayChg = $row.find('td#pch').text().trim()
 			const yearChg = $row.find('td').eq(5).text().trim()
 			const MCap = $row.find('td').eq(6).text().trim()
-			const dateText = $row.find('td#date').text().trim()
+			const date = $row.find('td#date').text().trim()
 
 			const regex = new RegExp(company, 'i')
 			const symbol = symbols.find((vo: any) => regex.test(vo.name))?.symbol
 
 			const price = parseFloat(priceText)
-
-			const currentYear = new Date().getFullYear()
-			if (!/^[A-Za-z]{3}\/\d{2}$/.test(dateText)) {
-				logger.warn(`無效的 dateText 格式: ${dateText}`)
-				return
-			}
-			const formattedDate = `${dateText}/${currentYear}`
-			const date = dayjs.tz(formattedDate, 'MMM/DD/YYYY', 'America/New_York').toDate()
 
 			stockPrices.push({
 				company,
@@ -363,15 +361,13 @@ async function fetchStockPrices(): Promise<void> {
 			const breath = advancingIssues == 0 ? 0 : advancingIssues / stockPrices.length
 
 			const date = stockPrices[0]?.date
-			if (!lastDateTime || dayjs(date).isAfter(dayjs(lastDateTime))) {
-				await db.Spy500Breadth.create({
-					date,
-					breath,
-					advancingIssues,
-					decliningIssues,
-					unChangedIssues,
-				})
-			}
+			await db.Spy500Breadth.create({
+				date,
+				breath,
+				advancingIssues,
+				decliningIssues,
+				unChangedIssues,
+			})
 		} else {
 			logger.warn('No stock price data extracted.')
 		}
@@ -419,8 +415,8 @@ async function migrateTechNews(filePath: string) {
 					}
 					const release_time = parsedDate.toISOString()
 
-					const { id, ...restOfVo } = vo
-					await db.tech_investment_news.create({ ...restOfVo, release_time })
+					const { id, ...rest } = vo
+					await db.tech_investment_news.create({ ...rest, release_time })
 
 					return { status: 'success', data: vo }
 				} catch (error) {
