@@ -11,27 +11,33 @@ interface techNewsAttributes {
 	updatedAt: Date
 }
 
+interface searchAttributes {
+	keyword?: string
+	page: number
+	size: number
+}
+
 class TechnewsService {
 	async getById(id: number): Promise<techNewsAttributes | null> {
 		return db.tech_investment_news.findByPk(id)
 	}
 
-	async getAll(page: number, size: number): Promise<techNewsAttributes[]> {
+	async getAll({ keyword, page, size }: searchAttributes): Promise<techNewsAttributes[] | null> {
 		const offset = (page - 1) * size
+		const query = keyword
+			? {
+					where: {
+						title: {
+							[Op.like]: `%${keyword}%`,
+						},
+					},
+			  }
+			: {}
 		return db.tech_investment_news.findAll({
 			limit: size,
 			offset,
+			...query,
 			order: [['createdAt', 'DESC']],
-		})
-	}
-
-	async searchByKeyword(keyword: string): Promise<techNewsAttributes[] | null> {
-		return db.tech_investment_news.findAll({
-			where: {
-				title: {
-					[Op.like]: `%${keyword}%`,
-				},
-			},
 		})
 	}
 }
