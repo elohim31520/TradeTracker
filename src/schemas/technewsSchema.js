@@ -5,16 +5,12 @@ const getByIdSchema = Joi.object({
 })
 
 const getAllSchema = Joi.object({
+    keyword: Joi.string().min(1).allow('', null),
     page: Joi.number().integer().min(1).default(1),
     size: Joi.number().integer().min(1).max(100).default(10)
-})
-
-const searchByKeywordSchema = Joi.object({
-    keyword: Joi.string().required().min(1)
 })
 
 module.exports = {
     getByIdSchema,
     getAllSchema,
-    searchByKeywordSchema
 } 

@@ -15,19 +15,10 @@ class technewsController {
 
 	async getAll(req, res, next) {
 		try {
-			const page = Number(req.query.page)
-			const size = Number(req.query.size)
-			const news = await technewsService.getAll(page, size)
-			res.json(responseHelper.success(news.reverse()))
-		} catch (error) {
-			next(error)
-		}
-	}
-
-	async searchByKeyword(req, res, next) {
-		try {
 			const keyword = _.get(req, 'query.keyword', '')
-			const news = await technewsService.searchByKeyword(keyword)
+			const page = +_.get(req, 'query.page')
+			const size = +_.get(req, 'query.size')
+			const news = await technewsService.getAll({ keyword, page, size })
 			res.json(responseHelper.success(news))
 		} catch (error) {
 			next(error)
