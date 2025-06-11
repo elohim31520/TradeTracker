@@ -15,7 +15,7 @@ interface CompanyNewsAttributes {
 interface searchParams {
 	page: number
 	size: number
-	keyword: string
+	keyword?: string
 }
 
 class companyNewsService {
@@ -55,13 +55,23 @@ class companyNewsService {
 		}
 	}
 
-	async getAll(page: number = 1, size: number = 10): Promise<CompanyNewsAttributes[]> {
+	async getAll({ page, size, keyword }: searchParams): Promise<CompanyNewsAttributes[]> {
 		try {
 			const offset = (page - 1) * size
+			const where = keyword
+				? {
+						where: {
+							title: {
+								[Op.like]: `%${keyword}%`,
+							},
+						},
+				  }
+				: {}
 			const news = await db.CompanyNews.findAll({
 				limit: size,
 				offset,
 				order: [['createdAt', 'DESC']],
+				...where,
 				include: [
 					{
 						model: db.Company,
@@ -71,50 +81,9 @@ class companyNewsService {
 					},
 				],
 				raw: true,
+				nest: true,
 			})
-
-			return news.map((vo: any) => {
-				const { 'Company.name': companyName, ...rest } = vo
-				return {
-					...rest,
-					companyName,
-				}
-			})
-		} catch (error: any) {
-			throw new Error(error)
-		}
-	}
-
-	async searchByKeyword({ page, size, keyword }: searchParams): Promise<CompanyNewsAttributes[]> {
-		try {
-			const offset = (page - 1) * size
-			const news = await db.CompanyNews.findAll({
-				limit: size,
-				offset,
-				order: [['createdAt', 'DESC']],
-				where: {
-					title: {
-						[Op.like]: `%${keyword}%`,
-					},
-				},
-				include: [
-					{
-						model: db.Company,
-						as: 'Company',
-						attributes: ['name'],
-						required: false,
-					},
-				],
-				raw: true,
-			})
-
-			return news.map((vo: any) => {
-				const { 'Company.name': companyName, ...rest } = vo
-				return {
-					...rest,
-					companyName,
-				}
-			})
+			return news
 		} catch (error: any) {
 			throw new Error(error)
 		}

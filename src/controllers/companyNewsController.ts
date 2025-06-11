@@ -3,13 +3,10 @@ import companyNewsService from '../services/companyNewsService'
 import _ from 'lodash'
 const responseHelper = require('../js/responseHelper')
 
-interface PaginationQuery {
-	page: number;
-	size: number;
-}
-
-interface SearchQuery extends PaginationQuery {
-	keyword: string;
+interface SearchQuery {
+	page: number
+	size: number
+	keyword?: string
 }
 
 class CompanyNewsController {
@@ -35,21 +32,13 @@ class CompanyNewsController {
 
 	async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
-			const query = req.query as unknown as PaginationQuery
-			const news = await companyNewsService.getAll(query.page, query.size)
-			res.json(responseHelper.success(news))
-		} catch (error) {
-			next(error)
-		}
-	}
-
-	async searchByKeyword(req: Request, res: Response, next: NextFunction): Promise<void> {
-		try {
-			const query = req.query as unknown as SearchQuery
-			const news = await companyNewsService.searchByKeyword({
-				page: query.page,
-				size: query.size,
-				keyword: query.keyword,
+			const keyword = _.get(req, 'query.keyword', '') as string
+			const page = +_.get(req, 'query.page', 1)
+			const size = +_.get(req, 'query.size', 10)
+			const news = await companyNewsService.getAll({
+				page,
+				size,
+				keyword,
 			})
 			res.json(responseHelper.success(news))
 		} catch (error) {

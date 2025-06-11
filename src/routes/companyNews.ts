@@ -10,6 +10,6 @@ router.use(verifyToken)
 router.post('/batch', validate(bulkCreateSchema), companyNewsController.bulkCreate)
 router.post('/', validate(createSchema), companyNewsController.create)
 router.get('/', validate(getAllSchema, 'query'), companyNewsController.getAll)
-router.get('/search', validate(searchByKeywordSchema, 'query'), companyNewsController.searchByKeyword)
+router.get('/search', validate(searchByKeywordSchema, 'query'), companyNewsController.getAll)
 
 module.exports = router
