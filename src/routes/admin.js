@@ -16,10 +16,10 @@ router.get('/users', adminController.getAllUsers)
 router.post('/set-admin', validate(createAdminSchema), adminController.setUserAsAdmin)
 
 // 移除管理員權限
-router.delete('/:userId', validate(deleteUserSchema), adminController.removeAdmin)
+router.delete('/admin/:userId', validate(deleteUserSchema, 'params'), adminController.removeAdmin)
 
 // 刪除用戶
-router.delete('/users/:userId', validate(deleteUserSchema), adminController.deleteUser)
+router.delete('/user/:userId', validate(deleteUserSchema, 'params'), adminController.deleteUser)
 
 // 獲取系統統計信息
 router.get('/stats', adminController.getSystemStats)

@@ -1,14 +1,13 @@
 const Joi = require('joi')
 
 const createAdminSchema = Joi.object({
-	userId: Joi.string().required(),
-})
-
-const deleteUserSchema = Joi.object({
-	userId: Joi.string().required(),
+	userId: Joi.alternatives().try(
+		Joi.number(),
+		Joi.string().pattern(/^\d+$/)
+	).required(),
 })
 
 module.exports = {
 	createAdminSchema,
-	deleteUserSchema,
+	deleteUserSchema: createAdminSchema,
 }

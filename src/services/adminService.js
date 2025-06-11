@@ -8,16 +8,27 @@ class AdminService {
 	 * @returns {Promise<Array>} 用戶列表
 	 */
 	async getAllUsers() {
-		return Users.findAll({
+		const users = await Users.findAll({
 			include: [
 				{
 					model: Admin,
 					as: 'admin',
-					attributes: ['id'],
+					attributes: ['id', 'userId'],
 				},
 			],
 			nest: true,
 			raw: true,
+		})
+
+		// 過濾掉 admin 為空值的情況
+		return users.map((user) => {
+			if (user.admin && user.admin.id === null && user.admin.userId === null) {
+				const { admin, ...rest } = user
+				return rest
+			} else {
+				user.isAdmin = true
+				return user
+			}
 		})
 	}
 
