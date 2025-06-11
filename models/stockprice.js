@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
 			dayChg: DataTypes.STRING,
 			yearChg: DataTypes.STRING,
 			MCap: DataTypes.STRING,
-			date: DataTypes.DATE,
+			date: DataTypes.STRING,
 		},
 		{
 			sequelize,
