@@ -293,13 +293,6 @@ interface StockPriceData {
 
 async function fetchStockPrices(): Promise<void> {
 	try {
-		const res = await db.StockPrice.findOne({
-			attributes: ['date'],
-			order: [['date', 'DESC']],
-			limit: 1,
-		})
-		const lastDateTime = res?.date
-
 		const symbols = await db.Company.findAll()
 
 		const url: string = process.env.STOCK_PRICES_URL || ''
@@ -308,16 +301,12 @@ async function fetchStockPrices(): Promise<void> {
 		const $ = cheerio.load(htmlContent)
 
 		const componentsTable = $('.table-minimize').eq(1).find('table')
-
-		const firstDate = componentsTable.find('tbody tr:first td#date').text().trim()
-		if (firstDate === lastDateTime) {
-			logger.warn('stock Prices 今日已寫入！')
-			return
-		}
+		const rows = componentsTable.find('tbody tr').toArray()
 
 		const stockPrices: StockPriceData[] = []
 
-		componentsTable.find('tbody tr').each((_: any, row: cheerio.Element) => {
+		// 使用 Promise.all 處理所有行的非同步操作
+		await Promise.all(rows.map(async (row: cheerio.Element) => {
 			const $row = $(row)
 
 			const company = $row.find('td').eq(0).text().trim()
@@ -332,16 +321,29 @@ async function fetchStockPrices(): Promise<void> {
 
 			const price = parseFloat(priceText)
 
-			stockPrices.push({
-				company,
-				price,
-				dayChg,
-				yearChg,
-				MCap,
-				date,
-				symbol,
+			const res = await db.StockPrice.findOne({
+				where: {
+					company,
+					date,
+				},
+				attributes: ['date'],
+				order: [['date', 'DESC']],
+				limit: 1,
 			})
-		})
+			const hasData = res?.date
+
+			if (!hasData) {
+				stockPrices.push({
+					company,
+					price,
+					dayChg,
+					yearChg,
+					MCap,
+					date,
+					symbol,
+				})
+			}
+		}))
 
 		if (stockPrices.length > 0) {
 			await db.StockPrice.bulkCreate(stockPrices)
