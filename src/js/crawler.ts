@@ -344,35 +344,6 @@ async function fetchStockPrices(): Promise<void> {
 				})
 			}
 		}))
-
-		if (stockPrices.length > 0) {
-			await db.StockPrice.bulkCreate(stockPrices)
-			let advancingIssues = 0
-			let decliningIssues = 0
-			let unChangedIssues = 0
-			stockPrices.forEach((vo) => {
-				const chg = parseFloat(vo.dayChg.replace('%', '')) || 0
-				if (chg > 0) {
-					advancingIssues += 1
-				} else if (chg === 0) {
-					unChangedIssues += 1
-				} else {
-					decliningIssues += 1
-				}
-			})
-			const breath = advancingIssues == 0 ? 0 : advancingIssues / stockPrices.length
-
-			const date = stockPrices[0]?.date
-			await db.Spy500Breadth.create({
-				date,
-				breath,
-				advancingIssues,
-				decliningIssues,
-				unChangedIssues,
-			})
-		} else {
-			logger.warn('No stock price data extracted.')
-		}
 	} catch (e: any) {
 		logger.error(`Error fetching stock prices: ${(e as Error).message}`)
 	}
