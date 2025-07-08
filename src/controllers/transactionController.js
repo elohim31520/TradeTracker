@@ -14,8 +14,8 @@ class TransactionController {
 
 	async getAll(req, res, next) {
 		try {
-			const userName = req.user.user_name
-			const transactions = await transactionService.getAll(userName)
+			const userId = req.user.id
+			const transactions = await transactionService.getAll(userId)
 			res.status(200).json(responseHelper.success(transactions))
 		} catch (error) {
 			next(error)

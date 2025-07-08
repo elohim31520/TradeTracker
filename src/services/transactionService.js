@@ -1,13 +1,11 @@
 const db = require('../../models')
-const { getUserIdByUsername } = require('../js/dbUtils')
 
 class TransactionService {
 	async create(data) {
 		return db.Transaction.create(data)
 	}
 
-	async getAll(userName) {
-		const userId = await getUserIdByUsername(db, userName)
+	async getAll(userId) {
 		return db.Transaction.findAll({
 			where: {
 				user_id: userId,
