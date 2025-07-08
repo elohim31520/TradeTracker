@@ -284,8 +284,8 @@ function extractCMData(data: string): Article[] {
 interface StockPriceData {
 	company: string
 	price: number
-	dayChg: string
-	yearChg: string
+	dayChg: number
+	yearChg: number
 	MCap: string
 	date: string
 	symbol?: string
@@ -311,8 +311,8 @@ async function fetchStockPrices(): Promise<void> {
 
 			const company = $row.find('td').eq(0).text().trim()
 			const priceText = $row.find('td#p').text().trim().replace(/,/g, '')
-			const dayChg = $row.find('td#pch').text().trim()
-			const yearChg = $row.find('td').eq(5).text().trim()
+			const dayChg = $row.find('td#pch').text().trim().replace(/%/g, '')
+			const yearChg = $row.find('td').eq(5).text().trim().replace(/%/g, '')
 			const MCap = $row.find('td').eq(6).text().trim()
 			const date = $row.find('td#date').text().trim()
 
@@ -336,14 +336,21 @@ async function fetchStockPrices(): Promise<void> {
 				stockPrices.push({
 					company,
 					price,
-					dayChg,
-					yearChg,
+					dayChg: parseFloat(dayChg),
+					yearChg: parseFloat(yearChg),
 					MCap,
 					date,
 					symbol,
 				})
 			}
 		}))
+
+		if (stockPrices.length > 0) {
+			await db.StockPrice.bulkCreate(stockPrices)
+			logger.info(`Successfully inserted ${stockPrices.length} new stock prices.`)
+		} else {
+			logger.info('No new stock prices to insert.')
+		}
 	} catch (e: any) {
 		logger.error(`Error fetching stock prices: ${(e as Error).message}`)
 	}
