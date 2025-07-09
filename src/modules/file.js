@@ -1,8 +1,6 @@
 const fs = require("fs");
-const { getTimeNow } = require("./util");
 const { dbDir } = require("./config");
 const path = require('path');
-
 
 function createDir(myPath) {
     return new Promise((rs, rj) => {
@@ -23,13 +21,6 @@ function writeFile(path, data) {
         })
     })
 }
-
-// function isDirDup(myPath=dbDir){
-//     let arr = fs.readdirSync(myPath) || []
-//     let tempT = getTimeNow().slice(0,-4)
-//     let isDup = arr.some(vo =>  vo.includes(tempT))
-//     return isDup
-// }
 
 function getLastDir() {
     let arr = fs.readdirSync(dbDir) || []

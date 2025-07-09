@@ -1,21 +1,36 @@
-import dayjs, { ManipulateType } from 'dayjs'
+import { add, isAfter } from 'date-fns'
+import { normalizeDate, getZonedDate } from './date'
+
+type DurationUnit =
+	| 'years'
+	| 'months'
+	| 'weeks'
+	| 'days'
+	| 'hours'
+	| 'minutes'
+	| 'seconds'
 
 interface ScheduleOptions {
 	countdown: number
 	gap?: number
-	gapUnit?: dayjs.UnitType
+	gapUnit?: DurationUnit
 	lastTime?: string | Date
 }
 
 class Schedule {
-	private lastTime: dayjs.Dayjs
+	private lastTime: Date | null
 	private timeoutID: NodeJS.Timeout | null = null
 	private gap: number
-	private gapUnit: dayjs.UnitType
+	private gapUnit: DurationUnit
 	private countdownSeconds: number
 
-	constructor({ countdown, gap = 24, gapUnit = 'hour', lastTime }: ScheduleOptions) {
-		this.lastTime = dayjs(lastTime)
+	constructor({
+		countdown,
+		gap = 24,
+		gapUnit = 'hours',
+		lastTime,
+	}: ScheduleOptions) {
+		this.lastTime = normalizeDate(lastTime ?? getZonedDate())
 		this.countdownSeconds = countdown
 		this.gap = gap
 		this.gapUnit = gapUnit
@@ -38,12 +53,13 @@ class Schedule {
 	}
 
 	updateLastTime(lastTime: string | Date): void {
-		this.lastTime = dayjs(lastTime)
+		this.lastTime = normalizeDate(lastTime)
 	}
 
-	isAfterTime(gap: number, gapUnit: ManipulateType): boolean {
+	isAfterTime(): boolean {
 		if (!this.lastTime) return false
-		return dayjs().isAfter(this.lastTime.add(gap, gapUnit))
+		const targetTime = add(this.lastTime, { [this.gapUnit]: this.gap })
+		return isAfter(getZonedDate(), targetTime)
 	}
 }
 

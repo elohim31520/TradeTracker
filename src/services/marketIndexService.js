@@ -1,8 +1,13 @@
 const db = require('../../models')
 const { calculateMean, calculateStdDev, calculateCorrelation } = require('../modules/math')
 const Sequelize = require('sequelize')
-const dayjs = require('dayjs')
 const { MOVING_AVERAGE, BTCUSD, USOIL, DXY, US10Y, XAUUSD } = require('../constant/market')
+const {
+	getZonedDate,
+	subtractDays,
+	getStartOfToday,
+	getEndOfToday,
+} = require('../modules/date')
 
 const KEY_MAP = {
 	BTCUSD: 'btc',
@@ -135,7 +140,7 @@ class MarketIndexService {
 	}
 
 	async getByDateRange(rangeInDays) {
-		const startDate = dayjs().subtract(rangeInDays, 'day').format('YYYY-MM-DD HH:mm:ss')
+		const startDate = subtractDays(getZonedDate(), rangeInDays)
 		const data = await db.market_index.findAll({
 			attributes: [
 				'symbol',
@@ -224,8 +229,8 @@ class MarketIndexService {
 	}
 
 	async getMarketBreadth() {
-		const now = dayjs()
-		const yesterday = now.subtract(24, 'hour').toDate()
+		const now = getZonedDate()
+		const yesterday = subtractDays(now, 1)
 		const spyBreadth = await db.Spy500Breadth.findOne({
 			where: {
 				date: yesterday,
@@ -247,8 +252,8 @@ class MarketIndexService {
 	}
 
 	async getTodayStocks() {
-		const todayStart = dayjs().startOf('day').toDate()
-		const todayEnd = dayjs().endOf('day').toDate()
+		const todayStart = getStartOfToday()
+		const todayEnd = getEndOfToday()
 		const stocks = await db.StockPrice.findAll({
 			where: {
 				[Sequelize.Op.and]: [

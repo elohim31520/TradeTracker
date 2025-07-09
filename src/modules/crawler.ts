@@ -2,13 +2,8 @@ import axios, { AxiosResponse } from 'axios'
 import iconv from 'iconv-lite'
 const cheerio = require('cheerio')
 import { get, isArray } from 'lodash'
-const dayjs = require('dayjs')
+import { isAfter, add } from 'date-fns'
 require('dotenv').config()
-import utc from 'dayjs/plugin/utc'
-import timezone from 'dayjs/plugin/timezone'
-
-dayjs.extend(utc)
-dayjs.extend(timezone)
 
 const { Sp500Fetcher } = require('./financialDataFetcher')
 const { tcHeader, marketIndexHeaders } = require('./config')
@@ -17,7 +12,11 @@ const { BTCUSD, USOIL, DXY, US10Y, XAUUSD } = require('../constant/market')
 import Schedule from './schedule'
 
 const logger = require('../logger')
-const util = require('./util')
+import {
+	getZonedDate,
+	zhTimeStringToStandard,
+	parseUtcDateTimeString,
+} from './date'
 const marketIndexService = require('../services/marketIndexService')
 
 const db = require('../../models')
@@ -42,7 +41,7 @@ function extractDataFromTechNewsHtml(html: string): Article[] {
 		if (title) {
 			title = title.trim()
 			web_url = web_url.trim()
-			release_time = util.zhTimeToStandardTime(release_time)
+			release_time = zhTimeStringToStandard(release_time)
 			arr.push({ title, web_url, release_time, publisher })
 		}
 	})
@@ -73,10 +72,18 @@ function fetchTnews(): void {
 
 			for (const vo of arr) {
 				try {
-					const parsedDate = dayjs.utc(vo.release_time, 'YYYY-MM-DD HH:mm').toDate()
-					const release_time = dayjs(parsedDate).toISOString()
-
-					await db.tech_investment_news.create({ ...vo, release_time })
+					const parsedDate = parseUtcDateTimeString(
+						vo.release_time,
+						'yyyy-MM-dd HH:mm'
+					)
+					if (parsedDate) {
+						const release_time = parsedDate.toISOString()
+						await db.tech_investment_news.create({ ...vo, release_time })
+					} else {
+						console.warn(
+							`Invalid date format for release_time: ${vo.release_time}`
+						)
+					}
 				} catch (e: any) {
 					console.warn((e as Error).message)
 				}
@@ -118,9 +125,11 @@ async function fetchStatements(): Promise<void> {
 		if (!res) logger.warn('No company statements found.')
 
 		const lastCreatedTime = res.createdAt
-		const canGet = dayjs().isAfter(dayjs(lastCreatedTime).add(24, 'hour'))
+		const canGet = isAfter(getZonedDate(), add(lastCreatedTime, { hours: 24 }))
 		if (!canGet) {
-			logger.warn('Skipping fetch Sp500 Statements: Data fetched within last 24 hours.')
+			logger.warn(
+				'Skipping fetch Sp500 Statements: Data fetched within last 24 hours.'
+			)
 			return
 		}
 
@@ -389,9 +398,14 @@ async function migrateTechNews(filePath: string) {
 		const results = await Promise.all(
 			news.map(async (vo, index) => {
 				try {
-					const parsedDate = dayjs.utc(vo.release_time, 'YYYY-MM-DD HH:mm')
-					if (!parsedDate.isValid()) {
-						throw new Error(`Invalid date format for release_time: ${vo.release_time}`)
+					const parsedDate = parseUtcDateTimeString(
+						vo.release_time,
+						'yyyy-MM-dd HH:mm'
+					)
+					if (!parsedDate) {
+						throw new Error(
+							`Invalid date format for release_time: ${vo.release_time}`
+						)
 					}
 					const release_time = parsedDate.toISOString()
 
@@ -400,10 +414,19 @@ async function migrateTechNews(filePath: string) {
 
 					return { status: 'success', data: vo }
 				} catch (error) {
-					logger.warn(`Error processing item at index ${index}: ${(error as Error).message}`, {
-						item: vo,
-					})
-					return { status: 'failed', data: vo, error: (error as Error).message }
+					logger.warn(
+						`Error processing item at index ${index}: ${
+							(error as Error).message
+						}`,
+						{
+							item: vo,
+						}
+					)
+					return {
+						status: 'failed',
+						data: vo,
+						error: (error as Error).message,
+					}
 				}
 			})
 		)

@@ -1,5 +1,5 @@
-import dayjs from 'dayjs'
 const db = require('../../models')
+import { getZonedDate } from '../modules/date'
 
 interface updateParams {
 	stock_id?: string
@@ -31,7 +31,7 @@ class PortfolioService {
 
 	async updateByUser(userId: string, data: updateParams): Promise<void> {
 		try {
-			const now = dayjs().format('YYYY-MM-DD HH:mm:ss')
+			const now = getZonedDate()
 
 			const [affectedRows] = await db.Portfolio.update(
 				{
