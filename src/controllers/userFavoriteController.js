@@ -1,6 +1,6 @@
 const _get = require('lodash/get')
 const userFavoriteService = require('../services/userFavoriteService')
-const responseHelper = require('../js/responseHelper')
+const responseHelper = require('../modules/responseHelper')
 
 /**
  * 創建用戶收藏技術新聞

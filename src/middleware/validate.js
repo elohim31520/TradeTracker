@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const { ClientError } = require('../js/errors')
+const { ClientError } = require('../modules/errors')
 
 const validate = (schema, property = 'body') => {
 	return (req, res, next) => {

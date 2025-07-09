@@ -1,5 +1,5 @@
 const db = require('../../models')
-const { calculateMean, calculateStdDev, calculateCorrelation } = require('../js/math')
+const { calculateMean, calculateStdDev, calculateCorrelation } = require('../modules/math')
 const Sequelize = require('sequelize')
 const dayjs = require('dayjs')
 const { MOVING_AVERAGE, BTCUSD, USOIL, DXY, US10Y, XAUUSD } = require('../constant/market')

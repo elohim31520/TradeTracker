@@ -1,6 +1,6 @@
 const { Users } = require('../../models')
-const { generateToken, generateSalt, sha256 } = require('../js/crypto')
-const { ClientError } = require('../js/errors')
+const { generateToken, generateSalt, sha256 } = require('../modules/crypto')
+const { ClientError } = require('../modules/errors')
 
 class userService {
 	async getByName(user_name) {

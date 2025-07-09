@@ -1,5 +1,5 @@
 'use strict'
-const { success } = require('../js/responseHelper')
+const { success } = require('../modules/responseHelper')
 const AdminService = require('../services/adminService')
 
 class AdminController {

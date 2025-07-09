@@ -1,5 +1,5 @@
 const transactionService = require('../services/transactionService')
-const responseHelper = require('../js/responseHelper')
+const responseHelper = require('../modules/responseHelper')
 
 class TransactionController {
 	async create(req, res, next) {

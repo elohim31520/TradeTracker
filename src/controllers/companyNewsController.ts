@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 import companyNewsService from '../services/companyNewsService'
 import _ from 'lodash'
-const responseHelper = require('../js/responseHelper')
+const responseHelper = require('../modules/responseHelper')
 
 interface SearchQuery {
 	page: number

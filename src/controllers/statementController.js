@@ -1,6 +1,6 @@
 const statementService = require('../services/statementService')
 const _ = require('lodash')
-const responseHelper = require('../js/responseHelper')
+const responseHelper = require('../modules/responseHelper')
 
 class statementController {
 	async getBySymbol(req, res, next) {

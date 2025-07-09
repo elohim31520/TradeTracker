@@ -1,5 +1,5 @@
-const redisClient = require('../js/redis').default
-const responseHelper = require('../js/responseHelper')
+const redisClient = require('../modules/redis').default
+const responseHelper = require('../modules/responseHelper')
 const logger = require('../logger')
 
 const redisCache = (expirationTime = 3600) => {

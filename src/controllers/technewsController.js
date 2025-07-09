@@ -1,6 +1,6 @@
 const technewsService = require('../services/technewsService')
 const _ = require('lodash')
-const responseHelper = require('../js/responseHelper')
+const responseHelper = require('../modules/responseHelper')
 
 class technewsController {
 	async getById(req, res, next) {

@@ -1,6 +1,6 @@
 const marketService = require('../services/marketIndexService')
 const _ = require('lodash')
-const responseHelper = require('../js/responseHelper')
+const responseHelper = require('../modules/responseHelper')
 
 class MarketIndexController {
 	async getAll(req, res, next) {

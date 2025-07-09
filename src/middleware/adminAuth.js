@@ -1,4 +1,4 @@
-const { AuthError } = require('../js/errors')
+const { AuthError } = require('../modules/errors')
 const db = require('../../models')
 
 async function verifyAdmin(req, res, next) {

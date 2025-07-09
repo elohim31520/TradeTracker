@@ -1,6 +1,6 @@
 'use strict'
 const commentService = require('../services/commentService')
-const { success, fail } = require('../js/responseHelper')
+const { success, fail } = require('../modules/responseHelper')
 const _get = require('lodash/get')
 
 class CommentController {

@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 import portfolioService from '../services/portfolioService'
 import _ from 'lodash'
-const responseHelper = require('../js/responseHelper')
+const responseHelper = require('../modules/responseHelper')
 const _get = require('lodash/get')
 
 class PorfolioController {

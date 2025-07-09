@@ -8,9 +8,9 @@ import logger from './src/logger'
 //@ts-ignore
 import errorHandler from './src/middleware/errorHandler'
 //@ts-ignore
-import { ForbiddenError } from './src/js/errors'
+import { ForbiddenError } from './src/modules/errors'
 import rateLimiterMiddleware, { initRateLimiter } from './src/middleware/rateLimiter'
-import redisClient from './src/js/redis'
+import redisClient from './src/modules/redis'
 
 const app = express()
 

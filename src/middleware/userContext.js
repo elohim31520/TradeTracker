@@ -1,5 +1,5 @@
 const { Users } = require('../../models')
-const { AuthError } = require('../js/errors')
+const { AuthError } = require('../modules/errors')
 
 /**
  * 用戶上下文中間件

@@ -1,5 +1,5 @@
-const { AppError, ClientError, AuthError } = require('../js/errors')
-const responseHelper = require('../js/responseHelper')
+const { AppError, ClientError, AuthError } = require('../modules/errors')
+const responseHelper = require('../modules/responseHelper')
 const errorCodes = require('../constant/errorCodes').default
 
 const errHandler = (err, req, res, next) => {

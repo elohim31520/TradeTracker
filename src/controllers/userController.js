@@ -1,5 +1,5 @@
 const userService = require('../services/userService')
-const responseHelper = require('../js/responseHelper')
+const responseHelper = require('../modules/responseHelper')
 
 class UserController {
 	async create(req, res, next) {

@@ -2,9 +2,9 @@ import { RateLimiterRedis, RateLimiterMemory, IRateLimiterOptions } from 'rate-l
 import express, { Request, Response, NextFunction } from 'express'
 //@ts-ignore
 import errorCodes from '../constant/errorCodes'
-const responseHelper = require('../js/responseHelper')
+const responseHelper = require('../modules/responseHelper')
 //@ts-ignore
-import redisClient from '../js/redis'
+import redisClient from '../modules/redis'
 //@ts-ignore
 import logger from '../logger'
 
