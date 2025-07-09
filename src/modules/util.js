@@ -1,7 +1,4 @@
 const _ = require('lodash')
-function replaceDotToDash(str) {
-	return str.replace('.', '-')
-}
 
 const generateRandomID = () => Math.random().toString(36).slice(2)
 
@@ -13,8 +10,24 @@ function uuidv4() {
 	})
 }
 
+function deleteFolderRecursive(myPath) {
+	if (fs.existsSync(myPath)) {
+		fs.readdirSync(myPath).forEach((file, index) => {
+			const curPath = path.join(myPath, file)
+			if (fs.lstatSync(curPath).isDirectory()) {
+				// recurse
+				deleteFolderRecursive(curPath)
+			} else {
+				// delete file
+				fs.unlinkSync(curPath)
+			}
+		})
+		fs.rmdirSync(myPath)
+		console.log('已刪除: ', myPath)
+	}
+}
+
 module.exports = {
-	replaceDotToDash,
 	generateRandomID,
 	uuidv4,
 }
