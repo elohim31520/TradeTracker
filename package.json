@@ -29,7 +29,6 @@
         "jsonwebtoken": "^8.5.1",
         "lodash": "^4.17.21",
         "mysql2": "^2.3.3",
-        "npm": "^10.2.3",
         "rate-limiter-flexible": "^3.0.4",
         "redis": "^5.1.0",
         "sequelize": "^6.24.0",
