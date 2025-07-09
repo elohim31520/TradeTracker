@@ -15,7 +15,7 @@ const logger = require('../logger')
 import {
 	getZonedDate,
 	zhTimeStringToStandard,
-	parseUtcDateTimeString,
+	normalizeDate,
 } from './date'
 const marketIndexService = require('../services/marketIndexService')
 
@@ -72,12 +72,9 @@ function fetchTnews(): void {
 
 			for (const vo of arr) {
 				try {
-					const parsedDate = parseUtcDateTimeString(
-						vo.release_time,
-						'yyyy-MM-dd HH:mm'
-					)
+					const parsedDate = normalizeDate(vo.release_time)
 					if (parsedDate) {
-						const release_time = parsedDate.toISOString()
+						const release_time = parsedDate
 						await db.tech_investment_news.create({ ...vo, release_time })
 					} else {
 						console.warn(
@@ -268,28 +265,6 @@ async function fetchMarketIndex(): Promise<void> {
 	}
 }
 
-function extractCMData(data: string): Article[] {
-	const $ = cheerio.load(data)
-	const articles: Article[] = []
-
-	$('article').each((index: number, element: cheerio.Element) => {
-		const html = $(element)
-		const title = html.find('.read-title a').text().trim()
-		const publisher = html.find('.author-links .posts-author a').text().trim()
-		const release_time = html.find('.posts-date').text().trim()
-		const web_url = html.find('.read-title a').attr('href') || ''
-
-		articles.push({
-			title,
-			release_time,
-			publisher,
-			web_url,
-		})
-	})
-
-	return articles
-}
-
 interface StockPriceData {
 	company: string
 	price: number
@@ -398,10 +373,7 @@ async function migrateTechNews(filePath: string) {
 		const results = await Promise.all(
 			news.map(async (vo, index) => {
 				try {
-					const parsedDate = parseUtcDateTimeString(
-						vo.release_time,
-						'yyyy-MM-dd HH:mm'
-					)
+					const parsedDate = normalizeDate(vo.release_time)
 					if (!parsedDate) {
 						throw new Error(
 							`Invalid date format for release_time: ${vo.release_time}`
