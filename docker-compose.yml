@@ -1,19 +1,66 @@
 version: '3.8'
 
 services:
-  app:
-    build: .
-    ports:
-      - "1233:1234"
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.14.0
+    container_name: elasticsearch
     environment:
-      - REDIS_URL=redis://redis:6379
+      - discovery.type=single-node
+      - xpack.security.enabled=false # For development convenience. Enable security in production.
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - "9200:9200"
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    networks:
+      - elk
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.14.0
+    container_name: kibana
+    ports:
+      - "5601:5601"
     depends_on:
-      - redis
+      - elasticsearch
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    networks:
+      - elk
 
   redis:
     image: "redis:alpine"
+    container_name: redis
+    networks:
+      - elk
     volumes:
       - redis-data:/data
 
+  app:
+    build: .
+    container_name: trade-tracker-app
+    depends_on:
+      - elasticsearch
+      - redis
+    environment:
+      - NODE_ENV=production
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+      - REDIS_URL=redis://redis:6379
+    networks:
+      - elk
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules # Prevents local node_modules from overwriting container's
+    command: node src/index.js # Assumes your entry point is src/index.js
+
+networks:
+  elk:
+    driver: bridge
+
 volumes:
-  redis-data: 
+  esdata:
+    driver: local
+  redis-data: {}
