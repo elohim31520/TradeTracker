@@ -1,8 +1,4 @@
-const path = require('path')
-
-const dbDir = path.join(__dirname, `../DB/`)
-
-const tcHeader = {
+export const TC_HEADER = {
 	'Accept':
 		'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
 	'Accept-Encoding': 'gzip, deflate, br',
@@ -23,7 +19,7 @@ const tcHeader = {
 		'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36',
 }
 
-const marketIndexHeaders = {
+export const MARKET_INDEX_HEADERS = {
 	'authority': 'tradingeconomics.com',
 	'method': 'GET',
 	'path': '/united-states/currency',
@@ -44,10 +40,4 @@ const marketIndexHeaders = {
 	'Upgrade-Insecure-Requests': '1',
 	'User-Agent':
 		'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-}
-
-module.exports = {
-	dbDir,
-	tcHeader,
-	marketIndexHeaders,
 }

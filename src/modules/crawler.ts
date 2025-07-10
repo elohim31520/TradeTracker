@@ -6,17 +6,13 @@ import { isAfter, add } from 'date-fns'
 require('dotenv').config()
 
 const { Sp500Fetcher } = require('./financialDataFetcher')
-const { tcHeader, marketIndexHeaders } = require('./config')
+import { TC_HEADER, MARKET_INDEX_HEADERS } from '../constant/config'
 const { BTCUSD, USOIL, DXY, US10Y, XAUUSD } = require('../constant/market')
 
 import Schedule from './schedule'
 
 const logger = require('../logger')
-import {
-	getZonedDate,
-	zhTimeStringToStandard,
-	normalizeDate,
-} from './date'
+import { getZonedDate, zhTimeStringToStandard, normalizeDate } from './date'
 const marketIndexService = require('../services/marketIndexService')
 
 const db = require('../../models')
@@ -61,7 +57,7 @@ function fetchTnews(): void {
 		}
 
 		try {
-			const res = await axios.get(techUrl, { headers: tcHeader })
+			const res = await axios.get(techUrl, { headers: TC_HEADER })
 			const data = get(res, 'data', {})
 			let arr = extractDataFromTechNewsHtml(data)
 
@@ -77,9 +73,7 @@ function fetchTnews(): void {
 						const release_time = parsedDate
 						await db.tech_investment_news.create({ ...vo, release_time })
 					} else {
-						console.warn(
-							`Invalid date format for release_time: ${vo.release_time}`
-						)
+						console.warn(`Invalid date format for release_time: ${vo.release_time}`)
 					}
 				} catch (e: any) {
 					console.warn((e as Error).message)
@@ -124,9 +118,7 @@ async function fetchStatements(): Promise<void> {
 		const lastCreatedTime = res.createdAt
 		const canGet = isAfter(getZonedDate(), add(lastCreatedTime, { hours: 24 }))
 		if (!canGet) {
-			logger.warn(
-				'Skipping fetch Sp500 Statements: Data fetched within last 24 hours.'
-			)
+			logger.warn('Skipping fetch Sp500 Statements: Data fetched within last 24 hours.')
 			return
 		}
 
@@ -224,7 +216,7 @@ async function fetchMarketIndex(): Promise<void> {
 	}
 
 	try {
-		const response: AxiosResponse<Buffer> = await axios.get(url, { headers: marketIndexHeaders })
+		const response: AxiosResponse<Buffer> = await axios.get(url, { headers: MARKET_INDEX_HEADERS })
 		const htmlContent = iconv.decode(response.data, 'utf-8')
 		const $ = cheerio.load(htmlContent)
 
@@ -280,7 +272,7 @@ async function fetchStockPrices(): Promise<void> {
 		const symbols = await db.Company.findAll()
 
 		const url: string = process.env.STOCK_PRICES_URL || ''
-		const resp = await axios.get(url, { headers: marketIndexHeaders, responseType: 'arraybuffer' })
+		const resp = await axios.get(url, { headers: MARKET_INDEX_HEADERS, responseType: 'arraybuffer' })
 		const htmlContent = iconv.decode(resp.data, 'utf-8')
 		const $ = cheerio.load(htmlContent)
 
@@ -290,44 +282,46 @@ async function fetchStockPrices(): Promise<void> {
 		const stockPrices: StockPriceData[] = []
 
 		// 使用 Promise.all 處理所有行的非同步操作
-		await Promise.all(rows.map(async (row: cheerio.Element) => {
-			const $row = $(row)
+		await Promise.all(
+			rows.map(async (row: cheerio.Element) => {
+				const $row = $(row)
 
-			const company = $row.find('td').eq(0).text().trim()
-			const priceText = $row.find('td#p').text().trim().replace(/,/g, '')
-			const dayChg = $row.find('td#pch').text().trim().replace(/%/g, '')
-			const yearChg = $row.find('td').eq(5).text().trim().replace(/%/g, '')
-			const MCap = $row.find('td').eq(6).text().trim()
-			const date = $row.find('td#date').text().trim()
+				const company = $row.find('td').eq(0).text().trim()
+				const priceText = $row.find('td#p').text().trim().replace(/,/g, '')
+				const dayChg = $row.find('td#pch').text().trim().replace(/%/g, '')
+				const yearChg = $row.find('td').eq(5).text().trim().replace(/%/g, '')
+				const MCap = $row.find('td').eq(6).text().trim()
+				const date = $row.find('td#date').text().trim()
 
-			const regex = new RegExp(company, 'i')
-			const symbol = symbols.find((vo: any) => regex.test(vo.name))?.symbol
+				const regex = new RegExp(company, 'i')
+				const symbol = symbols.find((vo: any) => regex.test(vo.name))?.symbol
 
-			const price = parseFloat(priceText)
+				const price = parseFloat(priceText)
 
-			const res = await db.StockPrice.findOne({
-				where: {
-					company,
-					date,
-				},
-				attributes: ['date'],
-				order: [['date', 'DESC']],
-				limit: 1,
-			})
-			const hasData = res?.date
-
-			if (!hasData) {
-				stockPrices.push({
-					company,
-					price,
-					dayChg: parseFloat(dayChg),
-					yearChg: parseFloat(yearChg),
-					MCap,
-					date,
-					symbol,
+				const res = await db.StockPrice.findOne({
+					where: {
+						company,
+						date,
+					},
+					attributes: ['date'],
+					order: [['date', 'DESC']],
+					limit: 1,
 				})
-			}
-		}))
+				const hasData = res?.date
+
+				if (!hasData) {
+					stockPrices.push({
+						company,
+						price,
+						dayChg: parseFloat(dayChg),
+						yearChg: parseFloat(yearChg),
+						MCap,
+						date,
+						symbol,
+					})
+				}
+			})
+		)
 
 		if (stockPrices.length > 0) {
 			await db.StockPrice.bulkCreate(stockPrices)
@@ -375,9 +369,7 @@ async function migrateTechNews(filePath: string) {
 				try {
 					const parsedDate = normalizeDate(vo.release_time)
 					if (!parsedDate) {
-						throw new Error(
-							`Invalid date format for release_time: ${vo.release_time}`
-						)
+						throw new Error(`Invalid date format for release_time: ${vo.release_time}`)
 					}
 					const release_time = parsedDate.toISOString()
 
@@ -386,14 +378,9 @@ async function migrateTechNews(filePath: string) {
 
 					return { status: 'success', data: vo }
 				} catch (error) {
-					logger.warn(
-						`Error processing item at index ${index}: ${
-							(error as Error).message
-						}`,
-						{
-							item: vo,
-						}
-					)
+					logger.warn(`Error processing item at index ${index}: ${(error as Error).message}`, {
+						item: vo,
+					})
 					return {
 						status: 'failed',
 						data: vo,
