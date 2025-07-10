@@ -1,4 +1,4 @@
-const userService = require('../services/userService')
+const userService = require('../services/userService').default
 const responseHelper = require('../modules/responseHelper')
 
 class UserController {
