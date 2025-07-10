@@ -55,6 +55,7 @@ function runDateTests() {
 	console.log('** 3. 日期解析與正規化 **')
 	const dateString1 = '2023-10-27 10:30:00'
 	const dateString2 = '2023/10/27'
+	const dateString3 = '2025-07-10 07:20'
 	const timestamp = 1698399000000 // 2023-10-27 10:30:00 UTC
 	const zhDateString = '2023 年 07 月 26 日 9:45'
 	const utcDateString = '2023-10-27 15:45'
@@ -62,6 +63,7 @@ function runDateTests() {
 	console.log(`normalizeDate('${dateString1}'):    `, normalizeDate(dateString1))
 	console.log(`normalizeDate('${dateString2}'):        `, normalizeDate(dateString2))
 	console.log(`normalizeDate(timestamp):                  `, normalizeDate(timestamp))
+	console.log(`normalizeDate('${dateString3}'):    `, normalizeDate(dateString3))
 	console.log(
 		`zhTimeStringToStandard('${zhDateString}'): `,
 		zhTimeStringToStandard(zhDateString)
