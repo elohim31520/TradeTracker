@@ -1,33 +1,53 @@
-'use strict'
-const db = require('../../models')
-const { Users, Admin } = db
+import models from '../../models'
+import type { DB } from '../types/db'
+
+const db = models as unknown as DB
+
+interface Admin {
+	id: number
+	userId: number
+	createdAt: Date
+	updatedAt: Date
+}
+
+interface User {
+	id: number
+	userId: number
+	username: string
+	email: string
+	createdAt: Date
+	updatedAt: Date
+}
+
+interface UserWithAdmin extends User {
+	admin: Admin | null
+	isAdmin: boolean
+}
 
 class AdminService {
 	/**
 	 * 獲取所有用戶列表
 	 * @returns {Promise<Array>} 用戶列表
 	 */
-	async getAllUsers() {
-		const users = await Users.findAll({
+	async getAllUsers(): Promise<User[]> {
+		const users = await db.Users.findAll({
 			include: [
 				{
-					model: Admin,
+					model: db.Admin,
 					as: 'admin',
 					attributes: ['id', 'userId'],
 				},
 			],
 			nest: true,
 			raw: true,
-		})
+		}) as unknown as UserWithAdmin[]
 
-		// 過濾掉 admin 為空值的情況
 		return users.map((user) => {
 			if (user.admin && user.admin.id === null && user.admin.userId === null) {
 				const { admin, ...rest } = user
 				return rest
 			} else {
-				user.isAdmin = true
-				return user
+				return { ...user, isAdmin: true }
 			}
 		})
 	}
@@ -37,18 +57,18 @@ class AdminService {
 	 * @param {Number} userId - 用戶ID
 	 * @returns {Promise<Object>} 創建的管理員記錄
 	 */
-	async setUserAsAdmin(userId) {
-		const user = await Users.findByPk(userId)
+	async setUserAsAdmin(userId: number): Promise<Admin> {
+		const user = await db.Users.findByPk(userId)
 		if (!user) {
 			throw new Error('用戶不存在')
 		}
 
-		const existingAdmin = await Admin.findOne({ where: { userId } })
+		const existingAdmin = await db.Admin.findOne({ where: { userId } })
 		if (existingAdmin) {
 			throw new Error('該用戶已經是管理員')
 		}
 
-		return Admin.create({ userId })
+		return db.Admin.create({ userId })
 	}
 
 	/**
@@ -56,8 +76,8 @@ class AdminService {
 	 * @param {Number} userId - 用戶ID
 	 * @returns {Promise<Boolean>} 操作結果
 	 */
-	async removeAdmin(userId) {
-		const admin = await Admin.findOne({ where: { userId } })
+	async removeAdmin(userId: number): Promise<boolean> {
+		const admin = await db.Admin.findOne({ where: { userId } })
 		if (!admin) {
 			throw new Error('該用戶不是管理員')
 		}
@@ -71,8 +91,8 @@ class AdminService {
 	 * @param {Number} userId - 用戶ID
 	 * @returns {Promise<Boolean>} 操作結果
 	 */
-	async deleteUser(userId) {
-		const user = await Users.findByPk(userId)
+	async deleteUser(userId: number): Promise<boolean> {
+		const user = await db.Users.findByPk(userId)
 		if (!user) {
 			throw new Error('用戶不存在')
 		}
@@ -85,8 +105,8 @@ class AdminService {
 	 * 獲取系統統計信息
 	 * @returns {Promise<Object>} 統計信息
 	 */
-	async getSystemStats() {
-		const [userCount, adminCount] = await Promise.all([Users.count(), Admin.count()])
+	async getSystemStats(): Promise<{ userCount: number; adminCount: number }> {
+		const [userCount, adminCount] = await Promise.all([db.Users.count(), db.Admin.count()])
 
 		return {
 			userCount,
