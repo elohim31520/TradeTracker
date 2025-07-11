@@ -1,28 +1,8 @@
 import models from '../../models'
 import type { DB } from '../types/db'
+import type { Admin, User, UserWithAdmin } from '../types/user'
 
 const db = models as unknown as DB
-
-interface Admin {
-	id: number
-	userId: number
-	createdAt: Date
-	updatedAt: Date
-}
-
-interface User {
-	id: number
-	userId: number
-	username: string
-	email: string
-	createdAt: Date
-	updatedAt: Date
-}
-
-interface UserWithAdmin extends User {
-	admin: Admin | null
-	isAdmin: boolean
-}
 
 class AdminService {
 	/**
@@ -115,4 +95,4 @@ class AdminService {
 	}
 }
 
-module.exports = new AdminService()
+export default new AdminService()
