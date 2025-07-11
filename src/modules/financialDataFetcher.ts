@@ -19,6 +19,10 @@ class BasicFetcher {
 		this.errorSymbols = []
 	}
 
+	protected decodeBuffer(buffer: Buffer | ArrayBuffer, encoding: string = 'utf-8'): string {
+		return iconv.decode(Buffer.from(buffer), encoding)
+	}
+
 	getCurrentSymbol(): string {
 		return this.stockSymbols[this.currentIndex]
 	}
@@ -58,8 +62,8 @@ class Sp500Fetcher extends BasicFetcher {
 
 		try {
 			const res = await axios.get(url, { responseType: 'arraybuffer' })
+			const decodedData = this.decodeBuffer(res.data)
 			this.currentIndex++
-			const decodedData = iconv.decode(res.data, 'utf-8')
 			return decodedData
 		} catch (error) {
 			return Promise.reject(error)
