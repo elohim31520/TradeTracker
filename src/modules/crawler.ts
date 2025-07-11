@@ -8,6 +8,7 @@ require('dotenv').config()
 const { Sp500Fetcher } = require('./financialDataFetcher')
 import { TC_HEADER, MARKET_INDEX_HEADERS } from '../constant/config'
 const { BTCUSD, USOIL, DXY, US10Y, XAUUSD } = require('../constant/market')
+import { decodeBuffer } from './util'
 
 import Schedule from './schedule'
 
@@ -271,10 +272,6 @@ export async function fetchMarketIndex(): Promise<void> {
 	} catch (e: any) {
 		logger.error(e.message)
 	}
-}
-
-function decodeBuffer(buffer: Buffer | ArrayBuffer, encoding: string = 'utf-8'): string {
-	return iconv.decode(Buffer.from(buffer), encoding)
 }
 
 async function extractStockPrices(htmlContent: string): Promise<StockPrice[]> {

@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from 'axios'
-import iconv from 'iconv-lite'
+import { decodeBuffer } from './util'
 
 interface ServiceOptions {
 	requestUrl?: string
@@ -17,10 +17,6 @@ class BasicFetcher {
 		this.stockSymbols = stockSymbols
 		this.currentIndex = 0
 		this.errorSymbols = []
-	}
-
-	protected decodeBuffer(buffer: Buffer | ArrayBuffer, encoding: string = 'utf-8'): string {
-		return iconv.decode(Buffer.from(buffer), encoding)
 	}
 
 	getCurrentSymbol(): string {
@@ -62,7 +58,7 @@ class Sp500Fetcher extends BasicFetcher {
 
 		try {
 			const res = await axios.get(url, { responseType: 'arraybuffer' })
-			const decodedData = this.decodeBuffer(res.data)
+			const decodedData = decodeBuffer(res.data)
 			this.currentIndex++
 			return decodedData
 		} catch (error) {

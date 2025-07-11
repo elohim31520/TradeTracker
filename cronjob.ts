@@ -1,20 +1,17 @@
 import { CronJob as CronJobClass } from 'cron'
-import cronJob from 'cron'
+import cron from 'cron'
 import { fetchTnews, fetchStatements, fetchMarketIndex, fetchStockPrices } from './src/modules/crawler'
 
-const CronJob = cronJob.CronJob
-
-// 定义参数类型
-interface CronJobConfig {
-	schedule: string | undefined
+interface CronConfig {
+	schedule: string
 	mission: () => void
 }
 
-function createCronJob({ schedule, mission }: CronJobConfig): CronJobClass {
+function createCronJob({ schedule, mission }: CronConfig): CronJobClass {
 	if (!schedule) {
 		throw new Error('Schedule is required')
 	}
-	const job = new CronJob(schedule, mission, null, true, 'Asia/Taipei')
+	const job = new cron.CronJob(schedule, mission, null, true, 'Asia/Taipei')
 	return job
 }
 
