@@ -50,12 +50,22 @@ module.exports = (sequelize, DataTypes) => {
 			},
 			pwd: {
 				type: DataTypes.STRING,
-				allowNull: false,
+				allowNull: true,  // 允許為空，因為 Google 登入的用戶不需要密碼
 			},
 			salt: {
 				type: DataTypes.STRING,
-				allowNull: false,
+				allowNull: true,  // 允許為空，因為 Google 登入的用戶不需要 salt
 			},
+			googleId: {
+				type: DataTypes.STRING,
+				allowNull: true,
+				unique: true,
+			},
+			provider: {
+				type: DataTypes.STRING,
+				allowNull: true,
+				defaultValue: 'local',
+			}
 		},
 		{
 			sequelize,
