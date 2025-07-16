@@ -34,6 +34,11 @@ module.exports = (sequelize, DataTypes) => {
 				foreignKey: 'userId',
 				as: 'admin',
 			})
+
+			models.Users.hasMany(models.ThirdpartyAccount, {
+				foreignKey: 'userId',
+				as: 'thirdpartyAccounts',
+			})
 		}
 	}
 	Users.init(
@@ -56,16 +61,6 @@ module.exports = (sequelize, DataTypes) => {
 				type: DataTypes.STRING,
 				allowNull: true,  // 允許為空，因為 Google 登入的用戶不需要 salt
 			},
-			googleId: {
-				type: DataTypes.STRING,
-				allowNull: true,
-				unique: true,
-			},
-			provider: {
-				type: DataTypes.STRING,
-				allowNull: true,
-				defaultValue: 'local',
-			}
 		},
 		{
 			sequelize,
