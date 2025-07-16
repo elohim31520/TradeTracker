@@ -14,7 +14,7 @@ interface payload {
 }
 
 export function generateToken(payload: payload, option: TokenOption = {}): string {
-	const { algorithm = 'RS256', expiresIn = '12h' } = option
+	const { algorithm = 'RS256', expiresIn = '24h' } = option
 	const token = jwt.sign(payload, privateKEY, { algorithm, expiresIn })
 	return token
 }
