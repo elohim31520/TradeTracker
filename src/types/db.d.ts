@@ -1,13 +1,13 @@
 import { Model, ModelStatic } from 'sequelize'
 
-interface UserAttributes {
+export interface UserAttributes {
 	user_name: string
-	pwd: string
-	salt: string
 	email: string
+	pwd?: string
+	salt?: string
 }
 
-interface UserInstance extends Model<UserAttributes>, UserAttributes {}
+export interface UserInstance extends Model<UserAttributes>, UserAttributes {}
 
 export interface DB {
 	Users: ModelStatic<UserInstance>
