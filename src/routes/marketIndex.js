@@ -5,6 +5,7 @@ const marketController = require('../controllers/marketIndexController')
 const validate = require('../middleware/validate')
 const { getLastOneSchema, getByDaysSchema } = require('../schemas/marketIndexSchema')
 const redisCache = require('../middleware/redisCache')
+const conditionalCache = require('../middleware/conditionalCache')
 
 // 不需要驗證的路由
 router.get('/', marketController.getAll)
@@ -17,9 +18,16 @@ router.use(verifyToken)
 
 // 需要驗證但不需要快取的路由
 router.get('/momentum', marketController.getMomentum)
+
+const momentumRangeCacheCondition = req => {
+	const days = parseInt(req.params.days, 10)
+	return [7, 30, 60].includes(days)
+}
+
 router.get(
 	'/momentum/range/:days',
 	validate(getByDaysSchema, 'params'),
+	conditionalCache(86400, momentumRangeCacheCondition),
 	marketController.getMarketIndicesByDays
 )
 
