@@ -1,8 +1,9 @@
 const redisClient = require('../modules/redis').default
 const responseHelper = require('../modules/responseHelper')
 const logger = require('../logger')
+const { CACHE_1H } = require('../constant/cache')
 
-const redisCache = (expirationTime = 3600) => {
+const redisCache = (expirationTime = CACHE_1H) => {
 	return async (req, res, next) => {
 		if (!redisClient || !redisClient.isReady) {
 			logger.warn('Redis client not ready')

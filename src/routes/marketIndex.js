@@ -6,12 +6,13 @@ const validate = require('../middleware/validate')
 const { getLastOneSchema, getByDaysSchema } = require('../schemas/marketIndexSchema')
 const redisCache = require('../middleware/redisCache')
 const conditionalCache = require('../middleware/conditionalCache')
+const { CACHE_24H } = require('../constant/cache')
 
 // 不需要驗證的路由
 router.get('/', marketController.getAll)
 router.get('/last/:symbol', validate(getLastOneSchema, 'params'), marketController.getLstOne)
-router.get('/stock/winners',redisCache(86400), marketController.getStockWinners)
-router.get('/stock/losers',redisCache(86400), marketController.getStockLosers)
+router.get('/stock/winners',redisCache(CACHE_24H), marketController.getStockWinners)
+router.get('/stock/losers',redisCache(CACHE_24H), marketController.getStockLosers)
 
 // 設置驗證中間件
 router.use(verifyToken)
@@ -27,12 +28,12 @@ const momentumRangeCacheCondition = req => {
 router.get(
 	'/momentum/range/:days',
 	validate(getByDaysSchema, 'params'),
-	conditionalCache(86400, momentumRangeCacheCondition),
+	conditionalCache(CACHE_24H, momentumRangeCacheCondition),
 	marketController.getMarketIndicesByDays
 )
 
 // 設置快取中間件
-router.use(redisCache(86400))
+router.use(redisCache(CACHE_24H))
 
 // 需要驗證和快取的路由
 router.get('/weights', marketController.getWeights)
