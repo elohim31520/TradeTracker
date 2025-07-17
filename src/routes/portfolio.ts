@@ -1,12 +1,13 @@
-import express from 'express'
+import express, { Router } from 'express'
 import portfolioController from '../controllers/portfolioController'
-const { verifyToken } = require('../middleware/auth')
-const validate = require('../middleware/validate')
+import { verifyToken } from '../middleware/auth'
+import validate from '../middleware/validate'
 import { updateSchema } from '../schemas/portfolioSchema'
+import { userContext } from '../middleware/userContext'
 
-const router = express.Router()
+const router: Router = express.Router()
 
-router.get('/', verifyToken, portfolioController.getAllByUserId)
-router.post('/', verifyToken, validate(updateSchema), portfolioController.updatePortfolio)
+router.get('/', verifyToken, userContext, portfolioController.getAllByUserId)
+router.post('/', verifyToken, userContext, validate(updateSchema), portfolioController.updatePortfolio)
 
-module.exports = router
+export default router
