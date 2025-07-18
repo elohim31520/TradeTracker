@@ -17,12 +17,11 @@ function verifyToken(req, res, next) {
 
 		const token = parts[1]
 		if (!token || token === 'undefined') {
-			throw new AuthError('令牌無效')
+			throw new AuthError('Token無效')
 		}
 		jwt.verify(token, publicKey, (err, decoded) => {
 			if (err) {
-				console.error('令牌驗證錯誤:', err)
-				throw new AuthError('令牌驗證失敗: ' + err.message)
+				throw new AuthError('Token驗證失敗: ' + err.message)
 			}
 			req.decoded = decoded
 			next()
