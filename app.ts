@@ -55,7 +55,6 @@ const initApp = async () => {
     app.use('/company-news', require('./src/routes/companyNews'))
     app.use('/transactions', require('./src/routes/transactions'))
     app.use('/users', require('./src/routes/user'))
-    app.use('/userFavorite', require('./src/routes/userFavorite'))
     app.use('/statements', require('./src/routes/statements'))
     app.use('/market', require('./src/routes/marketIndex'))
     app.use('/portfolio', require('./src/routes/portfolio').default)
