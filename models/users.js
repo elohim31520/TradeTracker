@@ -9,15 +9,6 @@ module.exports = (sequelize, DataTypes) => {
 		 * The `models/index` file will call this method automatically.
 		 */
 		static associate(models) {
-			models.Users.belongsToMany(models.tech_investment_news, {
-				through: models.pk_user_technews,
-				foreignKey: 'userId',
-			})
-			models.tech_investment_news.belongsToMany(models.Users, {
-				through: models.pk_user_technews,
-				foreignKey: 'newsId',
-			})
-
 			// 用戶發表的評論
 			models.Users.hasMany(models.Comments, {
 				foreignKey: 'userId',
