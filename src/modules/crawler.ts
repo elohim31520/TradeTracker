@@ -1,5 +1,4 @@
-import axios, { AxiosResponse } from 'axios'
-import iconv from 'iconv-lite'
+import axios from 'axios'
 const cheerio = require('cheerio')
 import _ from 'lodash'
 import { isAfter, add } from 'date-fns'
@@ -47,7 +46,6 @@ interface MarketIndexAttribute {
 	symbol: string
 	price: number
 	change: number
-	volatility?: number
 }
 
 interface StockPrice {
@@ -233,8 +231,8 @@ export async function fetchMarketIndex(): Promise<void> {
 	}
 
 	try {
-		const response: AxiosResponse<Buffer> = await axios.get(url, { headers: MARKET_INDEX_HEADERS })
-		const htmlContent = decodeBuffer(response.data)
+		const res = await axios.get(url, { headers: MARKET_INDEX_HEADERS })
+		const htmlContent = decodeBuffer(res.data)
 		const $ = cheerio.load(htmlContent)
 
 		const getParams = (symbol: string): MarketIndexAttribute => {
@@ -260,13 +258,6 @@ export async function fetchMarketIndex(): Promise<void> {
 		const symbols: string[] = [BTCUSD, DXY, USOIL, US10Y, XAUUSD]
 		for (const symbol of symbols) {
 			const param = getParams(symbol)
-			const lastOne = await marketIndexService.getLstOne(symbol)
-			const lastPrice = _.get(lastOne, 'price', null)
-
-			if (lastPrice !== null) {
-				param.volatility = +((param.price - lastPrice) / lastPrice) * 100
-			}
-
 			await marketIndexService.create(param)
 		}
 	} catch (e: any) {

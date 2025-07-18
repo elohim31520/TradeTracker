@@ -1,28 +1,24 @@
 'use strict'
 const { Model } = require('sequelize')
 module.exports = (sequelize, DataTypes) => {
-	class market_index extends Model {
-		/**
-		 * Helper method for defining associations.
-		 * This method is not a part of Sequelize lifecycle.
-		 * The `models/index` file will call this method automatically.
-		 */
+	class MarketIndex extends Model {
 		static associate(models) {
-			// define association here
+
 		}
 	}
-	market_index.init(
+	MarketIndex.init(
 		{
 			symbol: DataTypes.STRING,
 			price: DataTypes.FLOAT,
 			change: DataTypes.FLOAT,
-			volatility: DataTypes.FLOAT,
 		},
 		{
 			sequelize,
-			modelName: 'market_index',
-			tableName: 'market_index'
+			modelName: 'MarketIndex',
+			tableName: 'market_index',
+			timestamps: true,
+			underscored: true,
 		}
 	)
-	return market_index
+	return MarketIndex
 }

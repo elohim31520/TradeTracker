@@ -18,17 +18,17 @@ const KEY_MAP = {
 
 class MarketIndexService {
 	async create(params) {
-		const data = await db.market_index.create(params)
+		const data = await db.MarketIndex.create(params)
 		return data
 	}
 
 	async getAll() {
-		const data = db.market_index.findAll()
+		const data = db.MarketIndex.findAll()
 		return data
 	}
 
 	async getGroupedDataByTime() {
-		const data = await db.market_index.findAll({
+		const data = await db.MarketIndex.findAll({
 			attributes: [
 				'symbol',
 				[
@@ -130,7 +130,7 @@ class MarketIndexService {
 	}
 
 	async getLstOne(symbol) {
-		const lastOne = await db.market_index.findOne({
+		const lastOne = await db.MarketIndex.findOne({
 			where: {
 				symbol,
 			},
@@ -141,7 +141,7 @@ class MarketIndexService {
 
 	async getByDateRange(rangeInDays) {
 		const startDate = subtractDays(getZonedDate(), rangeInDays)
-		const data = await db.market_index.findAll({
+		const data = await db.MarketIndex.findAll({
 			attributes: [
 				'symbol',
 				[
