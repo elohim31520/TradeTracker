@@ -3,18 +3,18 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
 	async up(queryInterface, Sequelize) {
-		await queryInterface.createTable('ThirdpartyAccounts', {
+		await queryInterface.createTable('user_thirdparty_accounts', {
 			id: {
 				allowNull: false,
 				autoIncrement: true,
 				primaryKey: true,
 				type: Sequelize.INTEGER,
 			},
-			userId: {
+			user_id: {
 				type: Sequelize.INTEGER,
 				allowNull: false,
 				references: {
-					model: 'Users',
+					model: 'users',
 					key: 'id',
 				},
 				onDelete: 'CASCADE',
@@ -23,41 +23,42 @@ module.exports = {
 				type: Sequelize.STRING(50),
 				allowNull: false,
 			},
-			providerUserId: {
+			provider_user_id: {
 				type: Sequelize.STRING,
 				allowNull: false,
 			},
-			refreshToken: {
+			refresh_token: {
 				type: Sequelize.STRING,
 				allowNull: true,
 			},
-			accessToken: {
+			access_token: {
 				type: Sequelize.STRING,
 				allowNull: true,
 			},
-			accessTokenExpiresAt: {
+			access_token_expires_at: {
 				type: Sequelize.DATE,
 				allowNull: true,
 			},
-			createdAt: {
+			created_at: {
 				allowNull: false,
 				type: Sequelize.DATE,
 				defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
 			},
-			updatedAt: {
+			updated_at: {
 				allowNull: false,
 				type: Sequelize.DATE,
 				defaultValue: Sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
 			},
-		})
+		});
 
-		await queryInterface.addConstraint('ThirdpartyAccounts', {
-			fields: ['provider', 'providerUserId'],
+		await queryInterface.addConstraint('user_thirdparty_accounts', {
+			fields: ['provider', 'provider_user_id'],
 			type: 'unique',
 			name: 'unique_provider_user',
-		})
+		});
 	},
+
 	async down(queryInterface, Sequelize) {
-		await queryInterface.dropTable('ThirdpartyAccounts')
+		await queryInterface.dropTable('user_thirdparty_accounts');
 	},
-}
+};

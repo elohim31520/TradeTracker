@@ -3,11 +3,6 @@ const { Model } = require('sequelize')
 
 module.exports = (sequelize, DataTypes) => {
 	class Users extends Model {
-		/**
-		 * Helper method for defining associations.
-		 * This method is not a part of Sequelize lifecycle.
-		 * The `models/index` file will call this method automatically.
-		 */
 		static associate(models) {
 			// 用戶發表的評論
 			models.Users.hasMany(models.Comments, {
@@ -26,7 +21,7 @@ module.exports = (sequelize, DataTypes) => {
 				as: 'admin',
 			})
 
-			models.Users.hasMany(models.ThirdpartyAccount, {
+			models.Users.hasMany(models.UserThirdpartyAccount, {
 				foreignKey: 'userId',
 				as: 'thirdpartyAccounts',
 			})
