@@ -2,11 +2,6 @@
 const { Model } = require('sequelize')
 module.exports = (sequelize, DataTypes) => {
 	class tech_investment_news extends Model {
-		/**
-		 * Helper method for defining associations.
-		 * This method is not a part of Sequelize lifecycle.
-		 * The `models/index` file will call this method automatically.
-		 */
 		static associate(models) {
 			tech_investment_news.hasMany(models.Comments, {
 				foreignKey: 'postId',
@@ -48,6 +43,7 @@ module.exports = (sequelize, DataTypes) => {
 		{
 			sequelize,
 			modelName: 'tech_investment_news',
+			tableName: 'tech_investment_news',
 		}
 	)
 	return tech_investment_news

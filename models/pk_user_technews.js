@@ -37,6 +37,7 @@ module.exports = (sequelize, DataTypes) => {
 	}, {
 		sequelize,
 		modelName: 'pk_user_technews',
+		tableName: 'pk_user_technews',
 	});
 	pk_user_technews.removeAttribute('id')
 	return pk_user_technews;
