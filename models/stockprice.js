@@ -2,13 +2,7 @@
 const { Model } = require('sequelize')
 module.exports = (sequelize, DataTypes) => {
 	class StockPrice extends Model {
-		/**
-		 * Helper method for defining associations.
-		 * This method is not a part of Sequelize lifecycle.
-		 * The `models/index` file will call this method automatically.
-		 */
 		static associate(models) {
-			// define association here
 		}
 	}
 	StockPrice.init(
@@ -20,10 +14,25 @@ module.exports = (sequelize, DataTypes) => {
 			yearChg: DataTypes.DECIMAL,
 			MCap: DataTypes.STRING,
 			date: DataTypes.STRING,
+			timestamp: {
+				type: DataTypes.DATE,
+			},
+			createdAt: {
+				type: DataTypes.DATE,
+				allowNull: false,
+				defaultValue: DataTypes.NOW,
+			},
+			updatedAt: {
+				type: DataTypes.DATE,
+				allowNull: false,
+				defaultValue: DataTypes.NOW,
+			},
 		},
 		{
 			sequelize,
+			tableName: 'stock_prices',
 			modelName: 'StockPrice',
+			underscored: true,
 		}
 	)
 	return StockPrice
