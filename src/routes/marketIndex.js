@@ -13,6 +13,8 @@ router.get('/', marketController.getAll)
 router.get('/last/:symbol', validate(getLastOneSchema, 'params'), marketController.getLstOne)
 router.get('/stock/winners',redisCache(DAILY_UPDATE_CACHE_TTL), marketController.getStockWinners)
 router.get('/stock/losers',redisCache(DAILY_UPDATE_CACHE_TTL), marketController.getStockLosers)
+router.get('/stock/symbols',redisCache(DAILY_UPDATE_CACHE_TTL), marketController.getStockSymbol)
+router.get('/stock/breadth',redisCache(DAILY_UPDATE_CACHE_TTL), marketController.getMarketBreadth)
 
 // 設置驗證中間件
 router.use(verifyToken)
@@ -38,7 +40,5 @@ router.use(redisCache(DAILY_UPDATE_CACHE_TTL))
 // 需要驗證和快取的路由
 router.get('/weights', marketController.getWeights)
 router.get('/stock/prices', marketController.getStockPrices)
-router.get('/stock/symbols', marketController.getStockSymbol)
-router.get('/stock/breadth', marketController.getMarketBreadth)
 
 module.exports = router
