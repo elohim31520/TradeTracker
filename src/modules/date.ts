@@ -22,6 +22,17 @@ import { fromZonedTime, toZonedTime } from 'date-fns-tz'
 import _ from 'lodash'
 
 const DEFAULT_TIME_ZONE = 'Asia/Taipei'
+const EST_TIME_ZONE = 'America/New_York'
+
+export function convertToEST(dateString: string | number | Date): string {
+	const date = normalizeDate(dateString)
+	if (!date) {
+		throw new Error('Invalid date provided to convertToEST')
+	}
+
+	const estDate = toZonedTime(date, EST_TIME_ZONE)
+	return format(estDate, 'yyyy-MM-dd HH:mm:ss')
+}
 
 export function getCurrentDateTime() {
 	return format(getZonedDate(), 'yyyy/MM/dd HH:mm:ss')
@@ -191,6 +202,7 @@ const patterns = [
 	'yyyy/MM/dd HH:mm:ss',
 	'yyyy/MM/dd HH:mm',
 	'yyyy/MM/dd',
+	'MMM/dd',
 ]
 
 /**

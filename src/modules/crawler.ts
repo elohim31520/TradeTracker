@@ -12,7 +12,7 @@ import { decodeBuffer } from './util'
 import Schedule from './schedule'
 
 const logger = require('../logger')
-import { getZonedDate, zhTimeStringToStandard, normalizeDate } from './date'
+import { getZonedDate, zhTimeStringToStandard, normalizeDate, convertToEST } from './date'
 const marketIndexService = require('../services/marketIndexService')
 
 const db = require('../../models')
@@ -56,6 +56,7 @@ interface StockPrice {
 	MCap: string
 	date: string
 	symbol?: string
+	timestamp?: string
 }
 
 function extractDataFromTechNews(html: string): Article[] {
@@ -308,6 +309,7 @@ async function extractStockPrices(htmlContent: string): Promise<StockPrice[]> {
 					MCap,
 					date,
 					symbol,
+					timestamp: convertToEST(date),
 				})
 			}
 		})

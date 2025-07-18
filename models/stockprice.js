@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
 			MCap: DataTypes.STRING,
 			date: DataTypes.STRING,
 			timestamp: {
-				type: DataTypes.DATE,
+				type: DataTypes.STRING,
 			},
 			createdAt: {
 				type: DataTypes.DATE,
