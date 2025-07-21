@@ -4,11 +4,7 @@ const { success, fail } = require('../modules/responseHelper')
 const _get = require('lodash/get')
 
 class CommentController {
-	/**
-	 * 創建評論
-	 * @param {Object} req - 請求對象
-	 * @param {Object} res - 響應對象
-	 */
+	/** 創建評論 */
 	async createComment(req, res, next) {
 		try {
 			const data = req.body
@@ -19,11 +15,7 @@ class CommentController {
 		}
 	}
 
-	/**
-	 * 獲取新聞的評論列表
-	 * @param {Object} req - 請求對象
-	 * @param {Object} res - 響應對象
-	 */
+	/** 獲取新聞的評論列表 */
 	async getCommentsByPostId(req, res, next) {
 		try {
 			const { postId } = req.params
@@ -35,11 +27,7 @@ class CommentController {
 		}
 	}
 
-	/**
-	 * 獲取評論的回覆
-	 * @param {Object} req - 請求對象
-	 * @param {Object} res - 響應對象
-	 */
+	/** 獲取評論的回覆 */
 	async getRepliesByParentId(req, res, next) {
 		try {
 			const { parentId } = req.params
@@ -52,11 +40,7 @@ class CommentController {
 		}
 	}
 
-	/**
-	 * 獲取單個評論
-	 * @param {Object} req - 請求對象
-	 * @param {Object} res - 響應對象
-	 */
+	/** 獲取單個評論 */
 	async getCommentById(req, res, next) {
 		try {
 			const { id } = req.params
@@ -67,11 +51,7 @@ class CommentController {
 		}
 	}
 
-	/**
-	 * 更新評論
-	 * @param {Object} req - 請求對象
-	 * @param {Object} res - 響應對象
-	 */
+	/** 更新評論 */
 	async updateComment(req, res, next) {
 		try {
 			const { id } = req.params
@@ -83,11 +63,7 @@ class CommentController {
 		}
 	}
 
-	/**
-	 * 刪除評論
-	 * @param {Object} req - 請求對象
-	 * @param {Object} res - 響應對象
-	 */
+	/** 刪除評論 */
 	async deleteComment(req, res, next) {
 		try {
 			const { id } = req.params

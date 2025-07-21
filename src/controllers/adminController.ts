@@ -6,9 +6,6 @@ import { Request, Response, NextFunction } from 'express'
 class AdminController {
 	/**
 	 * 獲取所有用戶列表
-	 * @param {Object} req - 請求對象
-	 * @param {Object} res - 響應對象
-	 * @param {Function} next - 下一個中間件
 	 */
 	async getAllUsers(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
@@ -21,9 +18,6 @@ class AdminController {
 
 	/**
 	 * 將用戶設置為管理員
-	 * @param {Object} req - 請求對象
-	 * @param {Object} res - 響應對象
-	 * @param {Function} next - 下一個中間件
 	 */
 	async setUserAsAdmin(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
@@ -37,9 +31,6 @@ class AdminController {
 
 	/**
 	 * 移除管理員權限
-	 * @param {Object} req - 請求對象
-	 * @param {Object} res - 響應對象
-	 * @param {Function} next - 下一個中間件
 	 */
 	async removeAdmin(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
@@ -53,9 +44,6 @@ class AdminController {
 
 	/**
 	 * 刪除用戶
-	 * @param {Object} req - 請求對象
-	 * @param {Object} res - 響應對象
-	 * @param {Function} next - 下一個中間件
 	 */
 	async deleteUser(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
@@ -69,9 +57,6 @@ class AdminController {
 
 	/**
 	 * 獲取系統統計信息
-	 * @param {Object} req - 請求對象
-	 * @param {Object} res - 響應對象
-	 * @param {Function} next - 下一個中間件
 	 */
 	async getSystemStats(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
