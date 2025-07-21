@@ -22,26 +22,6 @@ class MarketIndexService {
 		return data
 	}
 
-	async getGroupedDataByTime() {
-		const data = await db.MarketIndex.findAll({
-			attributes: [
-				'symbol',
-				[
-					Sequelize.literal(
-						'(SELECT price FROM market_index AS mi2 WHERE mi2.symbol = market_index.symbol AND mi2.createdAt = market_index.createdAt AND mi2.change = MAX(market_index.change) LIMIT 1)'
-					),
-					'price',
-				],
-				[Sequelize.fn('MAX', Sequelize.col('change')), 'change'],
-				[Sequelize.literal("DATE_FORMAT(createdAt, '%Y-%m-%d %H')"), 'createdAt'],
-			],
-			raw: true,
-			group: ['symbol', 'createdAt'],
-			order: ['createdAt'],
-		})
-		return data
-	}
-
 	async getMomentumData(data) {
 		const consolidatedData = new Map()
 		const addDataToMap = (data, key) => {
@@ -134,7 +114,7 @@ class MarketIndexService {
 		return lastOne
 	}
 
-	async getByDateRange(rangeInDays) {
+	async getDataByDateRange(rangeInDays) {
 		const startDate = subtractDays(getZonedDate(), rangeInDays)
 		const rawQuery = `
 			WITH RankedData AS (
@@ -176,17 +156,17 @@ class MarketIndexService {
 	}
 
 	async getMomentumByDateRange(rangeInDays) {
-		const data = await this.getByDateRange(rangeInDays)
+		const data = await this.getDataByDateRange(rangeInDays)
 		return this.getMomentumData(data)
 	}
 
 	async getAllMomentum() {
-		const data = await this.getGroupedDataByTime()
+		const data = await this.getDataByDateRange(3650)
 		return this.getMomentumData(data)
 	}
 
 	async getWeights() {
-		const data = await this.getByDateRange(MOVING_AVERAGE)
+		const data = await this.getDataByDateRange(MOVING_AVERAGE)
 		const getPrices = (symbol) => data.filter((d) => d.symbol === symbol).map((d) => d.price)
 
 		const prices = {
