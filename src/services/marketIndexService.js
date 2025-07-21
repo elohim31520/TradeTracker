@@ -2,12 +2,7 @@ const db = require('../../models')
 const { calculateMean, calculateStdDev, calculateCorrelation } = require('../modules/math')
 const Sequelize = require('sequelize')
 const { MOVING_AVERAGE, BTCUSD, USOIL, DXY, US10Y, XAUUSD } = require('../constant/market')
-const {
-	getZonedDate,
-	subtractDays,
-	getStartOfToday,
-	getEndOfToday,
-} = require('../modules/date')
+const { getZonedDate, subtractDays, getStartOfToday, getEndOfToday } = require('../modules/date')
 
 const KEY_MAP = {
 	BTCUSD: 'btc',
@@ -141,29 +136,43 @@ class MarketIndexService {
 
 	async getByDateRange(rangeInDays) {
 		const startDate = subtractDays(getZonedDate(), rangeInDays)
-		const data = await db.MarketIndex.findAll({
-			attributes: [
-				'symbol',
-				[
-					Sequelize.literal(
-						'(SELECT price FROM market_index AS mi2 WHERE mi2.symbol = market_index.symbol AND mi2.createdAt = market_index.createdAt AND mi2.change = MAX(market_index.change) LIMIT 1)'
-					),
-					'price',
-				],
-				[Sequelize.fn('MAX', Sequelize.col('change')), 'change'],
-				[Sequelize.literal("DATE_FORMAT(createdAt, '%Y-%m-%d %H')"), 'createdAt'],
-			],
-			where: {
-				createdAt: {
-					[Sequelize.Op.gte]: startDate,
-				},
-			},
+		const rawQuery = `
+			WITH RankedData AS (
+				SELECT
+					id,
+					symbol,
+					price,
+					\`change\`,
+					DATE_FORMAT(created_at, '%Y-%m-%d %H') AS createdAt,
+					ROW_NUMBER() OVER (
+						PARTITION BY symbol, DATE_FORMAT(created_at, '%Y-%m-%d %H')
+						ORDER BY \`change\` DESC, created_at DESC
+					) as rn
+				FROM
+					market_index
+				WHERE
+					created_at >= :startDate
+			)
+			SELECT
+				symbol,
+				price,
+				\`change\`,
+				createdAt
+			FROM
+				RankedData
+			WHERE
+				rn = 1
+			ORDER BY
+				symbol, createdAt;
+		`
 
-			raw: true,
-			group: ['symbol', 'createdAt'],
-			order: ['createdAt'],
+		const results = await db.sequelize.query(rawQuery, {
+			replacements: { startDate: startDate },
+			type: db.sequelize.QueryTypes.SELECT,
+			raw: true
 		})
-		return data
+		
+		return results
 	}
 
 	async getMomentumByDateRange(rangeInDays) {
