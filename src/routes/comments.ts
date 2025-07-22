@@ -1,18 +1,19 @@
-const express = require('express')
-const router = express.Router()
-const commentController = require('../controllers/commentController')
-const validate = require('../middleware/validate')
-const {
+import express, { Router } from 'express'
+import commentController from '../controllers/commentController'
+import validate from '../middleware/validate'
+import {
 	createCommentSchema,
 	updateCommentSchema,
 	getByIdSchema,
 	getByPostIdSchema,
 	getByParentIdSchema,
 	commentPaginationSchema,
-} = require('../schemas/commentSchema')
-const { verifyToken } = require('../middleware/auth')
-const { userContext } = require('../middleware/userContext')
-const { verifyAdmin } = require('../middleware/adminAuth')
+} from '../schemas/commentSchema'
+import { verifyToken } from '../middleware/auth'
+import { userContext } from '../middleware/userContext'
+import { verifyAdmin } from '../middleware/adminAuth'
+
+const router: Router = express.Router()
 
 router.use(verifyToken, userContext)
 
@@ -44,4 +45,4 @@ router.put('/:id', validate(getByIdSchema, 'params'), validate(updateCommentSche
 // 刪除評論
 router.delete('/:id', verifyAdmin, validate(getByIdSchema, 'params'), commentController.deleteComment)
 
-module.exports = router
+export default router 

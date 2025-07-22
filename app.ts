@@ -12,7 +12,20 @@ import { ForbiddenError } from './src/modules/errors'
 import rateLimiterMiddleware, { initRateLimiter } from './src/middleware/rateLimiter'
 import redisClient from './src/modules/redis'
 
+// 路由
+import techNewsRoutes from './src/routes/technews'
+import companyNewsRoutes from './src/routes/companyNews'
+import transactionRoutes from './src/routes/transactions'
+import userRoutes from './src/routes/user'
+import statementRoutes from './src/routes/statements'
+import marketIndexRoutes from './src/routes/marketIndex'
+import portfolioRoutes from './src/routes/portfolio'
+import commentRoutes from './src/routes/comments'
+import adminRoutes from './src/routes/admin'
+import ollamaRoutes from './src/routes/ollama'
+
 const app = express()
+const port = process.env.PORT || 3000
 
 // 設置信任代理，使 req.ip 能夠正確獲取客戶端 IP
 // 數字 1 表示信任第一個代理，也可以使用 'loopback' 信任本地代理
@@ -51,20 +64,20 @@ const initApp = async () => {
         next(new ForbiddenError())
     })
     
-    app.use('/technews', require('./src/routes/technews'))
-    app.use('/company-news', require('./src/routes/companyNews'))
-    app.use('/transactions', require('./src/routes/transactions'))
-    app.use('/users', require('./src/routes/user'))
-    app.use('/statements', require('./src/routes/statements'))
-    app.use('/market', require('./src/routes/marketIndex'))
-    app.use('/portfolio', require('./src/routes/portfolio').default)
-    app.use('/comment', require('./src/routes/comments'))
-	app.use('/admin', require('./src/routes/admin').default)
-    app.use('/ollama', require('./src/routes/ollama').default)
+    app.use('/technews', techNewsRoutes)
+    app.use('/company-news', companyNewsRoutes)
+    app.use('/transactions', transactionRoutes)
+    app.use('/users', userRoutes)
+    app.use('/statements', statementRoutes)
+    app.use('/market', marketIndexRoutes)
+    app.use('/portfolio', portfolioRoutes)
+    app.use('/comment', commentRoutes)
+	app.use('/admin', adminRoutes)
+    app.use('/ollama', ollamaRoutes)
     
     app.use(errorHandler) //所有的api錯誤處理, 擺最後
     
-    app.listen(1234, () => {
+    app.listen(port, () => {
         logger.info('Server start!')
     })
 }

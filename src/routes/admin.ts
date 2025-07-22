@@ -3,7 +3,7 @@ import adminController from '../controllers/adminController'
 import { verifyToken } from '../middleware/auth'
 import { verifyAdmin } from '../middleware/adminAuth'
 import validate from '../middleware/validate'
-const adminSchema = require('../schemas/adminSchema')
+import * as adminSchema from '../schemas/adminSchema'
 
 const router: Router = express.Router()
 

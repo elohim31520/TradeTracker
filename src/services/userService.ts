@@ -35,7 +35,7 @@ class userService {
 		if (!user) throw new ClientError('User not found')
 
 		const { salt, pwd: storeHash } = user
-		const currentHash = sha256(pwd, salt)
+		const currentHash = sha256(pwd, salt || '')
 		if (currentHash != storeHash) throw new ClientError('Password Is Incorrect')
 		return generateToken({ user_name })
 	}
