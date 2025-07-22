@@ -149,9 +149,9 @@ class MarketIndexService {
 		const results = await db.sequelize.query(rawQuery, {
 			replacements: { startDate: startDate },
 			type: db.sequelize.QueryTypes.SELECT,
-			raw: true
+			raw: true,
 		})
-		
+
 		return results
 	}
 
@@ -191,24 +191,54 @@ class MarketIndexService {
 	}
 
 	async getStockPrices() {
-		const latestPrices = await db.StockPrice.findAll({
-			attributes: ['company', 'symbol', 'price', 'MCap', 'date', 'createdAt'],
-			where: {
-				id: {
-					[Sequelize.Op.in]: Sequelize.literal(`
-						(SELECT id
-							FROM StockPrices
-								WHERE (company, createdAt) IN (
-								SELECT company, MAX(createdAt)
-								FROM StockPrices
-								GROUP BY company
-						))
-					`),
-				},
-			},
+		const rawQuery = `
+			SELECT id, symbol, company, price, dayChg, yearChg, MCap, date, timestamp, createdAt
+			FROM (
+				SELECT
+					id,
+					symbol,
+					company,
+					price,
+					day_chg AS dayChg,
+					year_chg AS yearChg,
+					m_cap AS MCap,
+					date,
+					timestamp,
+					created_at AS createdAt,
+					ROW_NUMBER() OVER (PARTITION BY company ORDER BY created_at DESC) as rn
+				FROM
+					stock_prices
+			) AS ranked_prices
+			WHERE
+				rn = 1;
+		`
+		const latestPrices = await db.sequelize.query(rawQuery, {
+			type: db.sequelize.QueryTypes.SELECT,
+			raw: true,
 		})
+
 		return latestPrices
 	}
+
+	// async getStockPrices() {
+	// 	const latestPrices = await db.StockPrice.findAll({
+	// 		attributes: ['company', 'symbol', 'price', 'MCap', 'date', 'createdAt'],
+	// 		where: {
+	// 			id: {
+	// 				[Sequelize.Op.in]: Sequelize.literal(`
+	// 					(SELECT id
+	// 						FROM StockPrices
+	// 							WHERE (company, createdAt) IN (
+	// 							SELECT company, MAX(createdAt)
+	// 							FROM StockPrices
+	// 							GROUP BY company
+	// 					))
+	// 				`),
+	// 			},
+	// 		},
+	// 	})
+	// 	return latestPrices
+	// }
 
 	async getStockSymbol() {
 		const symbols = await db.Company.findAll({
