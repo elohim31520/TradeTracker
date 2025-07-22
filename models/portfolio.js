@@ -4,7 +4,7 @@ module.exports = (sequelize, DataTypes) => {
 	class Portfolio extends Model {
 		static associate(models) {
 			Portfolio.belongsTo(models.Users, { foreignKey: 'user_id' })
-			Portfolio.belongsTo(models.Company, { foreignKey: 'stock_id', targetKey: 'symbol', as: 'Company' })
+			Portfolio.belongsTo(models.Company, { foreignKey: 'stock_id', targetKey: 'symbol', as: 'company' })
 		}
 	}
 	Portfolio.init(
