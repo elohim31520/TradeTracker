@@ -2,13 +2,16 @@ import { Request, Response, NextFunction } from 'express'
 import portfolioService from '../services/portfolioService'
 import _ from 'lodash'
 const responseHelper = require('../modules/responseHelper')
-const _get = require('lodash/get')
 
 class PorfolioController {
 	async getAllByUserId(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
-			const userId = _get(req, 'user.id')
+			const userId = _.get(req, 'user.id')
+			if (typeof userId === 'undefined') {
+				throw new Error('User ID is required')
+			}
 			const transactions = await portfolioService.getAllByUserId(userId)
+			console.log(transactions)
 			res.json(responseHelper.success(transactions))
 		} catch (error: any) {
 			next(error)
@@ -17,7 +20,10 @@ class PorfolioController {
 
 	async updatePortfolio(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
-			const userId = _get(req, 'user.id')
+			const userId = _.get(req, 'user.id')
+			if (typeof userId === 'undefined') {
+				throw new Error('User ID is required')
+			}
 			const data = _.get(req, 'body', {})
 			await portfolioService.updateByUser(userId, data)
 			res.json(responseHelper.success())

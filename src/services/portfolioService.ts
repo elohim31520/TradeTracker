@@ -1,5 +1,6 @@
 const db = require('../../models')
 import { getZonedDate } from '../modules/date'
+import { Portfolio } from '../types/portfolio'
 
 interface updateParams {
 	stock_id?: string
@@ -8,11 +9,11 @@ interface updateParams {
 }
 
 class PortfolioService {
-	async getById(id: number) {
+	async getById(id: number): Promise<Portfolio | null> {
 		return db.Portfolio.findByPk(id)
 	}
 
-	async getAllByUserId(userId: string) {
+	async getAllByUserId(userId: number): Promise<Portfolio[]> {
 		return db.Portfolio.findAll({
 			where: {
 				user_id: userId,
@@ -20,16 +21,17 @@ class PortfolioService {
 			include: [
 				{
 					model: db.Company,
-					as: 'Company',
+					as: 'company',
 					attributes: ['name', 'symbol'],
 					required: false,
 				},
 			],
 			nest: true,
+			raw: true,
 		})
 	}
 
-	async updateByUser(userId: string, data: updateParams): Promise<void> {
+	async updateByUser(userId: number, data: updateParams): Promise<void> {
 		try {
 			const now = getZonedDate()
 
