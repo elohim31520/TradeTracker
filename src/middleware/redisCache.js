@@ -5,6 +5,10 @@ const { DEFAULT_CACHE_TIME } = require('../constant/cache')
 
 const redisCache = (expirationTime = DEFAULT_CACHE_TIME) => {
 	return async (req, res, next) => {
+		if (process.env.DEBUG_MODE) {
+			logger.warn('Debug mode is enabled, skipping cache')
+			return next()
+		}
 		if (!redisClient || !redisClient.isReady) {
 			logger.warn('Redis client not ready')
 			return next()
