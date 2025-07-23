@@ -8,13 +8,13 @@ const { AuthError } = require('../modules/errors')
  */
 async function userContext(req, res, next) {
     try {
-        const userName = req.decoded?.user_name
-        if (!userName) {
+        const username = req.decoded?.name
+        if (!username) {
             throw new AuthError('找不到用戶名稱')
         }
 
         const user = await Users.findOne({ 
-            where: { user_name: userName },
+            where: { name: username },
             attributes: { exclude: ['pwd', 'salt'] } // 排除敏感資訊
         })
 

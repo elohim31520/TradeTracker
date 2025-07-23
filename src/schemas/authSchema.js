@@ -1,7 +1,7 @@
 const Joi = require('joi');
 
 const registerSchema = Joi.object({
-	user_name: Joi.string().alphanum().min(3).max(30).required().messages({
+	name: Joi.string().alphanum().min(3).max(30).required().messages({
 		'string.base': 'Username should be a type of text',
 		'string.empty': 'Username cannot be an empty field',
 		'string.min': 'Username should have a minimum length of 3',
@@ -24,7 +24,7 @@ const registerSchema = Joi.object({
 });
 
 const loginSchema = Joi.object({
-	user_name: Joi.string().alphanum().min(3).max(30).required().messages({
+	name: Joi.string().alphanum().min(3).max(30).required().messages({
 		'string.base': 'Username should be a type of text',
 		'string.empty': 'Username cannot be an empty field',
 		'string.min': 'Username should have a minimum length of 3',

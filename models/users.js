@@ -29,7 +29,7 @@ module.exports = (sequelize, DataTypes) => {
 	}
 	Users.init(
 		{
-			user_name: {
+			name: {
 				type: DataTypes.STRING,
 				allowNull: false,
 				unique: true,
@@ -51,7 +51,8 @@ module.exports = (sequelize, DataTypes) => {
 		{
 			sequelize,
 			modelName: 'Users',
-			tableName: 'Users',
+			tableName: 'users',
+			underscored: true,
 		}
 	)
 	return Users

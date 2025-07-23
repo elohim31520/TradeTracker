@@ -6,7 +6,7 @@ export interface Admin {
 }
 
 export interface UserAttributes {
-	user_name: string
+	name: string
 	email: string
 	pwd?: string
 	salt?: string

@@ -67,7 +67,7 @@ class GoogleAuthService {
 				if (!localUser) {
 					// 如果本地使用者不存在，則創建新使用者
 					localUser = await db.Users.create({
-						user_name: name || `google_${googleId}`,
+						name: name || `google_${googleId}`,
 						email,
 					})
 				}
@@ -95,7 +95,7 @@ class GoogleAuthService {
 			}
 
 			return {
-				token: generateToken({ user_name: user.user_name }),
+				token: generateToken({ name: user.name }),
 				expiresIn: payload.exp ? payload.exp - currentTime : null, // 返回剩餘有效時間（秒）
 			}
 		} catch (error) {

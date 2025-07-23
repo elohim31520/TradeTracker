@@ -65,7 +65,7 @@ class CommentService {
 				{
 					model: Users,
 					as: 'author',
-					attributes: ['id', 'user_name', 'email'],
+					attributes: ['id', 'name', 'email'],
 				},
 				// {
 				// 	model: Comments,
@@ -97,12 +97,12 @@ class CommentService {
 				{
 					model: Users,
 					as: 'author',
-					attributes: ['id', 'user_name'],
+					attributes: ['id', 'name'],
 				},
 				{
 					model: Users,
 					as: 'toUser',
-					attributes: ['id', 'user_name'],
+					attributes: ['id', 'name'],
 				},
 			],
 			nest: true,
