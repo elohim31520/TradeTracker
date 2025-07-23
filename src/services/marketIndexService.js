@@ -220,26 +220,6 @@ class MarketIndexService {
 		return latestPrices
 	}
 
-	// async getStockPrices() {
-	// 	const latestPrices = await db.StockPrice.findAll({
-	// 		attributes: ['company', 'symbol', 'price', 'MCap', 'date', 'createdAt'],
-	// 		where: {
-	// 			id: {
-	// 				[Sequelize.Op.in]: Sequelize.literal(`
-	// 					(SELECT id
-	// 						FROM StockPrices
-	// 							WHERE (company, createdAt) IN (
-	// 							SELECT company, MAX(createdAt)
-	// 							FROM StockPrices
-	// 							GROUP BY company
-	// 					))
-	// 				`),
-	// 			},
-	// 		},
-	// 	})
-	// 	return latestPrices
-	// }
-
 	async getStockSymbol() {
 		const symbols = await db.Company.findAll({
 			attributes: ['symbol', 'name'],
@@ -262,30 +242,39 @@ class MarketIndexService {
 	async getTodayStocks() {
 		const todayStart = getStartOfToday()
 		const todayEnd = getEndOfToday()
-		const stocks = await db.StockPrice.findAll({
-			where: {
-				[Sequelize.Op.and]: [
-					{
-						createdAt: {
-							[Sequelize.Op.between]: [todayStart, todayEnd],
-						},
-					},
-					Sequelize.literal(`
-							(company, createdAt) IN (
-							SELECT company, MAX(createdAt)
-							FROM StockPrices
-							WHERE createdAt BETWEEN :todayStart AND :todayEnd
-							GROUP BY company
-							)
-						`),
-				],
-			},
+		const rawQuery = `
+			SELECT id, symbol, company, price, dayChg, yearChg, MCap, date, timestamp, createdAt
+			FROM (
+				SELECT
+					id,
+					symbol,
+					company,
+					price,
+					day_chg AS dayChg,
+					year_chg AS yearChg,
+					m_cap AS MCap,
+					date,
+					timestamp,
+					created_at AS createdAt,
+					ROW_NUMBER() OVER (PARTITION BY company ORDER BY created_at DESC) as rn
+				FROM
+					stock_prices
+				WHERE
+					created_at BETWEEN :todayStart AND :todayEnd
+			) AS ranked_prices
+			WHERE
+				rn = 1;
+		`
+
+		const stocks = await db.sequelize.query(rawQuery, {
+			type: db.sequelize.QueryTypes.SELECT,
+			raw: true,
 			replacements: {
 				todayStart: todayStart,
 				todayEnd: todayEnd,
 			},
-			raw: true,
 		})
+
 		return stocks
 	}
 
