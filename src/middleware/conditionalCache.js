@@ -3,7 +3,7 @@ const responseHelper = require('../modules/responseHelper')
 const logger = require('../logger')
 
 const conditionalCache = (duration, condition) => async (req, res, next) => {
-	if (process.env.NODE_ENV === 'test' || !condition(req)) {
+	if (process.env.DEBUG_MODE || !condition(req)) {
 		return next()
 	}
 
