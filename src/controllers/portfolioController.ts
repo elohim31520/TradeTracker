@@ -11,7 +11,6 @@ class PorfolioController {
 				throw new Error('User ID is required')
 			}
 			const transactions = await portfolioService.getAllByUserId(userId)
-			console.log(transactions)
 			res.json(responseHelper.success(transactions))
 		} catch (error: any) {
 			next(error)
