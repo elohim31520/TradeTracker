@@ -1,4 +1,4 @@
-const Joi = require('joi')
+import Joi from 'joi'
 
 const createSchema = Joi.object({
 	stock_id: Joi.string().required(),
@@ -8,6 +8,4 @@ const createSchema = Joi.object({
 	transaction_date: Joi.date().iso().required(),
 })
 
-module.exports = {
-	createSchema,
-}
+export { createSchema } 
