@@ -1,8 +1,9 @@
 import models from '../../models'
 import { TransactionAttributes, TransactionCreationAttributes } from '../types/transaction'
-import { Db, TransactionInstance } from '../types/db'
+import { DB, TransactionInstance } from '../types/db'
+import { ClientError } from '../modules/errors'
 
-const db = models as unknown as Db
+const db = models as unknown as DB
 
 class TransactionService {
 	async create(data: TransactionCreationAttributes): Promise<TransactionAttributes> {
@@ -27,7 +28,7 @@ class TransactionService {
 	async update(id: number, data: Partial<TransactionCreationAttributes>): Promise<TransactionAttributes> {
 		const transaction = await db.Transaction.findByPk(id)
 		if (!transaction) {
-			throw new Error('Transaction not found')
+			throw new ClientError('找不到交易紀錄，請確認id參數')
 		}
 		const updatedTransaction = await transaction.update(data)
 		return updatedTransaction.get({ plain: true })
@@ -36,7 +37,7 @@ class TransactionService {
 	async delete(id: number): Promise<void> {
 		const transaction = await db.Transaction.findByPk(id)
 		if (!transaction) {
-			throw new Error('Transaction not found')
+			throw new ClientError('找不到交易紀錄，請確認id參數')
 		}
 		await transaction.destroy()
 	}

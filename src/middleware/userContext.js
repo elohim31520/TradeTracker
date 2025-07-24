@@ -18,7 +18,7 @@ async function userContext(req, res, next) {
             attributes: { exclude: ['pwd', 'salt'] } // 排除敏感資訊
         })
 
-        if (!user) {
+        if (!user || !user.id) {
             throw new AuthError('找不到用戶資訊')
         }
 
