@@ -25,7 +25,7 @@ router.get('/momentum', marketController.getMomentum)
 
 const momentumRangeCacheCondition = (req: express.Request) => {
 	const days = parseInt(req.params.days, 10)
-	return [7, 30, 60].includes(days)
+	return [3, 7, 30, 60].includes(days)
 }
 
 router.get(
