@@ -16,6 +16,8 @@ router.get('/stock/winners', redisCache(DAILY_UPDATE_CACHE_TTL), marketControlle
 router.get('/stock/losers', redisCache(DAILY_UPDATE_CACHE_TTL), marketController.getStockLosers)
 router.get('/stock/symbols', redisCache(DAILY_UPDATE_CACHE_TTL), marketController.getStockSymbol)
 router.get('/stock/breadth', redisCache(DAILY_UPDATE_CACHE_TTL), marketController.getMarketBreadth)
+router.get('/:symbol', marketController.getMarketDataBySymbol)
+
 
 // 設置驗證中間件
 router.use(verifyToken)

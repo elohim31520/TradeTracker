@@ -97,6 +97,21 @@ class MarketIndexController {
 			next(error)
 		}
 	}
+
+	async getMarketDataBySymbol(req, res, next) {
+		try {
+			const symbol = _.get(req, 'params.symbol', '').toUpperCase()
+			const page = Number(_.get(req, 'query.page', 1))
+			const size = Number(_.get(req, 'query.size', 10))
+			if (!symbol) {
+				throw new ClientError('缺少Symbol參數')
+			}
+			const data = await marketService.getMarketDataBySymbol({symbol, page, size})
+			res.json(responseHelper.success(data))
+		} catch (error) {
+			next(error)
+		}
+	}
 }
 
 module.exports = new MarketIndexController()

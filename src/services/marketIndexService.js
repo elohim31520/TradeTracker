@@ -288,6 +288,18 @@ class MarketIndexService {
 			.sort((a, b) => b.dayChg - a.dayChg)
 		return sortedStocks
 	}
+
+	async getMarketDataBySymbol({symbol, page, size}) {
+		const data = await db.MarketIndex.findAll({
+			where: {
+				symbol,
+			},
+			order: [['createdAt', 'DESC']],
+			offset: (page - 1) * size,
+			limit: size,
+		})
+		return data
+	}
 }
 
 module.exports = new MarketIndexService()
