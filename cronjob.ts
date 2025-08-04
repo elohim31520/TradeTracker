@@ -1,6 +1,8 @@
 import { CronJob as CronJobClass } from 'cron'
 import cron from 'cron'
-import { fetchTnews, fetchStatements, fetchMarketIndex, fetchStockPrices } from './src/modules/crawler'
+import { fetchStatements, fetchStockPrices } from './src/modules/crawler'
+import { crawlMarketIndex } from './src/modules/crawler/marketIndex'
+import { crawlTechNews } from './src/modules/crawler/technews'
 
 interface CronConfig {
 	schedule: string
@@ -16,8 +18,8 @@ function createCronJob({ schedule, mission }: CronConfig): CronJobClass {
 }
 
 createCronJob({
-	schedule: '28 11-18/3 * * *',
-	mission: fetchTnews,
+	schedule: '30 11-18/3 * * *',
+	mission: crawlTechNews,
 })
 
 createCronJob({
@@ -27,7 +29,7 @@ createCronJob({
 
 createCronJob({
 	schedule: '*/10 * * * *',
-	mission: fetchMarketIndex,
+	mission: crawlMarketIndex,
 })
 
 createCronJob({

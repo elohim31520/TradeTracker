@@ -5,15 +5,13 @@ import { isAfter, add } from 'date-fns'
 require('dotenv').config()
 
 const { Sp500Fetcher } = require('./financialDataFetcher')
-import { TC_HEADER, MARKET_INDEX_HEADERS } from '../constant/config'
-const { BTCUSD, USOIL, DXY, US10Y, XAUUSD } = require('../constant/market')
+import { MARKET_INDEX_HEADERS } from '../constant/config'
 import { decodeBuffer } from './util'
 
 import Schedule from './schedule'
 
 const logger = require('../logger')
-import { getZonedDate, zhTimeStringToStandard, normalizeDate, convertToEST } from './date'
-const marketIndexService = require('../services/marketIndexService')
+import { getZonedDate, normalizeDate, convertToEST } from './date'
 
 const db = require('../../models')
 
@@ -42,12 +40,6 @@ interface Statement {
 	[key: string]: string | number | undefined
 }
 
-interface MarketIndexAttribute {
-	symbol: string
-	price: number
-	change: number
-}
-
 interface StockPrice {
 	company: string
 	price: number
@@ -57,73 +49,6 @@ interface StockPrice {
 	date: string
 	symbol?: string
 	timestamp?: string
-}
-
-function extractDataFromTechNews(html: string): Article[] {
-	const $ = cheerio.load(html)
-	const arr: Article[] = []
-
-	$('table').each((index: number, element: cheerio.Element) => {
-		let title = $(element).find('.maintitle h1.entry-title a').text()
-		let web_url = $(element).find('.maintitle h1.entry-title a').attr('href') || ''
-		let release_time = $(element).find('.head:contains("發布日期")').next().text()
-		let publisher = $(element).find('.head:contains("作者")').next().text()
-
-		if (title) {
-			title = title.trim()
-			web_url = web_url.trim()
-			release_time = zhTimeStringToStandard(release_time)
-			arr.push({ title, web_url, release_time, publisher })
-		}
-	})
-
-	return arr.reverse()
-}
-
-export function fetchTnews(): void {
-	const scheduleSec = new Schedule({ countdown: 10 })
-	let page = 5
-	const getUrl = (page: number): string => {
-		if (page <= 0) {
-			return process.env.TECHNEWS_URL || ''
-		}
-		return `${process.env.TECHNEWS_URL}page/${page}/`
-	}
-
-	scheduleSec.startInterval(async () => {
-		if (page <= 0) {
-			scheduleSec.removeInterval()
-			return
-		}
-
-		try {
-			const techUrl = getUrl(page)
-			const res = await axios.get(techUrl, { headers: TC_HEADER })
-			const data = _.get(res, 'data', {})
-			let arr = extractDataFromTechNews(data)
-
-			if (!arr.length) {
-				logger.warn('no data, HTML解析錯誤？')
-				return
-			}
-
-			for (const vo of arr) {
-				try {
-					const parsedDate = normalizeDate(vo.release_time)
-					if (!parsedDate) {
-						console.warn(`Invalid release_time: ${vo.release_time}`)
-						return
-					}
-					await db.tech_investment_news.create({ ...vo, release_time: parsedDate })
-				} catch (e: any) {
-					console.warn((e as Error).message)
-				}
-			}
-		} catch (e: any) {
-			console.error((e as Error).message)
-		}
-		page -= 1
-	})
 }
 
 export async function fetchStatements(): Promise<void> {
@@ -220,49 +145,6 @@ export async function fetchStatements(): Promise<void> {
 		})
 	} catch (e: any) {
 		logger.error((e as Error).message)
-	}
-}
-
-export async function fetchMarketIndex(): Promise<void> {
-	const url = process.env.MARKET_URL
-
-	if (!url) {
-		logger.error('MARKET_URL environment variable is not defined.')
-		return
-	}
-
-	try {
-		const res = await axios.get(url, { headers: MARKET_INDEX_HEADERS })
-		const htmlContent = decodeBuffer(res.data)
-		const $ = cheerio.load(htmlContent)
-
-		const getParams = (symbol: string): MarketIndexAttribute => {
-			let template
-			if (symbol === USOIL) {
-				template = `tr[data-symbol="CL1:COM"]`
-			} else if (symbol === US10Y) {
-				template = 'tr[data-symbol="USGG10YR:IND"]'
-			} else {
-				template = `tr[data-symbol="${symbol}:CUR"]`
-			}
-			const row = $(template)
-			const val = row.find('td#p').text().trim()
-			const chValue = row.find('td#pch').text().trim().replace('%', '')
-			console.log(`${symbol}的值: `, +val, '%Chg: ', chValue)
-			return {
-				symbol,
-				price: +val,
-				change: +chValue,
-			}
-		}
-
-		const symbols: string[] = [BTCUSD, DXY, USOIL, US10Y, XAUUSD]
-		for (const symbol of symbols) {
-			const param = getParams(symbol)
-			await marketIndexService.create(param)
-		}
-	} catch (e: any) {
-		logger.error(e.message)
 	}
 }
 
