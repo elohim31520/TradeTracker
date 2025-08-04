@@ -52,12 +52,12 @@ async function fetchTechNews(page: number): Promise<Article[]> {
 }
 
 export async function crawlTechNews(): Promise<void> {
-	let page = 5
+	const totalPage = 5
 	const sleepTime = 10 * 1000
 
 	try {
-		for (let i = page; i >= 0; i--) {
-			let arr = await fetchTechNews(i)
+		for (let page = totalPage; page >= 0; page--) {
+			let arr = await fetchTechNews(page)
 
 			if (!arr.length) {
 				logger.warn('沒從html中解析出資料！')
@@ -77,5 +77,4 @@ export async function crawlTechNews(): Promise<void> {
 	} catch (e: any) {
 		console.error((e as Error).message)
 	}
-	page -= 1
 }
