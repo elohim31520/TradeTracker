@@ -1,9 +1,9 @@
 import { CronJob as CronJobClass } from 'cron'
 import cron from 'cron'
-import { fetchStatements, fetchStockPrices } from './src/modules/crawler'
+import { fetchStockPrices } from './src/modules/crawler'
 import { crawlMarketIndex } from './src/modules/crawler/marketIndex'
 import { crawlTechNews } from './src/modules/crawler/technews'
-
+import { crawlCompanyMetrics } from './src/modules/crawler/companyMetrics'
 interface CronConfig {
 	schedule: string
 	mission: () => void
@@ -24,7 +24,7 @@ createCronJob({
 
 createCronJob({
 	schedule: '30 10-20 * * *',
-	mission: fetchStatements,
+	mission: crawlCompanyMetrics,
 })
 
 createCronJob({

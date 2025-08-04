@@ -1,18 +1,11 @@
 import axios from 'axios'
 const cheerio = require('cheerio')
 import _ from 'lodash'
-import { isAfter, add } from 'date-fns'
 require('dotenv').config()
-
-const { Sp500Fetcher } = require('./financialDataFetcher')
 import { MARKET_INDEX_HEADERS } from '../constant/config'
 import { decodeBuffer } from './util'
-
-import Schedule from './schedule'
-
 const logger = require('../logger')
-import { getZonedDate, normalizeDate, convertToEST } from './date'
-
+import { normalizeDate, convertToEST } from './date'
 const db = require('../../models')
 
 interface Article {
@@ -28,18 +21,6 @@ interface News extends Article {
 	updatedAt: Date
 }
 
-interface Statement {
-	symbo: string
-	PE_Trailing?: number
-	PE_Forward?: number
-	EPS_Trailing?: number
-	price?: number
-	EPS_Forward?: number
-	volume?: number
-	marketCap?: string
-	[key: string]: string | number | undefined
-}
-
 interface StockPrice {
 	company: string
 	price: number
@@ -49,103 +30,6 @@ interface StockPrice {
 	date: string
 	symbol?: string
 	timestamp?: string
-}
-
-export async function fetchStatements(): Promise<void> {
-	try {
-		const lastOne = await db.company_statements.findOne({
-			attributes: ['createdAt'],
-			order: [['createdAt', 'DESC']],
-			limit: 1,
-			raw: true,
-		})
-
-		const lastCreatedTime = lastOne?.createdAt
-		const canGet = isAfter(getZonedDate(), add(lastCreatedTime, { hours: 24 }))
-		if (!canGet) {
-			logger.warn('Skipping fetch Sp500 Statements: Data fetched within last 24 hours.')
-			return
-		}
-
-		const scheduleSec = new Schedule({ countdown: 6 })
-		const companies = await db.Company.findAll({ raw: true, attributes: ['symbol'] })
-		const symbols = new Set(companies.map((vo: any) => vo.symbol))
-		const myFetch = new Sp500Fetcher({
-			requestUrl: process.env.SP500_URL,
-			stockSymbols: Array.from(symbols),
-		})
-
-		scheduleSec.startInterval(async () => {
-			try {
-				const symbo = myFetch.getCurrentSymbol()
-				if (!symbo) {
-					scheduleSec.removeInterval()
-					logger.warn(`failed symbol: ${myFetch.getAllErrorSymbols()}`)
-					return
-				}
-				const htmlContent = await myFetch.fetchHtml()
-				const $ = cheerio.load(htmlContent)
-
-				const targetTable = $('.row .col-lg-7 .table')
-				const tdObject: { [key: string]: string } = {}
-
-				targetTable.find('tbody tr').each((index: number, element: cheerio.Element) => {
-					const tds = $(element).find('td')
-
-					const key1 = $(tds[0]).text().trim()
-					const value1 = $(tds[1]).text().trim()
-					const key2 = $(tds[2]).text().trim()
-					const value2 = $(tds[3]).text().trim()
-
-					if (key1) tdObject[key1] = value1
-					if (key2) tdObject[key2] = value2
-				})
-				const keymap: { [key: string]: keyof Statement } = {
-					'P/E (Trailing)': 'PE_Trailing',
-					'P/E (Forward)': 'PE_Forward',
-					'EPS (Trailing)': 'EPS_Trailing',
-					'Prev Close': 'price',
-					'EPS (Forward)': 'EPS_Forward',
-					'Volume': 'volume',
-					'Market Cap': 'marketCap',
-				}
-				const params: Statement = { symbo }
-
-				for (const key in tdObject) {
-					if (keymap.hasOwnProperty(key)) {
-						const newkey = keymap[key]
-						const value = tdObject[key]
-						// 检查 value 是否存在
-						if (value !== undefined && value !== '') {
-							// 根据 newkey 类型进行转换
-							if (newkey === 'marketCap') {
-								params[newkey] = value // marketCap 是字符串
-							} else {
-								// 将值转换为数字并检查是否有效
-								const numericValue = parseFloat(value)
-								if (!isNaN(numericValue)) {
-									params[newkey as string] = numericValue
-								}
-							}
-						}
-					}
-				}
-				db.company_statements.create(params)
-			} catch (e: any) {
-				let httpStatus: number | undefined
-				if (e.response) httpStatus = e.response.status
-				logger.error(`Fetch sp500 statements失敗: ${e.message} symbol: ${myFetch.getCurrentSymbol()}`)
-				myFetch.addErrorSymbol()
-				if (e.code == 999 || httpStatus == 403) {
-					scheduleSec.removeInterval()
-					return
-				}
-				myFetch.currentIndex++
-			}
-		})
-	} catch (e: any) {
-		logger.error((e as Error).message)
-	}
 }
 
 async function extractStockPrices(htmlContent: string): Promise<StockPrice[]> {
