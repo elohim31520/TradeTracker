@@ -10,7 +10,7 @@ import { getZonedDate } from '../date'
 const db = require('../../../models')
 
 interface Statement {
-	symbo?: string
+	symbol?: string
 	PE_Trailing?: number
 	PE_Forward?: number
 	EPS_Trailing?: number
@@ -22,7 +22,7 @@ interface Statement {
 }
 
 async function canGetSp500Statements(): Promise<boolean> {
-	const lastOne = await db.company_statements.findOne({
+	const lastOne = await db.CompanyStatement.findOne({
 		attributes: ['createdAt'],
 		order: [['createdAt', 'DESC']],
 		limit: 1,
@@ -122,7 +122,7 @@ export async function crawlCompanyMetrics(): Promise<void> {
 			try {
 				const htmlContent = await myFetch.fetchHtml()
 				const data = extractDataFromHtml(htmlContent)
-				await db.company_statements.create({ ...data, symbo: symbol })
+				await db.company_statements.create({ ...data, symbol: symbol })
 				logger.info(`Successfully processed symbol: ${symbol}`)
 				myFetch.currentIndex++
 				await new Promise((resolve) => setTimeout(resolve, sleepTime))

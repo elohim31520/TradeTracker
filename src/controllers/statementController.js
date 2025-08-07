@@ -5,7 +5,7 @@ const responseHelper = require('../modules/responseHelper')
 class statementController {
 	async getBySymbol(req, res, next) {
 		try {
-			const symbol = _.get(req, 'params.symbol', null)
+			const symbol = _.upperCase(_.get(req, 'params.symbol', ''))
 			const data = await statementService.getBySymbol(symbol)
 			res.json(responseHelper.success(data))
 		} catch (error) {

@@ -2,12 +2,12 @@ const db = require('../../models')
 
 interface StatementAttributes {
 	id: number
-	symbo: string
+	symbol: string
 	price: number
-	PE_Trailing: number
-	PE_Forward: number
-	EPS_Trailing: number
-	EPS_Forward: number
+	peTrailing: number
+	peForward: number
+	epsTrailing: number
+	epsForward: number
 	volume: number
 	marketCap: string
 	createdAt: Date
@@ -17,9 +17,9 @@ interface StatementAttributes {
 class StatementController {
 	async getBySymbol(symbol: string): Promise<StatementAttributes[]> {
 		try {
-			const data = db.company_statements.findAll({
+			const data = db.CompanyStatement.findAll({
 				where: {
-					symbo: symbol,
+					symbol,
 				},
 			})
 			return data

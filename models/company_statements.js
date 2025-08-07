@@ -3,26 +3,27 @@ const {
 	Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-	class company_statements extends Model {
+	class CompanyStatement extends Model {
 		static associate(models) {
 		}
 	}
-	company_statements.init({
-		symbo: {
+	CompanyStatement.init({
+		symbol: {
 			type: DataTypes.STRING,
 			allowNull: false
 		},
 		price: DataTypes.DECIMAL(10, 2),
-		PE_Trailing: DataTypes.DECIMAL(10, 2),
-		PE_Forward: DataTypes.DECIMAL(10, 2),
-		EPS_Trailing: DataTypes.DECIMAL(10, 2),
-		EPS_Forward: DataTypes.DECIMAL(10, 2),
+		peTrailing: DataTypes.DECIMAL(10, 2),
+		peForward: DataTypes.DECIMAL(10, 2),
+		epsTrailing: DataTypes.DECIMAL(10, 2),
+		epsForward: DataTypes.DECIMAL(10, 2),
 		volume: DataTypes.INTEGER,
 		marketCap: DataTypes.STRING
 	}, {
 		sequelize,
-		modelName: 'company_statements',
+		modelName: 'CompanyStatement',
 		tableName: 'company_statements',
+		underscored: true,
 	});
-	return company_statements;
+	return CompanyStatement;
 };
