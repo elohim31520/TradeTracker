@@ -122,7 +122,7 @@ export async function crawlCompanyMetrics(): Promise<void> {
 			try {
 				const htmlContent = await myFetch.fetchHtml()
 				const data = extractDataFromHtml(htmlContent)
-				await db.company_statements.create({ ...data, symbol: symbol })
+				await db.CompanyStatement.create({ ...data, symbol: symbol })
 				logger.info(`Successfully processed symbol: ${symbol}`)
 				myFetch.currentIndex++
 				await new Promise((resolve) => setTimeout(resolve, sleepTime))
