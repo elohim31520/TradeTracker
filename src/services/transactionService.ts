@@ -5,19 +5,28 @@ import { ClientError } from '../modules/errors'
 
 const db = models as unknown as DB
 
+interface GetAllParams {
+	userId: number
+	page: number
+	size: number
+}
+
 class TransactionService {
 	async create(data: TransactionCreationAttributes): Promise<TransactionAttributes> {
 		const transaction = await db.Transaction.create(data)
 		return transaction.get({ plain: true })
 	}
 
-	async getAll(userId: number): Promise<TransactionAttributes[]> {
+	async getAll({ userId, page, size }: GetAllParams): Promise<TransactionAttributes[]> {
 		const transactions = await db.Transaction.findAll({
 			where: {
 				user_id: userId,
 			},
+			offset: (page - 1) * size,
+			limit: size,
+			raw: true,
 		})
-		return transactions.map((t: TransactionInstance) => t.get({ plain: true }))
+		return transactions
 	}
 
 	async getById(id: number): Promise<TransactionAttributes | null> {
@@ -43,4 +52,4 @@ class TransactionService {
 	}
 }
 
-export default new TransactionService() 
+export default new TransactionService()
