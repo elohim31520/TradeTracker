@@ -18,7 +18,9 @@ class TransactionController {
 	async getAll(req: Request, res: Response, next: NextFunction) {
 		try {
 			const userId = _.get(req, 'user.id') as unknown as number
-			const transactions = await transactionService.getAll(userId)
+			const page = +_.get(req, 'query.page', 1)
+			const size = +_.get(req, 'query.size', 10)
+			const transactions = await transactionService.getAll({userId, page, size})
 			res.status(200).json(success(transactions))
 		} catch (error) {
 			next(error)

@@ -8,4 +8,9 @@ const createSchema = Joi.object({
 	transaction_date: Joi.date().iso().required(),
 })
 
-export { createSchema } 
+const getAllSchema = Joi.object({
+	page: Joi.number().integer().min(1).default(1),
+	size: Joi.number().integer().min(1).max(100).default(10),
+})
+
+export { createSchema, getAllSchema }
