@@ -1,7 +1,6 @@
 import { CronJob as CronJobClass } from 'cron'
 import cron from 'cron'
 import { crawlMarketIndex } from './src/modules/crawler/marketIndex'
-import { crawlTechNews } from './src/modules/crawler/technews'
 import { crawlCompanyMetrics } from './src/modules/crawler/companyMetrics'
 import { crawlStockPrices } from './src/modules/crawler/stockPrices'
 
@@ -17,11 +16,6 @@ function createCronJob({ schedule, mission }: CronConfig): CronJobClass {
 	const job = new cron.CronJob(schedule, mission, null, true, 'Asia/Taipei')
 	return job
 }
-
-createCronJob({
-	schedule: '30 11-18/3 * * *',
-	mission: crawlTechNews,
-})
 
 createCronJob({
 	schedule: '30 10-20 * * *',
