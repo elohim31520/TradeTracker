@@ -28,6 +28,20 @@ router.get('/momentum', verifyToken, marketController.getMomentum)
 router.get('/weights', verifyToken, redisCache(DAILY_UPDATE_CACHE_TTL), marketController.getWeights)
 router.get('/stock/prices', verifyToken, redisCache(DAILY_UPDATE_CACHE_TTL), marketController.getStockPrices)
 
+// 當 days 為 1 時，不需驗證 token 並強制快取，這是前端的需求
+router.get(
+	'/momentum/range/1',
+	// 手動設定 params.days 以便後續的 validate 和 controller 能正確取值
+	(req, res, next) => {
+		req.params.days = '1';
+		return next();
+	},
+	validate(getByDaysSchema, 'params'),
+	redisCache(DAILY_UPDATE_CACHE_TTL),
+	marketController.getMarketIndicesByDays
+)
+
+
 // --- 動態路由 (Dynamic Routes) ---
 
 router.get('/last/:symbol', validate(getLastOneSchema, 'params'), marketController.getLstOne)
