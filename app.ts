@@ -24,6 +24,11 @@ import commentRoutes from './src/routes/comments'
 import adminRoutes from './src/routes/admin'
 import ollamaRoutes from './src/routes/ollama'
 
+// 爬蟲
+import { crawlMarketIndex } from './src/modules/crawler/marketIndex'
+import { crawlCompanyMetrics } from './src/modules/crawler/companyMetrics'
+import { crawlStockPrices } from './src/modules/crawler/stockPrices'
+
 const app = express()
 const port = process.env.PORT || 3000
 
@@ -59,6 +64,14 @@ const initApp = async () => {
         app.use(rateLimiterMiddleware)
     }
     
+    // 在生產環境中，伺服器啟動時立即執行一次爬蟲任務
+    if (process.env.NODE_ENV === 'production') {
+        logger.info('生產環境：伺服器啟動，執行初始爬蟲任務...')
+        crawlMarketIndex().catch(err => logger.error('初始 crawlMarketIndex 任務失敗:', err))
+        crawlCompanyMetrics().catch(err => logger.error('初始 crawlCompanyMetrics 任務失敗:', err))
+        crawlStockPrices().catch(err => logger.error('初始 crawlStockPrices 任務失敗:', err))
+    }
+
     // 設置路由
     app.get('/', (req: Request, res: Response, next: NextFunction) => {
         next(new ForbiddenError())
