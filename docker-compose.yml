@@ -20,8 +20,10 @@ services:
     container_name: elasticsearch
     environment:
       - discovery.type=single-node
-      - xpack.security.enabled=false # For development convenience. Enable security in production.
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=true
+      - xpack.security.http.ssl.enabled=true
+      - xpack.security.transport.ssl.enabled=true
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
     ulimits:
       memlock:
         soft: -1
@@ -41,7 +43,8 @@ services:
     depends_on:
       - elasticsearch
     environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_HOSTS=https://elasticsearch:9200
+      - ELASTICSEARCH_PASSWORD=${ELASTIC_PASSWORD}
     networks:
       - elk
 
@@ -77,6 +80,28 @@ services:
       - .:/usr/src/app
       - /usr/src/app/node_modules # Prevents local node_modules from overwriting container's
     command: node /dist/app.js
+
+  cron:
+    build: .
+    container_name: ur-trade-cron
+    depends_on:
+      - elasticsearch
+      - redis
+      - mysql
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - ELASTICSEARCH_URL=${ELASTICSEARCH_URL}
+      - REDIS_URL=${REDIS_URL}
+      - MYSQL_HOST=${MYSQL_HOST}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+    networks:
+      - elk
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    command: node /dist/cronjob.js
 
   mysql:
     image: mysql:8.0
