@@ -15,6 +15,6 @@ COPY models ./models
 
 COPY public ./public
 
-EXPOSE 1234
+EXPOSE 3000
 
 CMD [ "node", "./dist/app.js" ]
