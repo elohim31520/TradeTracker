@@ -6,11 +6,10 @@ const { DEFAULT_CACHE_TIME } = require('../constant/cache')
 const redisCache = (expirationTime = DEFAULT_CACHE_TIME) => {
 	return async (req, res, next) => {
 		if (process.env.DEBUG_MODE) {
-			logger.warn('Debug mode is enabled, skipping cache')
+			console.log('Debug mode is enabled, skipping cache')
 			return next()
 		}
 		if (!redisClient || !redisClient.isReady) {
-			logger.warn('Redis client not ready')
 			return next()
 		}
 
@@ -24,7 +23,7 @@ const redisCache = (expirationTime = DEFAULT_CACHE_TIME) => {
 				return res.json(responseHelper.success(JSON.parse(cachedData)))
 			}
 
-			logger.warn(`Cache miss for ${cacheKey}, will set cache after response`)
+			logger.info(`Cache miss for ${cacheKey}, will set cache after response`)
 
 			// 修改res.json方法以在發送響應前緩存數據
 			const originalJson = res.json

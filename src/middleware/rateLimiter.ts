@@ -16,7 +16,6 @@ const KEY_PREFIX = 'rate_limit:'
 // 環境檢測
 const isDevelopment = process.env.NODE_ENV === 'development';
 
-// 定義 rateLimiter 類型
 let rateLimiter: RateLimiterRedis | RateLimiterMemory | null = null;
 
 const getRateLimiter = () => {
@@ -28,7 +27,7 @@ const getRateLimiter = () => {
 			duration: DURATION,
 		});
 	} else {
-		logger.warn('Redis 不可用，使用內存進行限流');
+		// Redis 不可用，使用內存進行限流
 		return new RateLimiterMemory({
 			points: MAX_POINTS,
 			duration: DURATION,
@@ -99,12 +98,9 @@ const rateLimiterMiddleware = (req: Request, res: Response, next: NextFunction) 
 	}
 	
 	if (!rateLimiter) {
-		logger.warn('限流器未初始化，跳過限流檢查', debugInfo);
+		// 限流器未初始化，跳過限流檢查
 		return next();
 	}
-	
-	// 添加調試日誌
-	logger.debug(`處理來自 ${clientIp} 的請求限流`, debugInfo);
 
 	rateLimiter
 		.consume(clientIp)

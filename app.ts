@@ -52,8 +52,7 @@ const initApp = async () => {
         logger.info('限流中間件已註冊')
     } catch (error) {
         logger.error('Redis 連接失敗:', error)
-        logger.warn('使用無 Redis 的限流中間件')
-        
+
         // 即使 Redis 連接失敗，也註冊限流中間件（會使用內存限流）
         await initRateLimiter()
         app.use(rateLimiterMiddleware)
