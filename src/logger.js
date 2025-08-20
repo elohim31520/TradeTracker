@@ -28,7 +28,16 @@ const transports = [
 transports.push(
 	new ElasticsearchTransport({
 		level: 'warn',
-		clientOpts: { node: process.env.ELASTICSEARCH_URL },
+		clientOpts: {
+			node: process.env.ELASTICSEARCH_URL,
+			auth: {
+				username: 'elastic',
+				password: process.env.ELASTIC_PASSWORD,
+			},
+			ssl: {
+				rejectUnauthorized: process.env.ELASTIC_PASSWORD ? true : false,
+			},
+		},
 		indexPrefix: 'ur-trade-logs',
 		transformer: (logData) => {
 			return {
