@@ -34,7 +34,13 @@ app.set('trust proxy', ['loopback', 'linklocal', 'uniquelocal'])
 // 確保連接並初始化應用
 const initApp = async () => {
     // 基本中間件設置（不依賴 Redis）
-    app.use(cors())
+    app.use(
+		cors({
+			// 只允許來自這個網域的請求
+			origin: process.env.CORS_ORIGIN,
+			optionsSuccessStatus: 200,
+		})
+	)
     app.use(helmet())
     app.use(express.json())
     app.use(express.urlencoded({ extended: true }))
