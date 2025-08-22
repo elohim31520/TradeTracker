@@ -64,7 +64,6 @@ const initApp = async () => {
     })
     
     app.use('/technews', techNewsRoutes)
-    app.use('/company-news', companyNewsRoutes)
     app.use('/transactions', transactionRoutes)
     app.use('/users', userRoutes)
     app.use('/statements', statementRoutes)
