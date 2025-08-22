@@ -14,13 +14,11 @@ import redisClient from './src/modules/redis'
 
 // 路由
 import techNewsRoutes from './src/routes/technews'
-import companyNewsRoutes from './src/routes/companyNews'
 import transactionRoutes from './src/routes/transactions'
 import userRoutes from './src/routes/user'
 import statementRoutes from './src/routes/statements'
 import marketIndexRoutes from './src/routes/marketIndex'
 import portfolioRoutes from './src/routes/portfolio'
-import commentRoutes from './src/routes/comments'
 import adminRoutes from './src/routes/admin'
 import ollamaRoutes from './src/routes/ollama'
 
@@ -75,7 +73,6 @@ const initApp = async () => {
     app.use('/statements', statementRoutes)
     app.use('/market', marketIndexRoutes)
     app.use('/portfolio', portfolioRoutes)
-    app.use('/comment', commentRoutes)
 	app.use('/admin', adminRoutes)
     app.use('/ollama', ollamaRoutes)
     

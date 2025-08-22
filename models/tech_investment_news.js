@@ -3,10 +3,7 @@ const { Model } = require('sequelize')
 module.exports = (sequelize, DataTypes) => {
 	class tech_investment_news extends Model {
 		static associate(models) {
-			tech_investment_news.hasMany(models.Comments, {
-				foreignKey: 'postId',
-				as: 'comments'
-			})
+			
 		}
 	}
 	tech_investment_news.init(

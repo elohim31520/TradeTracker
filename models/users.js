@@ -4,18 +4,6 @@ const { Model } = require('sequelize')
 module.exports = (sequelize, DataTypes) => {
 	class Users extends Model {
 		static associate(models) {
-			// 用戶發表的評論
-			models.Users.hasMany(models.Comments, {
-				foreignKey: 'userId',
-				as: 'comments',
-			})
-
-			// 用戶收到的評論
-			models.Users.hasMany(models.Comments, {
-				foreignKey: 'toUserId',
-				as: 'receivedComments',
-			})
-
 			models.Users.hasOne(models.Admin, {
 				foreignKey: 'userId',
 				as: 'admin',
