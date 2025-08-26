@@ -6,7 +6,8 @@ class statementController {
 	async getBySymbol(req, res, next) {
 		try {
 			const symbol = _.upperCase(_.get(req, 'params.symbol', ''))
-			const data = await statementService.getBySymbol(symbol)
+			const days = _.get(req, 'query.days')
+			const data = await statementService.getBySymbol(symbol, days)
 			res.json(responseHelper.success(data))
 		} catch (error) {
 			next(error)

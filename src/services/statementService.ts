@@ -1,4 +1,6 @@
 const db = require('../../models')
+const { Op } = require('sequelize')
+import { getZonedDate, subtractDays } from '../modules/date'
 
 interface StatementAttributes {
 	id: number
@@ -15,12 +17,24 @@ interface StatementAttributes {
 }
 
 class StatementController {
-	async getBySymbol(symbol: string): Promise<StatementAttributes[]> {
+	async getBySymbol(symbol: string, days?: number): Promise<StatementAttributes[]> {
 		try {
+			const whereCondition: {
+				symbol: string
+				createdAt?: any
+			} = {
+				symbol,
+			}
+
+			if (days) {
+				const date = subtractDays(getZonedDate(), Number(days))
+				whereCondition.createdAt = {
+					[Op.gte]: date,
+				}
+			}
 			const data = db.CompanyStatement.findAll({
-				where: {
-					symbol,
-				},
+				where: whereCondition,
+				order: [['createdAt', 'DESC']],
 			})
 			return data
 		} catch (e: any) {
