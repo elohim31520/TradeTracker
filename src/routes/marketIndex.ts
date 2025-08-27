@@ -19,8 +19,9 @@ const momentumRangeCacheCondition = (req: express.Request) => {
 // --- 靜態路由 (Static Routes) ---
 
 router.get('/', marketController.getAll)
-router.get('/stock/winners', redisCache(DAILY_UPDATE_CACHE_TTL), marketController.getStockWinners)
-router.get('/stock/losers', redisCache(DAILY_UPDATE_CACHE_TTL), marketController.getStockLosers)
+router.get('/stock/today', redisCache(DAILY_UPDATE_CACHE_TTL), marketController.getTodayStocks)
+router.get('/stock/winners', redisCache(DAILY_UPDATE_CACHE_TTL), marketController.getTop5StockWinners)
+router.get('/stock/losers', redisCache(DAILY_UPDATE_CACHE_TTL), marketController.getTop5StockLosers)
 router.get('/stock/symbols', redisCache(DAILY_UPDATE_CACHE_TTL), marketController.getStockSymbol)
 router.get('/stock/breadth', redisCache(DAILY_UPDATE_CACHE_TTL), marketController.getMarketBreadth)
 
