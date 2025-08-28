@@ -30,6 +30,20 @@ class PorfolioController {
 			next(error)
 		}
 	}
+
+	async deletePortfolio(req: Request, res: Response, next: NextFunction): Promise<void> {
+		try {
+			const userId = _.get(req, 'user.id')
+			if (typeof userId === 'undefined') {
+				throw new Error('User ID is required')
+			}
+			const portfolioId = +_.get(req, 'params.id')
+			await portfolioService.deleteByUser(userId, portfolioId)
+			res.json(responseHelper.success())
+		} catch (error: any) {
+			next(error)
+		}
+	}
 }
 
 export default new PorfolioController()

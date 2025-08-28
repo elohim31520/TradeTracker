@@ -57,6 +57,15 @@ class PortfolioService {
 			throw new Error(error)
 		}
 	}
+
+	async deleteByUser(userId: number, portfolioId: number): Promise<void> {
+		return db.Portfolio.destroy({
+			where: {
+				user_id: userId,
+				id: portfolioId,
+			},
+		})
+	}
 }
 
 export default new PortfolioService()
