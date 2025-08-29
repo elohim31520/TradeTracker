@@ -44,11 +44,16 @@ class TransactionService {
 	}
 
 	async delete(id: number): Promise<void> {
-		const transaction = await db.Transaction.findByPk(id)
-		if (!transaction) {
-			throw new ClientError('找不到交易紀錄，請確認id參數')
+		const deletedRowCount = await db.Transaction.destroy({
+			where: {
+				id,
+			},
+		})
+
+		if (deletedRowCount === 0) {
+			// 如果沒有任何行被刪除，也拋出錯誤
+			throw new ClientError('找不到交易紀錄，或紀錄已被刪除')
 		}
-		await transaction.destroy()
 	}
 }
 
