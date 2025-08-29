@@ -7,7 +7,7 @@ class PorfolioController {
 	async getAllByUserId(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
 			const userId = _.get(req, 'user.id')
-			if (typeof userId === 'undefined') {
+			if (_.isUndefined(userId)) {
 				throw new Error('User ID is required')
 			}
 			const transactions = await portfolioService.getAllByUserId(userId)
@@ -20,7 +20,7 @@ class PorfolioController {
 	async updatePortfolio(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
 			const userId = _.get(req, 'user.id')
-			if (typeof userId === 'undefined') {
+			if (_.isUndefined(userId)) {
 				throw new Error('User ID is required')
 			}
 			const data = _.get(req, 'body', {})
@@ -34,7 +34,7 @@ class PorfolioController {
 	async deletePortfolio(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
 			const userId = _.get(req, 'user.id')
-			if (typeof userId === 'undefined') {
+			if (_.isUndefined(userId)) {
 				throw new Error('User ID is required')
 			}
 			const portfolioId = +_.get(req, 'params.id')

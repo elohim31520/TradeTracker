@@ -16,7 +16,7 @@ function verifyToken(req, res, next) {
 		}
 
 		const token = parts[1]
-		if (!token || token === 'undefined') {
+		if (!token || _.isUndefined(token)) {
 			throw new AuthError('Token無效')
 		}
 		jwt.verify(token, publicKey, (err, decoded) => {
