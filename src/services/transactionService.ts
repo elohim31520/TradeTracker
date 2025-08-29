@@ -23,6 +23,7 @@ class TransactionService {
 				user_id: userId,
 			},
 			offset: (page - 1) * size,
+			order: [['createdAt', 'DESC']],
 			limit: size,
 			raw: true,
 		})
