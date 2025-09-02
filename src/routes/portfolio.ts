@@ -8,7 +8,7 @@ import { userContext } from '../middleware/userContext'
 const router: Router = express.Router()
 
 router.get('/', verifyToken, userContext, portfolioController.getAllByUserId)
-router.post('/', verifyToken, userContext, validate(updateSchema), portfolioController.updatePortfolio)
+router.put('/', verifyToken, userContext, validate(updateSchema), portfolioController.updatePortfolio)
 router.delete('/:id', verifyToken, userContext, validate(deleteSchema, 'params'), portfolioController.deletePortfolio)
 
 export default router
