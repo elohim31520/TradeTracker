@@ -19,15 +19,9 @@ const momentumRangeCacheCondition = (req: express.Request) => {
 // --- 靜態路由 (Static Routes) ---
 
 router.get('/', marketController.getAll)
-router.get('/stock/today', redisCache(DAILY_UPDATE_CACHE_TTL), marketController.getTodayStocks)
-router.get('/stock/winners', redisCache(DAILY_UPDATE_CACHE_TTL), marketController.getTop5StockWinners)
-router.get('/stock/losers', redisCache(DAILY_UPDATE_CACHE_TTL), marketController.getTop5StockLosers)
-router.get('/stock/symbols', redisCache(DAILY_UPDATE_CACHE_TTL), marketController.getStockSymbol)
-router.get('/stock/breadth', redisCache(DAILY_UPDATE_CACHE_TTL), marketController.getMarketBreadth)
 
 router.get('/momentum', verifyToken, marketController.getMomentum)
 router.get('/weights', verifyToken, redisCache(DAILY_UPDATE_CACHE_TTL), marketController.getWeights)
-router.get('/stock/prices', verifyToken, redisCache(DAILY_UPDATE_CACHE_TTL), marketController.getStockPrices)
 
 // 當 days 為 1 時，不需驗證 token 並強制快取，這是前端的需求
 router.get(

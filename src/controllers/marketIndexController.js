@@ -50,63 +50,6 @@ class MarketIndexController {
 		}
 	}
 
-	async getStockPrices(req, res, next) {
-		try {
-			const data = await marketService.getStockPrices()
-			res.json(responseHelper.success(data))
-		} catch (error) {
-			next(error)
-		}
-	}
-
-	async getStockSymbol(req, res, next) {
-		try {
-			const data = await marketService.getStockSymbol()
-			res.json(responseHelper.success(data))
-		} catch (error) {
-			next(error)
-		}
-	}
-
-	async getMarketBreadth(req, res, next) {
-		try {
-			const data = await marketService.getMarketBreadth()
-			res.json(responseHelper.success(data))
-		} catch (error) {
-			next(error)
-		}
-	}
-
-	async getTodayStocks(req, res, next) {
-		try {
-			const data = await marketService.getStockDayChgSorted()
-			res.json(responseHelper.success(data))
-		} catch (error) {
-			next(error)
-		}
-	}
-
-	async getTop5StockWinners(req, res, next) {
-		try {
-			const data = await marketService.getStockDayChgSorted()
-			const top5 = data.slice(0, 5)
-			res.json(responseHelper.success(top5))
-		} catch (error) {
-			next(error)
-		}
-	}
-
-	async getTop5StockLosers(req, res, next) {
-		try {
-			const data = await marketService.getStockDayChgSorted()
-			const len = data.length
-			const last5 = data.slice(len - 5, len)
-			res.json(responseHelper.success(last5))
-		} catch (error) {
-			next(error)
-		}
-	}
-
 	async getMarketDataBySymbol(req, res, next) {
 		try {
 			const symbol = _.get(req, 'params.symbol', '').toUpperCase()

@@ -1,6 +1,5 @@
 const db = require('../../models')
 const { calculateMean, calculateStdDev, calculateCorrelation } = require('../modules/math')
-const Sequelize = require('sequelize')
 const { MOVING_AVERAGE, BTCUSD, USOIL, DXY, US10Y, XAUUSD } = require('../constant/market')
 const { getZonedDate, subtractDays, getStartOfToday, getEndOfToday } = require('../modules/date')
 
@@ -188,105 +187,6 @@ class MarketIndexService {
 			[US10Y]: Number(getCorrelation(btcSlice, prices.US10Y.slice(-MOVING_AVERAGE)).toFixed(3)),
 			[XAUUSD]: Number(getCorrelation(btcSlice, prices.XAUUSD.slice(-MOVING_AVERAGE)).toFixed(3)),
 		}
-	}
-
-	async getStockPrices() {
-		const rawQuery = `
-			SELECT id, symbol, company, price, dayChg, yearChg, MCap, date, timestamp, createdAt
-			FROM (
-				SELECT
-					id,
-					symbol,
-					company,
-					price,
-					day_chg AS dayChg,
-					year_chg AS yearChg,
-					m_cap AS MCap,
-					date,
-					timestamp,
-					created_at AS createdAt,
-					ROW_NUMBER() OVER (PARTITION BY company ORDER BY created_at DESC) as rn
-				FROM
-					stock_prices
-			) AS ranked_prices
-			WHERE
-				rn = 1;
-		`
-		const latestPrices = await db.sequelize.query(rawQuery, {
-			type: db.sequelize.QueryTypes.SELECT,
-			raw: true,
-		})
-
-		return latestPrices
-	}
-
-	async getStockSymbol() {
-		const symbols = await db.Company.findAll({
-			attributes: ['symbol', 'name'],
-		})
-		return symbols
-	}
-
-	async getMarketBreadth() {
-		const stocks = await this.getTodayStocks()
-		const totalStocks = stocks.length
-		if (!totalStocks) return 0
-		const positiveStocks = stocks.filter((stock) => {
-			const dayChg = parseFloat(stock.dayChg.replace('%', ''))
-			return dayChg > 0
-		}).length
-
-		return positiveStocks / totalStocks
-	}
-
-	async getTodayStocks() {
-		const todayStart = getStartOfToday()
-		const todayEnd = getEndOfToday()
-		const rawQuery = `
-			SELECT id, symbol, company, price, dayChg, yearChg, MCap, date, timestamp, createdAt
-			FROM (
-				SELECT
-					id,
-					symbol,
-					company,
-					price,
-					day_chg AS dayChg,
-					year_chg AS yearChg,
-					m_cap AS MCap,
-					date,
-					timestamp,
-					created_at AS createdAt,
-					ROW_NUMBER() OVER (PARTITION BY company ORDER BY created_at DESC) as rn
-				FROM
-					stock_prices
-				WHERE
-					created_at BETWEEN :todayStart AND :todayEnd
-			) AS ranked_prices
-			WHERE
-				rn = 1;
-		`
-
-		const stocks = await db.sequelize.query(rawQuery, {
-			type: db.sequelize.QueryTypes.SELECT,
-			raw: true,
-			replacements: {
-				todayStart: todayStart,
-				todayEnd: todayEnd,
-			},
-		})
-
-		return stocks
-	}
-
-	async getStockDayChgSorted() {
-		const stocks = await this.getTodayStocks()
-		const sortedStocks = stocks
-			.map((stock) => ({
-				...stock,
-				dayChg: parseFloat(stock.dayChg.replace('%', '')),
-			}))
-			.sort((a, b) => b.dayChg - a.dayChg)
-		return sortedStocks
 	}
 
 	async getMarketDataBySymbol({symbol, page, size}) {

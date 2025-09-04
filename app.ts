@@ -20,7 +20,8 @@ import statementRoutes from './src/routes/statements'
 import marketIndexRoutes from './src/routes/marketIndex'
 import portfolioRoutes from './src/routes/portfolio'
 import adminRoutes from './src/routes/admin'
-import ollamaRoutes from './src/routes/ollama'
+import stockRoutes from './src/routes/stock'
+// import ollamaRoutes from './src/routes/ollama'
 
 const app = express()
 const port = process.env.PORT || 3000
@@ -73,6 +74,7 @@ const initApp = async () => {
     app.use('/market', marketIndexRoutes)
     app.use('/portfolio', portfolioRoutes)
 	app.use('/admin', adminRoutes)
+	app.use('/stock', stockRoutes)
     // app.use('/ollama', ollamaRoutes)
     
     app.use(errorHandler) //所有的api錯誤處理, 擺最後
