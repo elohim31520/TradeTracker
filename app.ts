@@ -67,14 +67,13 @@ const initApp = async () => {
         next(new ForbiddenError())
     })
     
-    app.use('/technews', techNewsRoutes)
     app.use('/transactions', transactionRoutes)
     app.use('/users', userRoutes)
     app.use('/statements', statementRoutes)
     app.use('/market', marketIndexRoutes)
     app.use('/portfolio', portfolioRoutes)
 	app.use('/admin', adminRoutes)
-    app.use('/ollama', ollamaRoutes)
+    // app.use('/ollama', ollamaRoutes)
     
     app.use(errorHandler) //所有的api錯誤處理, 擺最後
     
