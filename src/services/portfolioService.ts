@@ -66,6 +66,13 @@ class PortfolioService {
 			},
 		})
 	}
+
+	async createByUser(userId: number, data: updateParams): Promise<void> {
+		return db.Portfolio.create({
+			user_id: userId,
+			...data,
+		})
+	}
 }
 
 export default new PortfolioService()

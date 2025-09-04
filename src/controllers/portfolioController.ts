@@ -44,6 +44,20 @@ class PorfolioController {
 			next(error)
 		}
 	}
+
+	async createPortfolio(req: Request, res: Response, next: NextFunction): Promise<void> {
+		try {
+			const userId = _.get(req, 'user.id')
+			if (_.isUndefined(userId)) {
+				throw new Error('User ID is required')
+			}
+			const data = _.get(req, 'body', {})
+			await portfolioService.createByUser(userId, data)
+			res.json(responseHelper.success())
+		} catch (error: any) {
+			next(error)
+		}
+	}
 }
 
 export default new PorfolioController()
