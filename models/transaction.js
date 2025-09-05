@@ -24,11 +24,11 @@ module.exports = (sequelize, DataTypes) => {
 
 	Transaction.afterCreate(async (transaction, options) => {
 		const { user_id, stock_id, transaction_type, quantity, price } = transaction
-		const { Portfolio } = sequelize.models
+		const { Portfolio, UserBalance } = sequelize.models
 		const transactionTotal = price * quantity
 
 		// 更新股票持倉
-		const [portfolio, created] = await Portfolio.findOrCreate({
+		const [portfolio] = await Portfolio.findOrCreate({
 			where: { user_id, stock_id },
 			defaults: {
 				user_id,
@@ -61,20 +61,19 @@ module.exports = (sequelize, DataTypes) => {
 		}
 
 		// 更新USD持倉
-		const [usdPortfolio, usdCreated] = await Portfolio.findOrCreate({
-			where: { user_id, stock_id: 'USD' },
+		const [userBalance] = await UserBalance.findOrCreate({
+			where: { user_id, currency: 'USD' },
 			defaults: {
 				user_id,
-				stock_id: 'USD',
-				quantity: 0,
-				average_price: 1,
+				currency: 'USD',
+				balance: 0,
 			},
 		})
 
 		if (transaction_type === 'buy') {
-			await usdPortfolio.decrement('quantity', { by: transactionTotal })
+			await userBalance.decrement('balance', { by: transactionTotal })
 		} else if (transaction_type === 'sell') {
-			await usdPortfolio.increment('quantity', { by: transactionTotal })
+			await userBalance.increment('balance', { by: transactionTotal })
 		}
 	})
 

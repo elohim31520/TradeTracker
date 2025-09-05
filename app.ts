@@ -13,7 +13,7 @@ import rateLimiterMiddleware, { initRateLimiter } from './src/middleware/rateLim
 import redisClient from './src/modules/redis'
 
 // 路由
-import techNewsRoutes from './src/routes/technews'
+// import techNewsRoutes from './src/routes/technews'
 import transactionRoutes from './src/routes/transactions'
 import userRoutes from './src/routes/user'
 import statementRoutes from './src/routes/statements'
@@ -21,6 +21,7 @@ import marketIndexRoutes from './src/routes/marketIndex'
 import portfolioRoutes from './src/routes/portfolio'
 import adminRoutes from './src/routes/admin'
 import stockRoutes from './src/routes/stock'
+import balanceRoutes from './src/routes/balances'
 // import ollamaRoutes from './src/routes/ollama'
 
 const app = express()
@@ -75,6 +76,7 @@ const initApp = async () => {
     app.use('/portfolio', portfolioRoutes)
 	app.use('/admin', adminRoutes)
 	app.use('/stock', stockRoutes)
+    app.use('/balances', balanceRoutes)
     // app.use('/ollama', ollamaRoutes)
     
     app.use(errorHandler) //所有的api錯誤處理, 擺最後
