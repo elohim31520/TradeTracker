@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
 	Transaction.init(
 		{
 			user_id: DataTypes.INTEGER,
-			stock_id: DataTypes.INTEGER,
+			stock_id: DataTypes.STRING,
 			transaction_type: DataTypes.ENUM('buy', 'sell'),
 			quantity: DataTypes.INTEGER,
 			price: DataTypes.DECIMAL(10, 2),
@@ -24,45 +24,57 @@ module.exports = (sequelize, DataTypes) => {
 
 	Transaction.afterCreate(async (transaction, options) => {
 		const { user_id, stock_id, transaction_type, quantity, price } = transaction
-		const portfolio = await sequelize.models.Portfolio.findOne({
+		const { Portfolio } = sequelize.models
+		const transactionTotal = price * quantity
+
+		// 更新股票持倉
+		const [portfolio, created] = await Portfolio.findOrCreate({
 			where: { user_id, stock_id },
+			defaults: {
+				user_id,
+				stock_id,
+				quantity: 0,
+				average_price: 0,
+			},
 		})
 
 		if (transaction_type === 'buy') {
-			if (portfolio) {
-				// 更新現有持倉
-				const newQuantity = portfolio.quantity + quantity
-				const newAveragePrice =
-					newQuantity > 0 ? (portfolio.average_price * portfolio.quantity + price * quantity) / newQuantity : price
-
-				await portfolio.update({
-					quantity: newQuantity,
-					average_price: newAveragePrice,
-				})
-			} else {
-				// 創建新的持倉
-				await sequelize.models.Portfolio.create({
-					user_id,
-					stock_id,
-					quantity,
-					average_price: price,
-				})
-			}
+			const newQuantity = portfolio.quantity + quantity
+			const newAveragePrice =
+				newQuantity > 0
+					? (portfolio.average_price * portfolio.quantity + transactionTotal) / newQuantity
+					: price
+			await portfolio.update({
+				quantity: newQuantity,
+				average_price: newAveragePrice,
+			})
 		} else if (transaction_type === 'sell') {
-			if (portfolio) {
-				const newQuantity = portfolio.quantity - quantity
-				if (newQuantity > 0) {
-					await portfolio.update({
-						quantity: newQuantity,
-					})
-				} else if (newQuantity == 0) {
-					await portfolio.destroy()
-				} else {
-					throw new Error('賣出的股票數量超過持倉')
-				}
-			} else {
-				throw new Error('無持有的股票可以賣出')
+			const newQuantity = portfolio.quantity - quantity
+			if (newQuantity < 0) {
+				throw new Error('賣出的股票數量超過持倉')
 			}
+			if (newQuantity === 0) {
+				await portfolio.destroy()
+			} else {
+				await portfolio.update({ quantity: newQuantity })
+			}
+		}
+
+		// 更新USD持倉
+		const [usdPortfolio, usdCreated] = await Portfolio.findOrCreate({
+			where: { user_id, stock_id: 'USD' },
+			defaults: {
+				user_id,
+				stock_id: 'USD',
+				quantity: 0,
+				average_price: 1,
+			},
+		})
+
+		if (transaction_type === 'buy') {
+			await usdPortfolio.decrement('quantity', { by: transactionTotal })
+		} else if (transaction_type === 'sell') {
+			await usdPortfolio.increment('quantity', { by: transactionTotal })
 		}
 	})
 
