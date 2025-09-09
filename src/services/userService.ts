@@ -40,6 +40,29 @@ class userService {
 		if (currentHash != storeHash) throw new ClientError(PASSWORD_INCORRECT)
 		return generateToken({ name })
 	}
+
+	async changePassword({
+		userId,
+		oldPassword,
+		newPassword,
+	}: {
+		userId: number
+		oldPassword: string
+		newPassword: string
+	}) {
+		const user = await typedDB.Users.findOne({ where: { id: userId } as any, raw: true })
+		if (!user) throw new ClientError(USER_NOT_FOUND)
+
+		const { salt, pwd: storeHash } = user
+		const currentHash = sha256(oldPassword, salt || '')
+		if (currentHash != storeHash) throw new ClientError(PASSWORD_INCORRECT)
+
+		const newSalt = generateSalt()
+		const newHash = sha256(newPassword, newSalt)
+
+		await typedDB.Users.update({ pwd: newHash, salt: newSalt }, { where: { id: userId } as any })
+		return { message: '密碼更新成功' }
+	}
 }
 
 export default new userService()

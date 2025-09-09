@@ -39,4 +39,24 @@ const loginSchema = Joi.object({
 	}),
 })
 
-export { registerSchema, loginSchema }
+const changePasswordSchema = Joi.object({
+	oldPassword: Joi.string().required().messages({
+		'string.empty': '舊密碼不能為空',
+		'any.required': '舊密碼為必填欄位',
+	}),
+	newPassword: Joi.string()
+		.pattern(new RegExp('^[a-zA-Z0-9!@#$%^&*()_+\\-=\\[\\]{};:\'",.<>/?]{6,30}$'))
+		.required()
+		.messages({
+			'string.pattern.base': '新密碼長度需為 6-30 個字元，且只能包含英文字母、數字或特殊符號',
+			'string.empty': '新密碼不能為空',
+			'any.required': '新密碼為必填欄位',
+		}),
+	confirmNewPassword: Joi.string().valid(Joi.ref('newPassword')).required().messages({
+		'any.only': '確認密碼與新密碼不符',
+		'string.empty': '確認密碼不能為空',
+		'any.required': '確認密碼為必填欄位',
+	}),
+})
+
+export { registerSchema, loginSchema, changePasswordSchema }
