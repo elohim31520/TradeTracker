@@ -27,6 +27,7 @@ class StockService {
 		`
 		const latestPrices = await db.sequelize.query(rawQuery, {
 			type: db.sequelize.QueryTypes.SELECT,
+			attributes: ['symbol', 'company', 'price', 'dayChg','date'],
 			raw: true,
 		})
 
@@ -82,6 +83,7 @@ class StockService {
 		const stocks = await db.sequelize.query(rawQuery, {
 			type: db.sequelize.QueryTypes.SELECT,
 			raw: true,
+			attributes: ['symbol', 'company', 'price', 'dayChg','date'],
 			replacements: {
 				todayStart: todayStart,
 				todayEnd: todayEnd,
