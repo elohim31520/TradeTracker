@@ -15,7 +15,7 @@ interface Statement {
 	PE_Forward?: number
 	EPS_Trailing?: number
 	price?: number
-	EPS_Forward?: number
+	eps_forward?: number
 	volume?: number
 	marketCap?: string
 	[key: string]: string | number | undefined
@@ -59,11 +59,11 @@ function extractDataFromHtml(html: string): Statement {
 		if (key2) tdObject[key2] = value2
 	})
 	const keymap: { [key: string]: keyof Statement } = {
-		'P/E (Trailing)': 'PE_Trailing',
-		'P/E (Forward)': 'PE_Forward',
-		'EPS (Trailing)': 'EPS_Trailing',
+		'P/E (Trailing)': 'pe_trailing',
+		'P/E (Forward)': 'pe_forward',
+		'EPS (Trailing)': 'eps_trailing',
 		'Prev Close': 'price',
-		'EPS (Forward)': 'EPS_Forward',
+		'EPS (Forward)': 'eps_Forward',
 		'Volume': 'volume',
 		'Market Cap': 'marketCap',
 	}
