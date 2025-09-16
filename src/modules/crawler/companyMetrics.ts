@@ -11,9 +11,9 @@ const db = require('../../../models')
 
 interface Statement {
 	symbol?: string
-	PE_Trailing?: number
-	PE_Forward?: number
-	EPS_Trailing?: number
+	pe_trailing?: number
+	pe_forward?: number
+	eps_trailing?: number
 	price?: number
 	eps_forward?: number
 	volume?: number
