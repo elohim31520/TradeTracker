@@ -1,6 +1,8 @@
 /node_modules
 todo.txt
 .env
+.env.production
+.env.development
 private.key
 public.key
 symbol.json
