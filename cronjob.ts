@@ -17,17 +17,34 @@ function createCronJob({ schedule, mission }: CronConfig): CronJobClass {
 	return job
 }
 
-createCronJob({
-	schedule: '30 10-20 * * *',
-	mission: crawlCompanyMetrics,
-})
-
-createCronJob({
-	schedule: '*/10 * * * *',
-	mission: crawlMarketIndex,
-})
-
-createCronJob({
-	schedule: '0 * * * *',
-	mission: crawlStockPrices,
-})
+if(process.env.NODE_ENV === 'production') {
+	createCronJob({
+		schedule: '30 1 * * *',
+		mission: crawlCompanyMetrics,
+	})
+	
+	createCronJob({
+		schedule: '*/15 * * * *',
+		mission: crawlMarketIndex,
+	})
+	
+	createCronJob({
+		schedule: '0 2 * * *',
+		mission: crawlStockPrices,
+	})
+} else {
+	createCronJob({
+		schedule: '30 * * * *',
+		mission: crawlCompanyMetrics,
+	})
+	
+	createCronJob({
+		schedule: '*/10 * * * *',
+		mission: crawlMarketIndex,
+	})
+	
+	createCronJob({
+		schedule: '0 * * * *',
+		mission: crawlStockPrices,
+	})
+}
