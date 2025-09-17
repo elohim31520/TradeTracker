@@ -11,11 +11,11 @@ const db = require('../../../models')
 
 interface Statement {
 	symbol?: string
-	pe_trailing?: number
-	pe_forward?: number
-	eps_trailing?: number
+	peTrailing?: number
+	peForward?: number
+	epsTrailing?: number
 	price?: number
-	eps_forward?: number
+	epsForward?: number
 	volume?: number
 	marketCap?: string
 	[key: string]: string | number | undefined
@@ -59,11 +59,11 @@ function extractDataFromHtml(html: string): Statement {
 		if (key2) tdObject[key2] = value2
 	})
 	const keymap: { [key: string]: keyof Statement } = {
-		'P/E (Trailing)': 'pe_trailing',
-		'P/E (Forward)': 'pe_forward',
-		'EPS (Trailing)': 'eps_trailing',
+		'P/E (Trailing)': 'peTrailing',
+		'P/E (Forward)': 'peForward',
+		'EPS (Trailing)': 'epsTrailing',
 		'Prev Close': 'price',
-		'EPS (Forward)': 'eps_Forward',
+		'EPS (Forward)': 'epsForward',
 		'Volume': 'volume',
 		'Market Cap': 'marketCap',
 	}
