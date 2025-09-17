@@ -1,14 +1,9 @@
 require('dotenv').config()
 const winston = require('winston')
 const { ElasticsearchTransport } = require('winston-elasticsearch')
+const ecsFormat = require('@elastic/ecs-winston-format')
 
 // 為不同環境定義可重用的格式
-const productionFormat = winston.format.combine(
-	winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-	winston.format.errors({ stack: true }),
-	winston.format.json()
-)
-
 const developmentFormat = winston.format.combine(
 	winston.format.colorize(),
 	winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
@@ -21,13 +16,14 @@ const developmentFormat = winston.format.combine(
 // 根據環境決定要使用的 transports
 const transports = [
 	new winston.transports.Console({
-		format: process.env.NODE_ENV === 'production' ? productionFormat : developmentFormat,
+		format: process.env.NODE_ENV === 'production' ? ecsFormat() : developmentFormat,
 	}),
 ]
 
 transports.push(
 	new ElasticsearchTransport({
 		level: 'warn',
+		format: ecsFormat(),
 		clientOpts: {
 			node: process.env.ELASTICSEARCH_URL,
 			auth: {
@@ -39,14 +35,6 @@ transports.push(
 			},
 		},
 		indexPrefix: 'ur-trade-logs',
-		transformer: (logData) => {
-			return {
-				'@timestamp': new Date().toISOString(),
-				'severity': logData.level,
-				'message': logData.message,
-				'fields': logData.meta,
-			}
-		},
 	})
 )
 
