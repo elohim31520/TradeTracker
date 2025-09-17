@@ -8,7 +8,7 @@ services:
       - "80:80"
       - "443:443"
     networks:
-      - app-network
+      - elk
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
       - ./conf.d:/etc/nginx/conf.d
@@ -29,11 +29,44 @@ services:
       - ./html:/usr/share/nginx/html
     command: certonly --webroot --webroot-path=/usr/share/nginx/html --email {MY_EMAIL} --agree-tos --no-eff-email -d {MY_SERVER_DOMAIN} --staging
 
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.14.0
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=true
+      - xpack.security.http.ssl.enabled=true
+      - xpack.security.transport.ssl.enabled=true
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - "9200:9200"
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    networks:
+      - elk
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.14.0
+    container_name: kibana
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+    environment:
+      - ELASTICSEARCH_HOSTS=https://elasticsearch:9200
+      - ELASTICSEARCH_PASSWORD=${ELASTIC_PASSWORD}
+    networks:
+      - elk
+
   redis:
     image: "redis:alpine"
     container_name: redis
     networks:
-      - app-network
+      - elk
     volumes:
       - redis-data:/data
 
@@ -41,11 +74,13 @@ services:
     build: .
     container_name: ur-trade-app
     depends_on:
+      - elasticsearch
       - redis
       - mysql
       - nginx
     environment:
       - NODE_ENV=${NODE_ENV}
+      - ELASTICSEARCH_URL=${ELASTICSEARCH_URL}
       - REDIS_URL=${REDIS_URL}
       - MYSQL_HOST=${MYSQL_HOST}
       - MYSQL_USER=${MYSQL_USER}
@@ -54,32 +89,32 @@ services:
       - NGINX_HOST=${NGINX_HOST}
       - NGINX_PORT=${NGINX_PORT}
     networks:
-      - app-network
+      - elk
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules # Prevents local node_modules from overwriting container's
-      - ./logs:/usr/src/app/logs
     command: node /dist/app.js
 
   cron:
     build: .
     container_name: ur-trade-cron
     depends_on:
+      - elasticsearch
       - redis
       - mysql
     environment:
       - NODE_ENV=${NODE_ENV}
+      - ELASTICSEARCH_URL=${ELASTICSEARCH_URL}
       - REDIS_URL=${REDIS_URL}
       - MYSQL_HOST=${MYSQL_HOST}
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - MYSQL_DATABASE=${MYSQL_DATABASE}
     networks:
-      - app-network
+      - elk
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
-      - ./logs:/usr/src/app/logs
     command: node /dist/cronjob.js
 
   mysql:
@@ -91,16 +126,18 @@ services:
     ports:
       - "3306:3306"
     networks:
-      - app-network
+      - elk
     volumes:
       - mysql-data:/var/lib/mysql
 
 networks:
-  app-network:
+  elk:
     driver: bridge
 
 volumes:
   certbot-etc:
   certbot-var:
+  esdata:
+    driver: local
   redis-data: {}
   mysql-data: {}
