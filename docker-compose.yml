@@ -39,6 +39,7 @@ services:
 
   app:
     build: .
+    image: ur-trade-app
     container_name: ur-trade-app
     depends_on:
       - redis
@@ -56,13 +57,11 @@ services:
     networks:
       - app-network
     volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules # Prevents local node_modules from overwriting container's
-      - ./logs:/usr/src/app/logs
-    command: node /dist/app.js
+      - ./logs:/app/logs
+    command: node ./dist/app.js
 
   cron:
-    build: .
+    image: ur-trade-app
     container_name: ur-trade-cron
     depends_on:
       - redis
@@ -77,10 +76,8 @@ services:
     networks:
       - app-network
     volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules
-      - ./logs:/usr/src/app/logs
-    command: node /dist/cronjob.js
+      - ./logs:/app/logs
+    command: node ./dist/cronjob.js
 
   mysql:
     image: mysql:8.0
