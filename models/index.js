@@ -1,16 +1,15 @@
 'use strict'
 
-require('dotenv').config()
 const fs = require('fs')
 const path = require('path')
 const Sequelize = require('sequelize')
-const process = require('process')
 const basename = path.basename(__filename)
 const env = process.env.NODE_ENV || 'development'
-const config = require(__dirname + '/../config/config.json')[env]
+const config = require(__dirname + '/../config/config.js')[env]
 const db = {}
 
 let sequelize
+// dev
 if (config.use_env_variable) {
 	// prd
 	sequelize = new Sequelize(process.env[config.use_env_variable], {
@@ -18,7 +17,7 @@ if (config.use_env_variable) {
 		timezone: '+08:00',
 	})
 } else {
-	sequelize = new Sequelize(process.env['DB_NAME'], process.env['DB_USER'], process.env['DB_PASSWORD'], {
+	sequelize = new Sequelize(config.database, config.username, config.password, {
 		...config,
 		timezone: '+08:00',
 	})
@@ -26,13 +25,7 @@ if (config.use_env_variable) {
 
 fs.readdirSync(__dirname)
 	.filter((file) => {
-		return (
-			!['index.js'].includes(file) &&
-			file.indexOf('.') !== 0 &&
-			file !== basename &&
-			file.slice(-3) === '.js' &&
-			file.indexOf('.test.js') === -1
-		)
+		return file.indexOf('.') !== 0 && file !== basename && file.slice(-3) === '.js'
 	})
 	.forEach((file) => {
 		const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes)
