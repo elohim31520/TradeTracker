@@ -11,6 +11,14 @@
         "moduleResolution": "node",
         "lib": ["ES2020"]
     },
-    "include": ["src/**/*.ts", "src/types/**/*.d.ts", "app.ts", "cronjob.ts"],
+    "include": [
+        "src/**/*.ts",
+        "src/**/*.js",
+        "src/types/**/*.d.ts",
+        "app.ts",
+        "cronjob.ts",
+        "models/**/*.js",
+        "config/**/*.js"
+    ],
     "exclude": ["node_modules", "dist"]
 }
