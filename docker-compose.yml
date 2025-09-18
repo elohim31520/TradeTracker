@@ -25,7 +25,7 @@ services:
       - certbot-etc:/etc/letsencrypt
       - certbot-var:/var/lib/letsencrypt
       - ./html:/usr/share/nginx/html
-    command: certonly --webroot --webroot-path=/usr/share/nginx/html --email {MY_EMAIL} --agree-tos --no-eff-email -d {MY_SERVER_DOMAIN} --staging
+    command: certonly --webroot --webroot-path=/usr/share/nginx/html --email ${MY_EMAIL} --agree-tos --no-eff-email -d urtrade.trade -d www.urtrade.trade --staging
 
   redis:
     image: "redis:alpine"
