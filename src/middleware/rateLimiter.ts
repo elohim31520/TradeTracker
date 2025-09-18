@@ -58,13 +58,18 @@ const rateLimiterMiddleware = (req: Request, res: Response, next: NextFunction) 
 		return next();
 	}
 	
+	// 當應用程式在 Cloudflare 後方時，應優先使用 'CF-Connecting-IP' 標頭來取得真實的訪客 IP
+	// 若標頭不存在，則回退到 req.ip (適用於沒有經過 Cloudflare 的請求，例如本地開發)
+	const clientIp = (req.headers['cf-connecting-ip'] as string) || req.ip;
+	
 	// 直接使用 req.ip，因為 app.set('trust proxy', 1) 已經處理了真實 IP
-	const clientIp = req.ip;
+	// const clientIp = req.ip;
 	const userAgent = req.headers['user-agent'] || 'unknown';
 	const rateLimitKey = `${clientIp}_${userAgent}`;
 	
 	// 調試信息：輸出請求詳情
 	const debugInfo = {
+		cfConnectingIp: req.headers['cf-connecting-ip'],
 		rawIp: req.socket.remoteAddress, // The raw IP from the direct connection (e.g., Nginx)
 		clientIp, // The real client IP resolved by Express
 		path: req.path,
