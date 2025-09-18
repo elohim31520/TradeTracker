@@ -4,12 +4,12 @@ const { Model } = require('sequelize')
 module.exports = (sequelize, DataTypes) => {
 	class Users extends Model {
 		static associate(models) {
-			models.Users.hasOne(models.Admin, {
+			Users.hasOne(models.Admin, {
 				foreignKey: 'userId',
 				as: 'admin',
 			})
 
-			models.Users.hasMany(models.UserThirdpartyAccount, {
+			Users.hasMany(models.UserThirdpartyAccount, {
 				foreignKey: 'userId',
 				as: 'thirdpartyAccounts',
 			})
