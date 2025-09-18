@@ -3,7 +3,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
 	async up(queryInterface, Sequelize) {
-		await queryInterface.renameTable('StockPrices', 'stock_prices')
+		await queryInterface.renameTable('stock_prices', 'stock_prices')
 		await queryInterface.renameColumn('stock_prices', 'dayChg', 'day_chg')
 		await queryInterface.renameColumn('stock_prices', 'yearChg', 'year_chg')
 		await queryInterface.renameColumn('stock_prices', 'MCap', 'm_cap')

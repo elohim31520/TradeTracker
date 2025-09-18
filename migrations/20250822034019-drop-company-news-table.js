@@ -19,12 +19,13 @@ module.exports = {
 				allowNull: false,
 				unique: true,
 			},
-			company_id: {
-				type: Sequelize.INTEGER,
+			company_name: {
+				type: Sequelize.STRING,
 				references: {
-					model: 'Company',
-					key: 'id',
+					model: 'company',
+					key: 'name',
 				},
+				onUpdate: 'CASCADE',
 			},
 			release_time: {
 				type: Sequelize.DATE,

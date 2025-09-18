@@ -2,7 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
 	async up(queryInterface, Sequelize) {
-		await queryInterface.createTable('Comments', {
+		await queryInterface.createTable('comments', {
 			id: {
 				allowNull: false,
 				autoIncrement: true,
@@ -23,32 +23,38 @@ module.exports = {
 				},
 				comment: '新聞id',
 			},
-			userId: {
+			author_id: {
 				type: Sequelize.INTEGER,
-				allowNull: false,
 				references: {
-					model: 'Users',
+					model: 'users',
 					key: 'id',
 				},
+				allowNull: false,
 				comment: '評論用戶id',
 			},
 			toUserId: {
 				type: Sequelize.INTEGER,
 				allowNull: true,
 				references: {
-					model: 'Users',
+					model: 'users',
 					key: 'id',
 				},
 				comment: '被評論用戶id',
 			},
-			parentId: {
+			parent_id: {
 				type: Sequelize.INTEGER,
-				allowNull: true,
 				references: {
-					model: 'Comments',
+					model: 'comments',
 					key: 'id',
 				},
 				comment: '父評論id',
+			},
+			editor_id: {
+				type: Sequelize.INTEGER,
+				references: {
+					model: 'users',
+					key: 'id',
+				},
 			},
 			createdAt: {
 				allowNull: false,
@@ -61,6 +67,6 @@ module.exports = {
 		})
 	},
 	async down(queryInterface, Sequelize) {
-		await queryInterface.dropTable('Comments')
+		await queryInterface.dropTable('comments')
 	},
 }

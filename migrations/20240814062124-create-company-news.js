@@ -17,9 +17,10 @@ module.exports = {
 			company_id: {
 				type: Sequelize.INTEGER,
 				references: {
-					model: 'Company',
-					key: 'id',
+					model: 'company',
+					key: 'name',
 				},
+				onUpdate: 'CASCADE',
 			},
 			release_time: {
 				type: Sequelize.DATE,

@@ -2,8 +2,8 @@
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-	async up(queryInterface, Sequelize) {
-		await queryInterface.createTable('Portfolios', {
+	up: async (queryInterface, Sequelize) => {
+		await queryInterface.createTable('portfolios', {
 			id: {
 				allowNull: false,
 				autoIncrement: true,
@@ -13,9 +13,10 @@ module.exports = {
 			user_id: {
 				type: Sequelize.INTEGER,
 				references: {
-					model: 'Users',
+					model: 'users',
 					key: 'id',
 				},
+				onUpdate: 'CASCADE',
 				allowNull: false,
 			},
 			stock_id: {
@@ -45,7 +46,7 @@ module.exports = {
 		})
 	},
 
-	async down(queryInterface, Sequelize) {
-		await queryInterface.dropTable('Portfolios');
+	down: async (queryInterface, Sequelize) => {
+		await queryInterface.dropTable('portfolios')
 	},
 }
