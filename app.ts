@@ -9,7 +9,7 @@ import logger from './src/logger'
 import errorHandler from './src/middleware/errorHandler'
 //@ts-ignore
 import { ForbiddenError } from './src/modules/errors'
-import rateLimiterMiddleware, { initRateLimiter } from './src/middleware/rateLimiter'
+// import rateLimiterMiddleware, { initRateLimiter } from './src/middleware/rateLimiter'
 import redisClient from './src/modules/redis'
 
 // 路由
@@ -66,17 +66,17 @@ const initApp = async () => {
 		logger.info('Redis 連接成功')
 
 		// Redis 連接成功後初始化限流器
-		await initRateLimiter()
+		// await initRateLimiter()
 
 		// 註冊限流中間件
-		app.use(rateLimiterMiddleware)
-		logger.info('限流中間件已註冊')
+		// app.use(rateLimiterMiddleware)
+		// logger.info('限流中間件已註冊')
 	} catch (error) {
 		logger.error('Redis 連接失敗:', error)
 
 		// 即使 Redis 連接失敗，也註冊限流中間件（會使用內存限流）
-		await initRateLimiter()
-		app.use(rateLimiterMiddleware)
+		// await initRateLimiter()
+		// app.use(rateLimiterMiddleware)
 	}
 
 	// 設置路由
