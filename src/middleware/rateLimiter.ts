@@ -9,8 +9,8 @@ import redisClient from '../modules/redis'
 import logger from '../logger'
 
 // 可調整參數
-const MAX_POINTS = 15 // 每秒請求數限制
-const DURATION = 1    // 時間窗口大小（秒）
+const MAX_POINTS = 20 // 每秒請求數限制
+const DURATION = 10    // 時間窗口大小（秒）
 const KEY_PREFIX = 'rate_limit:'
 
 // 環境檢測
