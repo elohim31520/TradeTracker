@@ -35,6 +35,10 @@ const port = process.env.PORT || 3000
 // 確保連接並初始化應用
 const initApp = async () => {
 	// 基本中間件設置（不依賴 Redis）
+
+	// 偵錯：在日誌中印出 CORS_ORIGIN 環境變數的實際值
+	logger.info(`CORS_ORIGIN environment variable is: ${process.env.CORS_ORIGIN}`)
+
 	const allowedOrigins = [process.env.CORS_ORIGIN].filter(Boolean)
 
 	app.use(
