@@ -25,14 +25,14 @@ const errorHandlers = [
 	},
 	{
 		matches: (err) => err.name === 'SequelizeUniqueConstraintError',
-		handle: (res) => {
+		handle: (err, res) => {
 			const { code, message } = errorCodes.DUPLICATE_ACCOUNT
 			res.status(409).json(responseHelper.fail(code, message))
 		},
 	},
 	{
 		matches: (err) => err.name === 'SequelizeDatabaseError',
-		handle: (res) => {
+		handle: (err, res) => {
 			const { code, message } = errorCodes.WRONG_VALUE_FOR_FIELD
 			res.status(400).json(responseHelper.fail(code, message))
 		},
