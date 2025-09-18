@@ -25,11 +25,12 @@ import balanceRoutes from './src/routes/balances'
 // import ollamaRoutes from './src/routes/ollama'
 
 const app = express()
+app.set('trust proxy', 1);
 const port = process.env.PORT || 3000
 
 // 設置信任代理，使 req.ip 能夠正確獲取客戶端 IP
 // 數字 1 表示信任第一個代理，也可以使用 'loopback' 信任本地代理
-app.set('trust proxy', ['loopback', 'linklocal', 'uniquelocal'])
+// app.set('trust proxy', ['loopback', 'linklocal', 'uniquelocal'])
 
 // 確保連接並初始化應用
 const initApp = async () => {
