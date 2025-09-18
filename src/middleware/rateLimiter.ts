@@ -9,7 +9,7 @@ import redisClient from '../modules/redis'
 import logger from '../logger'
 
 // 可調整參數
-const MAX_POINTS = 20 // 每秒請求數限制
+const MAX_POINTS = 50 // 每10秒請求數限制
 const DURATION = 10    // 時間窗口大小（秒）
 const KEY_PREFIX = 'rate_limit:'
 
@@ -50,35 +50,19 @@ export const initRateLimiter = async (): Promise<void> => {
 	}
 };
 
-// 獲取客戶端 IP 的函數
-const getClientIp = (req: Request): string => {
-	// 從各種可能的來源獲取 IP
-	const xForwardedFor = req.headers['x-forwarded-for'];
-	
-	if (xForwardedFor) {
-		// 如果有 X-Forwarded-For 頭，取第一個 IP（最原始的客戶端 IP）
-		const ips = Array.isArray(xForwardedFor) 
-			? xForwardedFor[0] 
-			: xForwardedFor.split(',')[0].trim();
-		return ips || req.ip || req.socket.remoteAddress || 'unknown';
-	}
-	
-	return req.ip || req.socket.remoteAddress || 'unknown';
-};
-
 const rateLimiterMiddleware = (req: Request, res: Response, next: NextFunction) => {
 	// 開發環境跳過限流
 	if (isDevelopment) {
 		return next();
 	}
 	
-	// 獲取客戶端 IP
-	const clientIp = getClientIp(req);
+	// 直接使用 req.ip，因為 app.set('trust proxy', 1) 已經處理了真實 IP
+	const clientIp = req.ip;
 	
 	// 調試信息：輸出請求詳情
 	const debugInfo = {
-		rawIp: req.ip,
-		clientIp,
+		rawIp: req.socket.remoteAddress, // The raw IP from the direct connection (e.g., Nginx)
+		clientIp, // The real client IP resolved by Express
 		path: req.path,
 		headers: {
 			'x-forwarded-for': req.headers['x-forwarded-for'],
