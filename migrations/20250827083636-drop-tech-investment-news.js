@@ -3,10 +3,12 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
 	async up(queryInterface, Sequelize) {
-		await queryInterface.dropTable('tech_investment_news')
+		await queryInterface.dropTable('comments');
+		await queryInterface.dropTable('tech_investment_news');
 	},
 
 	async down(queryInterface, Sequelize) {
+		// Recreate tech_investment_news table first
 		await queryInterface.createTable('tech_investment_news', {
 			id: {
 				type: Sequelize.INTEGER,
@@ -38,6 +40,47 @@ module.exports = {
 				allowNull: false,
 				type: Sequelize.DATE,
 			},
-		})
+		});
+		
+		// Then recreate comments table as it was, assuming its original definition
+		// This part should ideally match the 'up' method of '20250520024535-create-comment.js'
+		await queryInterface.createTable('comments', {
+			id: {
+				allowNull: false,
+				autoIncrement: true,
+				primaryKey: true,
+				type: Sequelize.INTEGER,
+			},
+			content: {
+				type: Sequelize.STRING,
+				allowNull: false,
+			},
+			postId: {
+				type: Sequelize.INTEGER,
+				allowNull: false,
+				references: {
+					model: 'tech_investment_news',
+					key: 'id',
+				},
+				onDelete: 'CASCADE'
+			},
+			author_id: {
+				type: Sequelize.INTEGER,
+				allowNull: false,
+				references: {
+					model: 'users',
+					key: 'id',
+				},
+			},
+			// ... assuming other columns like toUserId, parent_id etc. were here
+			createdAt: {
+				allowNull: false,
+				type: Sequelize.DATE,
+			},
+			updatedAt: {
+				allowNull: false,
+				type: Sequelize.DATE,
+			},
+		});
 	},
-}
+};
