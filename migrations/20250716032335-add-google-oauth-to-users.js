@@ -7,7 +7,7 @@ module.exports = {
 
 		try {
 			await queryInterface.addColumn(
-				'Users',
+				'users',
 				'googleId',
 				{
 					type: Sequelize.STRING,
@@ -18,7 +18,7 @@ module.exports = {
 			)
 
 			await queryInterface.addColumn(
-				'Users',
+				'users',
 				'provider',
 				{
 					type: Sequelize.STRING,
@@ -30,7 +30,7 @@ module.exports = {
 
 			// 修改現有欄位
 			await queryInterface.changeColumn(
-				'Users',
+				'users',
 				'pwd',
 				{
 					type: Sequelize.STRING,
@@ -40,7 +40,7 @@ module.exports = {
 			)
 
 			await queryInterface.changeColumn(
-				'Users',
+				'users',
 				'salt',
 				{
 					type: Sequelize.STRING,
@@ -60,11 +60,11 @@ module.exports = {
 		const transaction = await queryInterface.sequelize.transaction()
 
 		try {
-			await queryInterface.removeColumn('Users', 'googleId', { transaction })
-			await queryInterface.removeColumn('Users', 'provider', { transaction })
+			await queryInterface.removeColumn('users', 'googleId', { transaction })
+			await queryInterface.removeColumn('users', 'provider', { transaction })
 
 			await queryInterface.changeColumn(
-				'Users',
+				'users',
 				'pwd',
 				{
 					type: Sequelize.STRING,
@@ -74,7 +74,7 @@ module.exports = {
 			)
 
 			await queryInterface.changeColumn(
-				'Users',
+				'users',
 				'salt',
 				{
 					type: Sequelize.STRING,

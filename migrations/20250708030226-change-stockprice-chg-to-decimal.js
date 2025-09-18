@@ -6,14 +6,14 @@ module.exports = {
 		const transaction = await queryInterface.sequelize.transaction()
 		try {
 			// First, remove the '%' sign from the existing data.
-			await queryInterface.sequelize.query('UPDATE StockPrices SET dayChg = REPLACE(dayChg, "%", "")', { transaction })
-			await queryInterface.sequelize.query('UPDATE StockPrices SET yearChg = REPLACE(yearChg, "%", "")', {
+			await queryInterface.sequelize.query('UPDATE stock_prices SET dayChg = REPLACE(dayChg, "%", "")', { transaction })
+			await queryInterface.sequelize.query('UPDATE stock_prices SET yearChg = REPLACE(yearChg, "%", "")', {
 				transaction,
 			})
 
 			// Then, change the column type to DECIMAL.
 			await queryInterface.changeColumn(
-				'StockPrices',
+				'stock_prices',
 				'dayChg',
 				{
 					type: Sequelize.DECIMAL(10, 2),
@@ -22,7 +22,7 @@ module.exports = {
 			)
 
 			await queryInterface.changeColumn(
-				'StockPrices',
+				'stock_prices',
 				'yearChg',
 				{
 					type: Sequelize.DECIMAL(10, 2),
@@ -43,7 +43,7 @@ module.exports = {
 			// When reverting, we change the type back to STRING.
 			// Note: This does not add the '%' symbol back to the data.
 			await queryInterface.changeColumn(
-				'StockPrices',
+				'stock_prices',
 				'dayChg',
 				{
 					type: Sequelize.STRING,
@@ -52,7 +52,7 @@ module.exports = {
 			)
 
 			await queryInterface.changeColumn(
-				'StockPrices',
+				'stock_prices',
 				'yearChg',
 				{
 					type: Sequelize.STRING,
