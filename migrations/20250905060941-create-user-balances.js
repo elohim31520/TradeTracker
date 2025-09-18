@@ -41,7 +41,7 @@ module.exports = {
 			},
 		})
 
-		await queryInterface.addConstraint('UserBalances', {
+		await queryInterface.addConstraint('user_balances', {
 			fields: ['user_id', 'currency'],
 			type: 'unique',
 			name: 'user_currency_unique_constraint',
