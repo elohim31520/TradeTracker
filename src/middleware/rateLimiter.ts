@@ -20,6 +20,7 @@ let rateLimiter: RateLimiterRedis | RateLimiterMemory | null = null;
 
 const getRateLimiter = () => {
 	if (redisClient && redisClient.isReady) {
+		logger.info('限流器正在使用 Redis');
 		return new RateLimiterRedis({
 			storeClient: redisClient,
 			keyPrefix: KEY_PREFIX,
@@ -27,6 +28,7 @@ const getRateLimiter = () => {
 			duration: DURATION,
 		});
 	} else {
+		logger.warn('Redis 尚未就緒，限流器將回退到記憶體模式');
 		// Redis 不可用，使用內存進行限流
 		return new RateLimiterMemory({
 			points: MAX_POINTS,
@@ -58,6 +60,8 @@ const rateLimiterMiddleware = (req: Request, res: Response, next: NextFunction) 
 	
 	// 直接使用 req.ip，因為 app.set('trust proxy', 1) 已經處理了真實 IP
 	const clientIp = req.ip;
+	const userAgent = req.headers['user-agent'] || 'unknown';
+	const rateLimitKey = `${clientIp}_${userAgent}`;
 	
 	// 調試信息：輸出請求詳情
 	const debugInfo = {
@@ -87,13 +91,14 @@ const rateLimiterMiddleware = (req: Request, res: Response, next: NextFunction) 
 	}
 
 	rateLimiter
-		.consume(clientIp)
+		.consume(rateLimitKey)
 		.then(() => {
 			next();
 		})
 		.catch((rejRes) => {
 			// 紀錄被限流的請求詳情
 			logger.warn(`請求被限流: ${clientIp}`, { 
+				rateLimitKey,
 				...debugInfo,
 				remainingPoints: rejRes.remainingPoints,
 				msBeforeNext: rejRes.msBeforeNext
