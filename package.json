@@ -5,7 +5,7 @@
     "main": "index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "build": "tsc && cp -r config dist/ && cp public.key private.key dist/ && copyfiles -u 1 src/**/*.js dist/src",
+        "build": "tsc && cp -r config dist/ && copyfiles -u 1 src/**/*.js dist/src",
         "start": "node dist/app.js",
         "dev": "ts-node app.ts",
         "crawl": "ts-node cronJob.ts",
