@@ -32,6 +32,17 @@ COPY seeders ./seeders
 COPY models ./models
 COPY public ./public
 
+# Copy the key generation script and the entrypoint script
+COPY generateKeyPairSync.js ./
+COPY entrypoint.sh ./
+
+# Make the entrypoint script executable
+RUN chmod +x ./entrypoint.sh
+
 EXPOSE 3000
 
+# Set the entrypoint
+ENTRYPOINT ["./entrypoint.sh"]
+
+# The command to run after the entrypoint
 CMD [ "node", "./dist/app.js" ]
