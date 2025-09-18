@@ -1,5 +1,9 @@
 {
 	"development": {
+		"username": "${DB_USER}",
+		"password": "${DB_PASSWORD}",
+		"database": "${DB_NAME}",
+		"host": "${MYSQL_HOST}",
 		"dialect": "mysql"
 	},
 	"test": {
@@ -10,7 +14,10 @@
 		"dialect": "mysql"
 	},
 	"production": {
-		"use_env_variable": "DATABASE_URL",
+		"username": "${DB_USER}",
+		"password": "${DB_PASSWORD}",
+		"database": "${DB_NAME}",
+		"host": "${MYSQL_HOST}",
 		"dialect": "mysql"
 	}
 }
