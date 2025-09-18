@@ -55,8 +55,7 @@ services:
       - app-network
     volumes:
       - ./logs:/app/logs
-      - ./public.key:/app/public.key
-      - ./private.key:/app/private.key
+      - ./secrets:/app/secrets
     # The command is now passed to the entrypoint script
     command: node ./dist/app.js
 
@@ -77,8 +76,7 @@ services:
       - app-network
     volumes:
       - ./logs:/app/logs
-      - ./public.key:/app/public.key
-      - ./private.key:/app/private.key
+      - ./secrets:/app/secrets
     # The command for the cron container
     command: node ./dist/cronjob.js
 
