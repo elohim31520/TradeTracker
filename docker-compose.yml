@@ -44,6 +44,7 @@ services:
       - mysql
     environment:
       - NODE_ENV=${NODE_ENV}
+      - CORS_ORIGIN=${CORS_ORIGIN}
       - REDIS_URL=${REDIS_URL}
       - MYSQL_HOST=${MYSQL_HOST}
       - DB_USER=${DB_USER}
@@ -51,6 +52,7 @@ services:
       - DB_NAME=${DB_NAME}
       - NGINX_HOST=${NGINX_HOST}
       - NGINX_PORT=${NGINX_PORT}
+      - PORT=${PORT}
     networks:
       - app-network
     volumes:
@@ -67,11 +69,19 @@ services:
       - mysql
     environment:
       - NODE_ENV=${NODE_ENV}
+      - CORS_ORIGIN=${CORS_ORIGIN}
       - REDIS_URL=${REDIS_URL}
       - MYSQL_HOST=${MYSQL_HOST}
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_NAME=${DB_NAME}
+      - TECHNEWS_URL=${TECHNEWS_URL}
+      - FINZ_URL=${FINZ_URL}
+      - SP500_URL=${SP500_URL}
+      - MARKET_URL=${MARKET_URL}
+      - STOCK_NEWS_URL=${STOCK_NEWS_URL}
+      - STOCK_PRICES_URL=${STOCK_PRICES_URL}
+      - PORT=${PORT}
     networks:
       - app-network
     volumes:
