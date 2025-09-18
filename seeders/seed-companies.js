@@ -1,5 +1,3 @@
-const { Company } = require('../models')
-
 const companies = [
 	{ name: 'Apple Inc.', symbol: 'AAPL' },
 	{ name: 'Airbnb, Inc.', symbol: 'ABNB' },
@@ -158,11 +156,12 @@ const companies = [
 	{ name: 'ResMed Inc', symbol: 'RMD' },
 ]
 
-;(async () => {
-	try {
-		await Company.bulkCreate(companies)
-		console.log('Data inserted successfully')
-	} catch (error) {
-		console.error('Error inserting data:', error)
-	}
-})()
+module.exports = {
+	up: async (queryInterface, Sequelize) => {
+		await queryInterface.bulkInsert('company', companies, {})
+	},
+
+	down: async (queryInterface, Sequelize) => {
+		await queryInterface.bulkDelete('company', null, {})
+	},
+}
