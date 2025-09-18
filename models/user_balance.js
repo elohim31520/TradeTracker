@@ -31,7 +31,7 @@ module.exports = (sequelize, DataTypes) => {
 		{
 			sequelize,
 			modelName: 'UserBalance',
-			tableName: 'UserBalances',
+			tableName: 'user_balances',
 			uniqueKeys: {
 				user_currency_unique: {
 					fields: ['user_id', 'currency'],

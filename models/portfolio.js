@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
 		{
 			sequelize,
 			modelName: 'Portfolio',
-			tableName: 'Portfolios',
+			tableName: 'portfolios',
 			uniqueKeys: {
 				unique_user_stock: {
 					fields: ['user_id', 'stock_id'],
