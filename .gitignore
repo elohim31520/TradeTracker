@@ -15,3 +15,4 @@ test/marketIndex/momentum_data.xlsx
 src/scripts/index.html
 src/scripts/token
 logs/
+/secrets
