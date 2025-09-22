@@ -5,7 +5,7 @@ import validate from '../middleware/validate'
 import { getLastOneSchema, getByDaysSchema } from '../schemas/marketIndexSchema'
 import redisCache from '../middleware/redisCache'
 import conditionalCache from '../middleware/conditionalCache'
-import { DAILY_UPDATE_CACHE_TTL } from '../constant/cache'
+import { DAILY_UPDATE_CACHE_TTL, HOURS3_CACHE_TTL } from '../constant/cache'
 
 const router = express.Router()
 
@@ -23,7 +23,7 @@ router.get('/', marketController.getAll)
 router.get('/momentum', verifyToken, marketController.getMomentum)
 router.get('/weights', verifyToken, redisCache(DAILY_UPDATE_CACHE_TTL), marketController.getWeights)
 
-// 當 days 為 1 時，不需驗證 token 並強制快取，這是前端的需求
+// 當 days 為 1 時，不需驗證 token 並強制快取，這是前端的需求, 3小時快取
 router.get(
 	'/momentum/range/1',
 	// 手動設定 params.days 以便後續的 validate 和 controller 能正確取值
@@ -32,7 +32,7 @@ router.get(
 		return next();
 	},
 	validate(getByDaysSchema, 'params'),
-	redisCache(DAILY_UPDATE_CACHE_TTL),
+	redisCache(HOURS3_CACHE_TTL),
 	marketController.getMarketIndicesByDays
 )
 
