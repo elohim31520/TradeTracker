@@ -6,8 +6,8 @@ class GoogleAuthController {
 	async googleLogin(req: Request, res: Response, next: NextFunction) {
 		try {
 			const { credential } = req.body
-			const jwt = await googleAuthService.handleGoogleCredential(credential)
-			res.json(success(jwt))
+			const result = await googleAuthService.handleGoogleCredential(credential)
+			res.json(success(result))
 		} catch (error) {
 			next(error)
 		}

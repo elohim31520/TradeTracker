@@ -26,14 +26,7 @@ class GoogleAuthService {
 			if (payload.iss !== 'https://accounts.google.com') {
 				throw new ClientError('issuer發行商 不匹配!')
 			}
-
-			// 檢查 token 是否過期
-			const currentTime = Math.floor(Date.now() / 1000) // 轉換為秒
-			if (payload.exp && payload.exp < currentTime) {
-				throw new ClientError('Google token 已過期')
-			}
-
-			const { sub: googleId, email, name } = payload
+			const { sub: googleId, email, name, picture } = payload
 
 			// 處理使用者和外部帳號
 			let user
@@ -45,6 +38,7 @@ class GoogleAuthService {
 			if (thirdpartyAccount) {
 				// 如果已存在外部帳號，直接取得使用者
 				user = thirdpartyAccount.user
+				await thirdpartyAccount.update({ picture, name })
 			} else {
 				// 否則，尋找或創建使用者，然後創建外部帳號
 				let localUser = await db.Users.findOne({ where: { email } })
@@ -64,6 +58,7 @@ class GoogleAuthService {
 						userId: (localUser as any).id,
 						provider: 'google',
 						providerUserId: googleId,
+						picture,
 					},
 				})
 				user = localUser
@@ -73,10 +68,7 @@ class GoogleAuthService {
 				throw new ServerError('無法創建或找到用戶')
 			}
 
-			return {
-				token: generateToken({ name: user.name }),
-				expiresIn: payload.exp ? payload.exp - currentTime : null, // 返回剩餘有效時間（秒）
-			}
+			return generateToken({ name: user.name })
 		} catch (error) {
 			if (error instanceof ClientError) {
 				throw error

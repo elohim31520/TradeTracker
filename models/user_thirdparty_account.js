@@ -40,6 +40,14 @@ module.exports = (sequelize, DataTypes) => {
 				allowNull: true,
 				field: 'access_token_expires_at',
 			},
+			picture: {
+				type: DataTypes.STRING,
+				allowNull: true,
+			},
+			name: {
+				type: DataTypes.STRING,
+				allowNull: true,
+			},
 		},
 		{
 			sequelize,
