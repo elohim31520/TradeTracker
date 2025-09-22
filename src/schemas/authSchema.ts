@@ -59,4 +59,11 @@ const changePasswordSchema = Joi.object({
 	}),
 })
 
-export { registerSchema, loginSchema, changePasswordSchema }
+const googleLoginSchema = Joi.object({
+	credential: Joi.string().required().messages({
+		'string.empty': 'Google token 不能為空',
+		'any.required': 'Google token 為必填欄位',
+	}),
+})
+
+export { registerSchema, loginSchema, changePasswordSchema, googleLoginSchema }

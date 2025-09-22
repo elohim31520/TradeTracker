@@ -5,12 +5,8 @@ import { success, fail } from '../modules/responseHelper'
 class GoogleAuthController {
 	async googleLogin(req: Request, res: Response, next: NextFunction) {
 		try {
-			const { authCode } = req.body
-			if (!authCode) {
-				return res.status(400).json(fail(400, '缺少 Google 授權碼'))
-			}
-
-			const jwt = await googleAuthService.handleGoogleAuthCode(authCode)
+			const { credential } = req.body
+			const jwt = await googleAuthService.handleGoogleCredential(credential)
 			res.json(success(jwt))
 		} catch (error) {
 			next(error)

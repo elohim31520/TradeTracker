@@ -8,21 +8,11 @@ const db = models as unknown as DB
 const googleOAuth = new OAuth2Client(process.env.GOOGLE_CLIENT_ID, process.env.GOOGLE_CLIENT_SECRET)
 
 class GoogleAuthService {
-	async handleGoogleAuthCode(authCode: string) {
+	async handleGoogleCredential(credential: string) {
 		try {
-			// 1. 交換授權碼以獲取 token
-			const { tokens } = await googleOAuth.getToken(authCode)
-			googleOAuth.setCredentials(tokens)
-
-			const { id_token, refresh_token: refreshToken, access_token: accessToken } = tokens
-
-			if (!id_token) {
-				throw new ClientError('從 Google 獲取 ID_Token 失敗')
-			}
-
-			// 2. 驗證 ID token
+			// 1. 驗證 ID token
 			const ticket = await googleOAuth.verifyIdToken({
-				idToken: id_token,
+				idToken: credential,
 				audience: process.env.GOOGLE_CLIENT_ID,
 			})
 
@@ -47,7 +37,7 @@ class GoogleAuthService {
 
 			// 處理使用者和外部帳號
 			let user
-			const thirdpartyAccount = await db.ThirdpartyAccount.findOne({
+			const thirdpartyAccount = await db.UserThirdpartyAccount.findOne({
 				where: { provider: 'google', providerUserId: googleId },
 				include: [{ model: db.Users, as: 'user' }],
 			})
@@ -55,11 +45,6 @@ class GoogleAuthService {
 			if (thirdpartyAccount) {
 				// 如果已存在外部帳號，直接取得使用者
 				user = thirdpartyAccount.user
-
-				await thirdpartyAccount.update({
-					refreshToken,
-					accessToken,
-				})
 			} else {
 				// 否則，尋找或創建使用者，然後創建外部帳號
 				let localUser = await db.Users.findOne({ where: { email } })
@@ -73,20 +58,14 @@ class GoogleAuthService {
 				}
 
 				// 創建新的外部帳號並與使用者關聯
-				const [newExternalAccount, created] = await db.ThirdpartyAccount.findOrCreate({
+				await db.UserThirdpartyAccount.findOrCreate({
 					where: { provider: 'google', providerUserId: googleId },
 					defaults: {
 						userId: (localUser as any).id,
 						provider: 'google',
 						providerUserId: googleId,
-						refreshToken,
-						accessToken,
 					},
 				})
-
-				if (!created && refreshToken) {
-					await newExternalAccount.update({ refreshToken })
-				}
 				user = localUser
 			}
 
