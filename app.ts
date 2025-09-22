@@ -39,7 +39,7 @@ const initApp = async () => {
 	// 偵錯：在日誌中印出 CORS_ORIGIN 環境變數的實際值
 	logger.info(`CORS_ORIGIN environment variable is: ${process.env.CORS_ORIGIN}`)
 
-	const allowedOrigins = [process.env.CORS_ORIGIN].filter(Boolean)
+	const allowedOrigins = process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : []
 
 	app.use(
 		cors({
