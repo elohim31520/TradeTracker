@@ -68,7 +68,11 @@ class GoogleAuthService {
 				throw new ServerError('無法創建或找到用戶')
 			}
 
-			return generateToken({ name: user.name })
+			return {
+				token: generateToken({ name: user.name }),
+				picture,
+				name
+			}
 		} catch (error) {
 			if (error instanceof ClientError) {
 				throw error
