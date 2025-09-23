@@ -24,7 +24,22 @@ class StockService {
 
 	async getTodayStocks(): Promise<StockPriceAlias[]> {
 		try {
-			const rawQuery = `
+			const dateQuery = `
+				SELECT DISTINCT DATE(timestamp) as date
+				FROM stock_prices
+				ORDER BY date DESC
+				LIMIT 2
+			`
+			const dates: { date: string }[] = await db.sequelize.query(dateQuery, {
+				type: QueryTypes.SELECT,
+			})
+
+			if (!dates.length) {
+				return []
+			}
+
+			const fetchStocksByDate = async (date: string) => {
+				const rawQuery = `
 				SELECT name, price, chg, ychg, cap, time
 				FROM (
 					SELECT
@@ -38,17 +53,28 @@ class StockService {
 					FROM
 						stock_prices
 					WHERE
-						DATE(timestamp) = (SELECT MAX(DATE(timestamp)) FROM stock_prices)
+						DATE(timestamp) = :targetDate
 				) AS ranked_prices
 				WHERE
 					rn = 1;
 			`
+				const stocks = await db.sequelize.query(rawQuery, {
+					replacements: { targetDate: date },
+					type: QueryTypes.SELECT,
+				})
 
-			const stocks = await db.sequelize.query(rawQuery, {
-				type: QueryTypes.SELECT,
-			})
+				return stocks as StockPriceAlias[]
+			}
 
-			return stocks as StockPriceAlias[]
+			const latestDate = dates[0].date
+			let stocks = await fetchStocksByDate(latestDate)
+
+			if (stocks.length < 20 && dates.length > 1) {
+				const secondLatestDate = dates[1].date
+				stocks = await fetchStocksByDate(secondLatestDate)
+			}
+
+			return stocks
 		} catch (error) {
 			console.error("Error fetching today's stocks:", error)
 			return []
