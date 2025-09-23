@@ -17,7 +17,7 @@ interface StatementAttributes {
 }
 
 class StatementController {
-	async getBySymbol(symbol: string, days?: number): Promise<StatementAttributes[]> {
+	static async getBySymbol(symbol: string, days?: number): Promise<StatementAttributes[]> {
 		try {
 			const whereCondition: {
 				symbol: string
@@ -32,15 +32,27 @@ class StatementController {
 					[Op.gte]: date,
 				}
 			}
-			const data = db.CompanyStatement.findAll({
+			const data = await db.CompanyStatement.findAll({
+				attributes: [
+					['symbol', 'sb'],
+					['price', 'pr'],
+					['pe_trailing', 'pe'],
+					['pe_forward', 'fpe'],
+					['eps_trailing', 'eps'],
+					['eps_forward', 'feps'],
+					['volume', 'v'],
+					['market_cap', 'cap'],
+					['created_at', 'ct'],
+				],
 				where: whereCondition,
-				order: [['createdAt', 'DESC']],
+				order: [['created_at', 'DESC']],
 			})
 			return data
 		} catch (e: any) {
-			throw new Error('Not found by symbol')
+			console.error('Failed to get company statement:', e)
+			throw new Error('Error fetching data from database.')
 		}
 	}
 }
 
-module.exports = new StatementController()
+module.exports = StatementController
