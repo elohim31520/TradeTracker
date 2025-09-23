@@ -11,6 +11,5 @@ router.get('/winners', redisCache(DAILY_UPDATE_CACHE_TTL), stockController.getTo
 router.get('/losers', redisCache(DAILY_UPDATE_CACHE_TTL), stockController.getTop5StockLosers)
 router.get('/symbols', redisCache(DAILY_UPDATE_CACHE_TTL), stockController.getStockSymbol)
 router.get('/breadth', redisCache(DAILY_UPDATE_CACHE_TTL), stockController.getMarketBreadth)
-router.get('/prices', verifyToken, redisCache(DAILY_UPDATE_CACHE_TTL), stockController.getStockPrices)
 
 export default router

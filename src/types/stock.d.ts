@@ -10,3 +10,14 @@ export interface StockPrice {
 	timestamp: string;
 	createdAt: string;
 }
+
+export interface StockPriceAlias {
+	id?: number;
+	symbol?: string;
+	name: string;
+	price: number;
+	chg: string;
+	ychg: string;
+	cap: string;
+	time: string;
+}

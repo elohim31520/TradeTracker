@@ -4,15 +4,6 @@ import { success } from '../modules/responseHelper'
 import { Request, Response, NextFunction } from 'express'
 
 class StockController {
-	async getStockPrices(req: Request, res: Response, next: NextFunction) {
-		try {
-			const data = await stockService.getStockPrices()
-			res.json(success(data))
-		} catch (error) {
-			next(error)
-		}
-	}
-
 	async getStockSymbol(req: Request, res: Response, next: NextFunction) {
 		try {
 			const data = await stockService.getStockSymbol()

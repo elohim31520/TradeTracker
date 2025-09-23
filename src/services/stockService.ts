@@ -1,39 +1,8 @@
 const db = require('../../models')
-import { getStartOfToday, getEndOfToday } from '../modules/date'
-import { StockPrice } from '../types/stock'
+import { QueryTypes } from 'sequelize'
+import { StockPriceAlias } from '../types/stock'
 
 class StockService {
-	async getStockPrices(): Promise<StockPrice[]> {
-		const rawQuery = `
-			SELECT id, symbol, company, price, dayChg, yearChg, MCap, date, timestamp, createdAt
-			FROM (
-				SELECT
-					id,
-					symbol,
-					company,
-					price,
-					day_chg AS dayChg,
-					year_chg AS yearChg,
-					m_cap AS MCap,
-					date,
-					timestamp,
-					created_at AS createdAt,
-					ROW_NUMBER() OVER (PARTITION BY company ORDER BY created_at DESC) as rn
-				FROM
-					stock_prices
-			) AS ranked_prices
-			WHERE
-				rn = 1;
-		`
-		const latestPrices = await db.sequelize.query(rawQuery, {
-			type: db.sequelize.QueryTypes.SELECT,
-			attributes: ['symbol', 'company', 'price', 'dayChg','date'],
-			raw: true,
-		})
-
-		return latestPrices as StockPrice[]
-	}
-
 	async getStockSymbol() {
 		const symbols = await db.Company.findAll({
 			attributes: ['symbol', 'name'],
@@ -46,51 +15,44 @@ class StockService {
 		const totalStocks = stocks.length
 		if (!totalStocks) return 0
 		const positiveStocks = stocks.filter((stock) => {
-			const dayChg = parseFloat(String(stock.dayChg).replace('%', ''))
-			return dayChg > 0
+			const chg = parseFloat(String(stock.chg).replace('%', ''))
+			return chg > 0
 		}).length
 
 		return positiveStocks / totalStocks
 	}
 
-	async getTodayStocks(): Promise<StockPrice[]> {
-		const todayStart = getStartOfToday()
-		const todayEnd = getEndOfToday()
-		const rawQuery = `
-			SELECT id, symbol, company, price, dayChg, yearChg, MCap, date, timestamp, createdAt
-			FROM (
-				SELECT
-					id,
-					symbol,
-					company,
-					price,
-					day_chg AS dayChg,
-					year_chg AS yearChg,
-					m_cap AS MCap,
-					date,
-					timestamp,
-					created_at AS createdAt,
-					ROW_NUMBER() OVER (PARTITION BY company ORDER BY created_at DESC) as rn
-				FROM
-					stock_prices
+	async getTodayStocks(): Promise<StockPriceAlias[]> {
+		try {
+			const rawQuery = `
+				SELECT name, price, chg, ychg, cap, time
+				FROM (
+					SELECT
+						company as name,
+						price,
+						day_chg AS chg,
+						year_chg AS ychg,
+						m_cap AS cap,
+						DATE(timestamp) as time,
+						ROW_NUMBER() OVER (PARTITION BY company ORDER BY timestamp DESC) as rn
+					FROM
+						stock_prices
+					WHERE
+						DATE(timestamp) = (SELECT MAX(DATE(timestamp)) FROM stock_prices)
+				) AS ranked_prices
 				WHERE
-					created_at BETWEEN :todayStart AND :todayEnd
-			) AS ranked_prices
-			WHERE
-				rn = 1;
-		`
+					rn = 1;
+			`
 
-		const stocks = await db.sequelize.query(rawQuery, {
-			type: db.sequelize.QueryTypes.SELECT,
-			raw: true,
-			attributes: ['symbol', 'company', 'price', 'dayChg','date'],
-			replacements: {
-				todayStart: todayStart,
-				todayEnd: todayEnd,
-			},
-		})
+			const stocks = await db.sequelize.query(rawQuery, {
+				type: QueryTypes.SELECT,
+			})
 
-		return stocks as StockPrice[]
+			return stocks as StockPriceAlias[]
+		} catch (error) {
+			console.error("Error fetching today's stocks:", error)
+			return []
+		}
 	}
 
 	async getStockDayChgSorted() {
@@ -98,9 +60,9 @@ class StockService {
 		const sortedStocks = stocks
 			.map((stock) => ({
 				...stock,
-				dayChg: parseFloat(String(stock.dayChg).replace('%', '')),
+				chg: parseFloat(String(stock.chg).replace('%', '')),
 			}))
-			.sort((a, b) => b.dayChg - a.dayChg)
+			.sort((a, b) => b.chg - a.chg)
 		return sortedStocks
 	}
 }
