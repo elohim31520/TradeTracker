@@ -28,9 +28,9 @@ if(process.env.NODE_ENV === 'production') {
 		mission: crawlMarketIndex,
 	})
 	
-	// 下午 1:00 更新 stock prices，原因是爬蟲的網站可能是台灣時間下午才更新
+	// 早上 11:00 更新 stock prices，原因是爬蟲的網站可能是美東晚上才更新
 	createCronJob({
-		schedule: '0 13 * * *',
+		schedule: '0 11 * * *',
 		mission: crawlStockPrices,
 	})
 } else {
