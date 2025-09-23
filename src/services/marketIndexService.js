@@ -95,8 +95,8 @@ class MarketIndexService {
 			const volume = btc * btcWeight + dxyWeight * dxy + usoilWeight * usoil + us10Weight * us10y
 
 			return {
-				createdAt,
-				volume: parseFloat(volume.toFixed(2)),
+				ct: createdAt,
+				v: parseFloat(volume.toFixed(2)),
 			}
 		})
 
