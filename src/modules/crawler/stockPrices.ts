@@ -19,6 +19,13 @@ interface StockPrice {
 	timestamp?: string
 }
 
+function getSymbol(companyName: string, symbols: any[]): string {
+	const segmentName = companyName.split(' ')[0]
+	const regex = new RegExp(segmentName, 'i')
+	const symbol = symbols.find((vo: any) => regex.test(vo.name))?.symbol
+	return symbol
+}
+
 async function extractDataFromHtml(htmlContent: string): Promise<StockPrice[]> {
 	const $ = cheerio.load(htmlContent)
 	const componentsTable = $('.table-minimize').eq(1).find('table')
@@ -36,8 +43,7 @@ async function extractDataFromHtml(htmlContent: string): Promise<StockPrice[]> {
 			const MCap = $row.find('td').eq(6).text().trim()
 			const date = $row.find('td#date').text().trim()
 
-			const regex = new RegExp(company, 'i')
-			const symbol = symbols.find((vo: any) => regex.test(vo.name))?.symbol
+			const symbol = getSymbol(company, symbols)
 
 			const price = parseFloat(priceText)
 
