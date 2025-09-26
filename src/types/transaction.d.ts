@@ -11,3 +11,12 @@ export interface TransactionAttributes {
 }
 
 export type TransactionCreationAttributes = Omit<TransactionAttributes, 'id' | 'createdAt' | 'updatedAt'>
+
+export interface TransactionPartial {
+	id: number
+	stock_id: number
+	type: 'buy' | 'sell'
+	quantity: number
+	price: number
+	date: Date
+}
