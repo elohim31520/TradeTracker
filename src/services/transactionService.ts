@@ -1,5 +1,5 @@
 import models from '../../models'
-import { TransactionAttributes, TransactionCreationAttributes } from '../types/transaction'
+import { TransactionAttributes, TransactionCreationAttributes, TransactionPartial } from '../types/transaction'
 import { DB, TransactionInstance } from '../types/db'
 import { ClientError } from '../modules/errors'
 
@@ -17,17 +17,18 @@ class TransactionService {
 		return transaction.get({ plain: true })
 	}
 
-	async getAll({ userId, page, size }: GetAllParams): Promise<TransactionAttributes[]> {
+	async getAll({ userId, page, size }: GetAllParams) {
 		const transactions = await db.Transaction.findAll({
 			where: {
 				user_id: userId,
 			},
+			attributes: ['id', 'stock_id', 'quantity', 'price', ['transaction_type', 'type'], ['transaction_date', 'date']],
 			offset: (page - 1) * size,
 			order: [['createdAt', 'DESC']],
 			limit: size,
 			raw: true,
 		})
-		return transactions
+		return transactions as unknown as TransactionPartial[]
 	}
 
 	async getById(id: number): Promise<TransactionAttributes | null> {
