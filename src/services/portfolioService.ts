@@ -1,6 +1,6 @@
 const db = require('../../models')
 import { getZonedDate } from '../modules/date'
-import { Portfolio } from '../types/portfolio'
+import { Portfolio, PortfolioWithAvg } from '../types/portfolio'
 
 interface updateParams {
 	stock_id?: string
@@ -13,22 +13,25 @@ class PortfolioService {
 		return db.Portfolio.findByPk(id)
 	}
 
-	async getAllByUserId(userId: number): Promise<Portfolio[]> {
-		return db.Portfolio.findAll({
+	async getAllByUserId(userId: number): Promise<PortfolioWithAvg[]> {
+		const portfolios = await db.Portfolio.findAll({
 			where: {
 				user_id: userId,
 			},
-			include: [
-				{
-					model: db.Company,
-					as: 'company',
-					attributes: ['name', 'symbol'],
-					required: false,
-				},
-			],
-			nest: true,
+			attributes: ['id', 'stock_id', 'quantity', ['average_price', 'avg']],
 			raw: true,
+			// 不關聯db.Company 為了省雲端網路留流量！
+			// include: [
+			// 	{
+			// 		model: db.Company,
+			// 		as: 'company',
+			// 		attributes: ['name', 'symbol'],
+			// 		required: false,
+			// 	},
+			// ],
+			// nest: true,
 		})
+		return portfolios as unknown as PortfolioWithAvg[]
 	}
 
 	async updateByUser(userId: number, data: updateParams): Promise<void> {
