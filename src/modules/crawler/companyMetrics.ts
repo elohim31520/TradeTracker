@@ -37,7 +37,10 @@ async function canGetSp500Statements(): Promise<boolean> {
 }
 
 async function getAllSp500Symbols(): Promise<string[]> {
-	const companies = await db.Company.findAll({ raw: true, attributes: ['symbol'] })
+	const companies = await db.Company.findAll({
+		raw: true,
+		attributes: [[db.sequelize.fn('DISTINCT', db.sequelize.col('symbol')), 'symbol']], //去重
+	})
 	return companies.map((vo: any) => vo.symbol)
 }
 
