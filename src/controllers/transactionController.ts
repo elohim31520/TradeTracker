@@ -59,7 +59,8 @@ class TransactionController {
 			if (!transactionId) {
 				res.status(400).json(fail(400, 'Transaction ID is required'))
 			}
-			await transactionService.delete(transactionId)
+			const userId = _.get(req, 'user.id') as unknown as number
+			await transactionService.delete(transactionId, userId)
 			res.status(204).json(success([], 'Transaction deleted successfully'))
 		} catch (error) {
 			next(error)

@@ -45,10 +45,11 @@ class TransactionService {
 		return updatedTransaction.get({ plain: true })
 	}
 
-	async delete(id: number): Promise<void> {
+	async delete(id: number, userId: number): Promise<void> {
 		const deletedRowCount = await db.Transaction.destroy({
 			where: {
 				id,
+				user_id: userId
 			},
 		})
 
