@@ -4,7 +4,7 @@ import { verifyToken } from '../middleware/auth'
 import { userContext } from '../middleware/userContext'
 import validate from '../middleware/validate'
 import { createSchema, getAllSchema } from '../schemas/transactionSchema'
-import { verifyAdmin } from '../middleware/adminAuth'
+// import { verifyAdmin } from '../middleware/adminAuth'
 
 const router = express.Router()
 
@@ -15,6 +15,6 @@ router.post('/', validate(createSchema), transactionController.create)
 router.get('/', validate(getAllSchema, 'query'), transactionController.getAll)
 router.get('/:id', transactionController.getById)
 router.put('/:id', transactionController.update)
-router.delete('/:id', verifyAdmin, transactionController.delete)
+router.delete('/:id', transactionController.delete)
 
 export default router 
