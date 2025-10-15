@@ -22,6 +22,7 @@ router.get('/', marketController.getAll)
 
 router.get('/momentum', verifyToken, marketController.getMomentum)
 router.get('/weights', verifyToken, redisCache(DAILY_UPDATE_CACHE_TTL), marketController.getWeights)
+router.get('/quotes', marketController.getQuotes  )
 
 // 當 days 為 1 時，不需驗證 token 並強制快取，這是前端的需求, 3小時快取
 router.get(

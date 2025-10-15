@@ -64,6 +64,15 @@ class MarketIndexController {
 			next(error)
 		}
 	}
+
+	async getQuotes (req, res, next) {
+		try {
+			const data = await marketService.getQuotes()
+			res.json(responseHelper.success(data))
+		} catch (error) {
+			next(error)
+		}
+	}
 }
 
 module.exports = new MarketIndexController()

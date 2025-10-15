@@ -200,6 +200,22 @@ class MarketIndexService {
 		})
 		return data
 	}
+
+	async getQuotes() {
+		const data = await db.MarketIndex.findAll({
+			attributes: ['symbol', 'price', 'created_at'],
+			where: {
+				id: {
+					[db.Sequelize.Op.in]: db.Sequelize.literal(
+						`(SELECT MAX(id) FROM market_index GROUP BY symbol)`
+					)
+				}
+			},
+			raw: true
+		});
+		
+		return data;
+	}
 }
 
 module.exports = new MarketIndexService()
