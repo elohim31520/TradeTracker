@@ -30,27 +30,6 @@ class StockController {
 			next(error)
 		}
 	}
-
-	async getTop5StockWinners(req: Request, res: Response, next: NextFunction) {
-		try {
-			const data = await stockService.getStockDayChgSorted()
-			const top5 = data.slice(0, 5)
-			res.json(success(top5))
-		} catch (error) {
-			next(error)
-		}
-	}
-
-	async getTop5StockLosers(req: Request, res: Response, next: NextFunction) {
-		try {
-			const data = await stockService.getStockDayChgSorted()
-			const len = data.length
-			const last5 = data.slice(len - 5, len)
-			res.json(success(last5))
-		} catch (error) {
-			next(error)
-		}
-	}
 }
 
 export default new StockController()
