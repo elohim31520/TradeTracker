@@ -14,12 +14,10 @@ if (config.use_env_variable) {
 	// prd
 	sequelize = new Sequelize(process.env[config.use_env_variable], {
 		...config,
-		timezone: '+08:00',
 	})
 } else {
 	sequelize = new Sequelize(config.database, config.username, config.password, {
 		...config,
-		timezone: '+08:00',
 	})
 }
 
