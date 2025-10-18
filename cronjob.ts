@@ -24,7 +24,7 @@ if(process.env.NODE_ENV === 'production') {
 	})
 	
 	createCronJob({
-		schedule: '*/15 * * * *',
+		schedule: '*/10 * * * *',
 		mission: crawlMarketIndex,
 	})
 	
