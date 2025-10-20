@@ -105,6 +105,16 @@ export async function crawlCompanyMetrics(): Promise<void> {
 		const sleepTime = 6 * 1000
 
 		const symbols = await getAllSp500Symbols()
+		
+		if (!symbols || symbols.length === 0) {
+			logger.warn('Skipping fetch Sp500 Statements: No symbols found in the database.')
+			return
+		}
+
+		if (!process.env.SP500_URL) {
+			logger.error('SP500_URL is not defined in environment variables.')
+			return
+		}
 		const myFetch = new Sp500Fetcher({
 			requestUrl: process.env.SP500_URL,
 			stockSymbols: symbols,
