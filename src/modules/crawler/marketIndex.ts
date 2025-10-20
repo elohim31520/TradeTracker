@@ -27,7 +27,6 @@ function extractDataFromHtml($: cheerio.CheerioAPI, symbol: string): MarketIndex
 	const row = $(template)
 	const val = row.find('td#p').text().trim()
 	const chValue = row.find('td#pch').text().trim().replace('%', '')
-	console.log(`${symbol}的值: `, +val, '%Chg: ', chValue)
 	return {
 		symbol,
 		price: +val,
