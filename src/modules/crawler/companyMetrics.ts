@@ -96,12 +96,6 @@ function extractDataFromHtml(html: string): Statement {
 
 export async function crawlCompanyMetrics(): Promise<void> {
 	try {
-		const canGet = await canGetSp500Statements()
-		if (!canGet) {
-			logger.warn('Skipping fetch Sp500 Statements: Data fetched within last 24 hours.')
-			return
-		}
-
 		const sleepTime = 6 * 1000
 
 		const symbols = await getAllSp500Symbols()
