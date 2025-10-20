@@ -59,7 +59,6 @@ class Sp500Fetcher extends BasicFetcher {
 		try {
 			const res = await axios.get(url, { responseType: 'arraybuffer' })
 			const decodedData = decodeBuffer(res.data)
-			this.currentIndex++
 			return decodedData
 		} catch (error) {
 			return Promise.reject(error)
