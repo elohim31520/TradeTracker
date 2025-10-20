@@ -19,7 +19,7 @@ function createCronJob({ schedule, mission }: CronConfig): CronJobClass {
 
 if(process.env.NODE_ENV === 'production') {
 	createCronJob({
-		schedule: '30 1 * * *',
+		schedule: '0 15 * * *',
 		mission: crawlCompanyMetrics,
 	})
 	
