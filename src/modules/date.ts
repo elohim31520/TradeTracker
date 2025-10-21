@@ -21,7 +21,7 @@ import {
 import { fromZonedTime, toZonedTime } from 'date-fns-tz'
 import _ from 'lodash'
 
-const DEFAULT_TIME_ZONE = 'Asia/Taipei'
+const DEFAULT_TIME_ZONE = 'UTC'
 const EST_TIME_ZONE = 'America/New_York'
 
 export function convertToEST(dateString: string | number | Date): string {

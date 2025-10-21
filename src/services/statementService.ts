@@ -42,7 +42,7 @@ class StatementController {
 					['eps_forward', 'feps'],
 					['volume', 'v'],
 					['market_cap', 'cap'],
-					[db.Sequelize.fn('DATE_FORMAT', db.Sequelize.col('created_at'), '%Y-%m-%dT%H'), 'ct'],
+					[db.Sequelize.fn('DATE_FORMAT', db.Sequelize.col('created_at'), '%Y-%m-%dT%H:%m'), 'ct'],
 				],
 				where: whereCondition,
 				order: [['created_at', 'DESC']],
