@@ -40,24 +40,27 @@ class StockService {
 
 			const fetchStocksByDate = async (date: string) => {
 				const rawQuery = `
-				SELECT name, price, chg, ychg, cap, time
-				FROM (
-					SELECT
-						company as name,
-						price,
-						day_chg AS chg,
-						year_chg AS ychg,
-						m_cap AS cap,
-						DATE(timestamp) as time,
-						ROW_NUMBER() OVER (PARTITION BY company ORDER BY timestamp DESC) as rn
-					FROM
-						stock_prices
+					SELECT name, symbol, price, chg, ychg, cap, time
+					FROM (
+						SELECT
+							sp.company as name,
+							c.symbol,
+							sp.price,
+							sp.day_chg AS chg,
+							sp.year_chg AS ychg,
+							sp.m_cap AS cap,
+							DATE(sp.timestamp) as time,
+							ROW_NUMBER() OVER (PARTITION BY sp.company ORDER BY sp.timestamp DESC) as rn
+						FROM
+							stock_prices sp
+						LEFT JOIN
+							company c ON LOWER(c.name) LIKE CONCAT('%', LOWER(TRIM(sp.company)), '%')
+						WHERE
+							DATE(sp.timestamp) = :targetDate
+					) AS ranked_prices
 					WHERE
-						DATE(timestamp) = :targetDate
-				) AS ranked_prices
-				WHERE
-					rn = 1;
-			`
+						rn = 1;
+				`
 				const stocks = await db.sequelize.query(rawQuery, {
 					replacements: { targetDate: date },
 					type: QueryTypes.SELECT,
