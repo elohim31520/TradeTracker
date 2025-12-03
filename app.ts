@@ -22,6 +22,7 @@ import portfolioRoutes from './src/routes/portfolio'
 import adminRoutes from './src/routes/admin'
 import stockRoutes from './src/routes/stock'
 import balanceRoutes from './src/routes/balances'
+import newsRoutes from './src/routes/news'
 // import ollamaRoutes from './src/routes/ollama'
 
 const app = express()
@@ -92,6 +93,7 @@ const initApp = async () => {
 	app.use('/admin', adminRoutes)
 	app.use('/stock', stockRoutes)
 	app.use('/balances', balanceRoutes)
+	app.use('/news', newsRoutes)
 	// app.use('/ollama', ollamaRoutes)
 
 	app.use(errorHandler) //所有的api錯誤處理, 擺最後
