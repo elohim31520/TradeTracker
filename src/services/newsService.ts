@@ -14,6 +14,10 @@ class NewsService {
 		return db.News.create(news)
 	}
 
+	async bulkCreateNews(news: NewsAttributes[]) {
+		return db.News.bulkCreate(news)
+	}
+
 	async updateNews(id: string, news: NewsAttributes) {
 		const [updated] = await db.News.update(news, {
 			where: { id },

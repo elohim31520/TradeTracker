@@ -28,20 +28,24 @@ class NewsController {
 			const news = await newsService.createNews(req.body)
 			res.json(success(news))
 		} catch (error) {
-			console.log(error);
-			
+			next(error)
+		}
+	}
+
+	async bulkCreateNews(req: Request, res: Response, next: NextFunction) {
+		try {
+			const news = await newsService.bulkCreateNews(req.body)
+			res.json(success(news))
+		} catch (error) {
 			next(error)
 		}
 	}
 
 	async updateNews(req: Request, res: Response, next: NextFunction) {
 		try {
-			const news = await newsService.updateNews(req.params.id, req.body)
-			if (news) {
-				res.json(success(news))
-			} else {
-				res.status(404).send('News not found')
-			}
+			const id = req.params.id
+			const news = await newsService.updateNews(id, req.body)
+			res.json(success(news))
 		} catch (error) {
 			next(error)
 		}
