@@ -14,6 +14,11 @@ module.exports = {
         allowNull: false,
         comment: '內容',
       },
+      content_en: {
+        type: Sequelize.TEXT,
+        allowNull: true,
+        comment: '英文版內容',
+      },
       status: {
         type: Sequelize.ENUM('draft', 'published', 'archived'),
         defaultValue: 'draft',

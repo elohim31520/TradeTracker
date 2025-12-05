@@ -10,6 +10,10 @@ module.exports = (sequelize, DataTypes) => {
 				type: DataTypes.TEXT,
 				allowNull: false,
 			},
+			contentEn: {
+				type: DataTypes.TEXT,
+				allowNull: true,
+			},
 			status: {
 				type: DataTypes.ENUM('draft', 'published', 'archived'),
 				defaultValue: 'draft',
