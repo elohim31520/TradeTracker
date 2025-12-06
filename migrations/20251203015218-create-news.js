@@ -19,6 +19,11 @@ module.exports = {
         allowNull: true,
         comment: '英文版內容',
       },
+      content_hash: {
+        type: Sequelize.CHAR(32),
+        allowNull: false,
+        unique: true
+      },
       status: {
         type: Sequelize.ENUM('draft', 'published', 'archived'),
         defaultValue: 'draft',
