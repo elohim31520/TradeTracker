@@ -13,24 +13,29 @@ interface Article {
 	title: string
 	web_url: string
 	release_time: string
-	publisher: string
+	publisher?: string
 }
 
-function extractDataFromHtml(html: string): Article[] {
+interface News {
+	content: string
+	publishedAt: Date
+}
+
+function extractDataFromHtml(html: string): News[] {
 	const $ = cheerio.load(html)
-	const arr: Article[] = []
+	const arr: News[] = []
 
 	$('table').each((index: number, element: cheerio.Element) => {
 		let title = $(element).find('.maintitle h1.entry-title a').text()
 		let web_url = $(element).find('.maintitle h1.entry-title a').attr('href') || ''
 		let release_time = $(element).find('.head:contains("發布日期")').next().text()
-		let publisher = $(element).find('.head:contains("作者")').next().text()
+		// let publisher = $(element).find('.head:contains("作者")').next().text()
 
 		if (title) {
 			title = title.trim()
 			web_url = web_url.trim()
 			release_time = zhTimeStringToStandard(release_time)
-			arr.push({ title, web_url, release_time, publisher })
+			arr.push({ content: title, publishedAt: release_time })
 		}
 	})
 
@@ -44,7 +49,7 @@ function getTechNewsUrl(page: number): string {
 	return `${process.env.TECHNEWS_URL}page/${page}/`
 }
 
-async function fetchTechNews(page: number): Promise<Article[]> {
+async function fetchTechNews(page: number): Promise<News[]> {
 	const techUrl = getTechNewsUrl(page)
 	const res = await axios.get(techUrl, { headers: TC_HEADER })
 	const data = _.get(res, 'data', {})
@@ -57,24 +62,33 @@ export async function crawlTechNews(): Promise<void> {
 
 	try {
 		for (let page = totalPage; page >= 0; page--) {
+			console.log(`正在爬取第 ${page} 頁...`)
 			let arr = await fetchTechNews(page)
 
 			if (!arr.length) {
-				logger.warn('沒從html中解析出資料！')
-				return
+				logger.warn(`第 ${page} 頁沒解析出資料，跳過。`)
+				continue
 			}
 
 			for (const article of arr) {
-				const parsedDate = normalizeDate(article.release_time)
+				const parsedDate = normalizeDate(article.publishedAt)
 				if (!parsedDate) {
-					console.warn(`release_time格式錯誤: ${article.release_time}`)
-					return
+					console.warn(`publishedAt格式錯誤: ${article.publishedAt}`)
+					continue
 				}
-				await db.tech_investment_news.create({ ...article, release_time: parsedDate })
+
+				try {
+					await db.News.create({ ...article, publishedAt: parsedDate })
+				} catch (innerError: any) {
+					if (innerError.name === 'SequelizeUniqueConstraintError') {
+						console.log(`文章已存在 (跳過): ${article.content}`)
+					}
+				}
 			}
+
 			await new Promise((resolve) => setTimeout(resolve, sleepTime))
 		}
 	} catch (e: any) {
-		console.error((e as Error).message)
+		console.error('爬蟲主流程發生嚴重錯誤:', (e as Error).message)
 	}
 }
