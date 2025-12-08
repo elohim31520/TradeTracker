@@ -80,6 +80,7 @@ services:
       - SP500_URL=${SP500_URL}
       - MARKET_URL=${MARKET_URL}
       - STOCK_PRICES_URL=${STOCK_PRICES_URL}
+      - TECHNEWS_URL=${TECHNEWS_URL}
       - PORT=${PORT}
     networks:
       - app-network
