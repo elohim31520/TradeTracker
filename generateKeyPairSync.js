@@ -1,22 +1,29 @@
-const fs = require('fs')
+const { generateKeyPairSync } = require('crypto');
+const fs = require('fs');
+const path = require('path');
 
-const crypto = require('crypto');
+// 取得命令列參數傳入的路徑
+const privateKeyPath = process.argv[2]; 
+const publicKeyPath = process.argv[3];
 
-const { privateKey, publicKey } = crypto.generateKeyPairSync('rsa', {
-    modulusLength: 4096,
-    publicKeyEncoding: {
-        type: 'spki',
-        format: 'pem'
-    },
-    privateKeyEncoding: {
-        type: 'pkcs8',
-        format: 'pem'
-    }
+if (!privateKeyPath || !publicKeyPath) {
+    console.error("Usage: node generateKeyPairSync.js <privateKeyPath> <publicKeyPath>");
+    process.exit(1);
+}
+
+const { privateKey, publicKey } = generateKeyPairSync('rsa', {
+  modulusLength: 2048,
+  publicKeyEncoding: {
+    type: 'spki',
+    format: 'pem'
+  },
+  privateKeyEncoding: {
+    type: 'pkcs8',
+    format: 'pem'
+  }
 });
 
-// We need to output the keys in a way our shell script can easily parse them.
-// Using a simple delimiter.
-process.stdout.write('-----PRIVATE KEY-----\n');
-process.stdout.write(privateKey + '\n');
-process.stdout.write('-----PUBLIC KEY-----\n');
-process.stdout.write(publicKey + '\n');
+fs.writeFileSync(privateKeyPath, privateKey);
+fs.writeFileSync(publicKeyPath, publicKey);
+
+console.log("Keys generated successfully.");
