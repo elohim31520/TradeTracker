@@ -1,11 +1,15 @@
 import { Request, Response, NextFunction } from 'express'
 import newsService from '../services/newsService'
 import { success, fail } from '../modules/responseHelper'
+import _ from 'lodash'
 
 class NewsController {
 	async getAllNews(req: Request, res: Response, next: NextFunction) {
 		try {
-			const news = await newsService.getAllNews()
+			const page = Number(req.query.page ?? 1)
+			const size = Number(req.query.size ?? 10)
+			const status = _.get(req, 'query.status', 'published') as string
+			const news = await newsService.getAllNews({ page, size, status })
 			res.json(success(news))
 		} catch (error) {
 			next(error)

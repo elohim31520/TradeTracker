@@ -3,11 +3,18 @@ import newsController from '../controllers/newsController'
 import { verifyToken } from '../middleware/auth'
 import { verifyAdmin } from '../middleware/adminAuth'
 import validate from '../middleware/validate'
-import { updateSchema, deleteSchema, createSchema, bulkCreateSchema, idSchema } from '../schemas/newsSchema'
+import {
+	updateSchema,
+	deleteSchema,
+	createSchema,
+	bulkCreateSchema,
+	idSchema,
+	getAllNewsQuerySchema,
+} from '../schemas/newsSchema'
 
 const router = express.Router()
 
-router.get('/', newsController.getAllNews)
+router.get('/', validate(getAllNewsQuerySchema, 'query'), newsController.getAllNews)
 router.get('/:id', newsController.getNewsById)
 router.post('/bulkCreate', verifyToken, verifyAdmin, validate(bulkCreateSchema), newsController.bulkCreateNews)
 router.post('/', verifyToken, verifyAdmin, validate(createSchema), newsController.createNews)

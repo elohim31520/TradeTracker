@@ -1,9 +1,30 @@
 const db = require('../../models')
 import { NewsAttributes } from '../types/news'
 
+interface GetAllNewsParams {
+	page: number
+	size: number
+	status: string
+}
+
 class NewsService {
-	async getAllNews() {
-		return db.News.findAll()
+	async getAllNews({ page, size, status }: GetAllNewsParams) {
+		const offset = (page - 1) * size
+
+		let whereCondition = {}
+		if (status) {
+			whereCondition = {
+				status,
+			}
+		}
+
+		return await db.News.findAndCountAll({
+			where: whereCondition,
+			limit: size,
+			offset: offset,
+			order: [['createdAt', 'DESC']],
+			raw: true
+		})
 	}
 
 	async getNewsById(id: string) {
