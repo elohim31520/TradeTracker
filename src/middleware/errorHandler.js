@@ -39,17 +39,27 @@ const errorHandlers = [
 	},
 ]
 
-const errHandler = (err, req, res, next) => {
+const errorHandler = (err, req, res, next) => {
+	console.error('💥 錯誤攔截:', {
+		name: err.name, // 關鍵：這會告訴你它到底是 SequelizeDatabaseError 還是別的
+		message: err.message, // 錯誤訊息
+		path: req.path, // 發生在哪個 API
+	})
+
+	// [新增] 如果 header 已經送出，就不要再處理，直接交給 Express 預設處理
+	if (res.headersSent) {
+		return next(err)
+	}
+
 	for (const handler of errorHandlers) {
 		if (handler.matches(err)) {
 			return handler.handle(err, res)
 		}
 	}
 
-	console.error('ERROR 💥', err)
-	logger.error(err)
+	console.log('⚠️ 未被匹配的錯誤，回傳 500');
 	const { code, message } = errorCodes.SERVER_ERROR
 	res.status(500).json(responseHelper.fail(code, message))
 }
 
-module.exports = errHandler
+export default errorHandler
