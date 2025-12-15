@@ -5,10 +5,6 @@ import type { Admin, User, UserWithAdmin } from '../types/user'
 const db = models as unknown as DB
 
 class AdminService {
-	/**
-	 * 獲取所有用戶列表
-	 * @returns {Promise<Array>} 用戶列表
-	 */
 	async getAllUsers(): Promise<User[]> {
 		const users = await db.Users.findAll({
 			include: [
@@ -32,11 +28,6 @@ class AdminService {
 		})
 	}
 
-	/**
-	 * 將用戶設置為管理員
-	 * @param {Number} userId - 用戶ID
-	 * @returns {Promise<Object>} 創建的管理員記錄
-	 */
 	async setUserAsAdmin(userId: number): Promise<Admin> {
 		const user = await db.Users.findByPk(userId)
 		if (!user) {
@@ -51,11 +42,6 @@ class AdminService {
 		return db.Admin.create({ userId })
 	}
 
-	/**
-	 * 移除管理員權限
-	 * @param {Number} userId - 用戶ID
-	 * @returns {Promise<Boolean>} 操作結果
-	 */
 	async removeAdmin(userId: number): Promise<boolean> {
 		const admin = await db.Admin.findOne({ where: { userId } })
 		if (!admin) {
@@ -66,11 +52,6 @@ class AdminService {
 		return true
 	}
 
-	/**
-	 * 刪除用戶
-	 * @param {Number} userId - 用戶ID
-	 * @returns {Promise<Boolean>} 操作結果
-	 */
 	async deleteUser(userId: number): Promise<boolean> {
 		const user = await db.Users.findByPk(userId)
 		if (!user) {
@@ -81,10 +62,6 @@ class AdminService {
 		return true
 	}
 
-	/**
-	 * 獲取系統統計信息
-	 * @returns {Promise<Object>} 統計信息
-	 */
 	async getSystemStats(): Promise<{ userCount: number; adminCount: number }> {
 		const [userCount, adminCount] = await Promise.all([db.Users.count(), db.Admin.count()])
 
