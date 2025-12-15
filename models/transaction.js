@@ -22,59 +22,101 @@ module.exports = (sequelize, DataTypes) => {
 		}
 	)
 
-	Transaction.afterCreate(async (transaction, options) => {
-		const { user_id, stock_id, transaction_type, quantity, price } = transaction
+	const updatePortfolioAndBalance = async (transactions, options) => {
 		const { Portfolio, UserBalance } = sequelize.models
-		const transactionTotal = price * quantity
+		const t = options.transaction
 
-		// 更新股票持倉
-		const [portfolio] = await Portfolio.findOrCreate({
-			where: { user_id, stock_id },
-			defaults: {
-				user_id,
-				stock_id,
-				quantity: 0,
-				average_price: 0,
-			},
-		})
+		if (!t) {
+			console.warn('⚠️ 警告: 執行交易相關操作未檢測到事務，可能導致資料不一致！')
+		}
 
-		if (transaction_type === 'buy') {
-			const newQuantity = portfolio.quantity + quantity
-			const newAveragePrice =
-				newQuantity > 0
-					? (portfolio.average_price * portfolio.quantity + transactionTotal) / newQuantity
-					: price
-			await portfolio.update({
-				quantity: newQuantity,
-				average_price: newAveragePrice,
+		// 2. 必須使用串行處理 (For Loop)，不能使用 Promise.all
+		// 因為在同一個事務中，我們希望後一筆交易能讀到前一筆交易更新後的結果
+		for (const transaction of transactions) {
+			const { user_id, stock_id, transaction_type, quantity, price } = transaction
+			const transactionTotal = Number(price) * Number(quantity)
+
+			// --- A. 更新股票持倉 (Portfolio) ---
+			// 3. 使用悲觀鎖 (Lock) 查找持倉
+			// 如果這行被鎖住，其他事務必須等待直到當前事務 Commit/Rollback
+			let [portfolio, created] = await Portfolio.findOrCreate({
+				where: { user_id, stock_id },
+				defaults: {
+					user_id,
+					stock_id,
+					quantity: 0,
+					average_price: 0,
+				},
+				transaction: t,
+				lock: t ? t.LOCK.UPDATE : null, // 找到或建立後，鎖住該行直到事務結束
 			})
-		} else if (transaction_type === 'sell') {
-			const newQuantity = portfolio.quantity - quantity
-			if (newQuantity < 0) {
-				throw new Error('賣出的股票數量超過持倉')
+
+			const currentQty = Number(portfolio.quantity)
+			const currentAvgPrice = Number(portfolio.average_price)
+
+			if (transaction_type === 'buy') {
+				const newQuantity = currentQty + quantity
+				const newAveragePrice =
+					newQuantity > 0 ? (currentAvgPrice * currentQty + transactionTotal) / newQuantity : price
+
+				await portfolio.update(
+					{
+						quantity: newQuantity,
+						average_price: newAveragePrice,
+					},
+					{ transaction: t }
+				)
+			} else if (transaction_type === 'sell') {
+				const newQuantity = currentQty - quantity
+				if (newQuantity < 0) {
+					throw new Error(`庫存不足: Stock ${stock_id} 當前 ${currentQty}, 欲賣出 ${quantity}`)
+				}
+
+				// 這裡可以選擇刪除或更新為0，這裡選擇更新
+				await portfolio.update({ quantity: newQuantity }, { transaction: t })
 			}
-			if (newQuantity === 0) {
-				await portfolio.destroy()
-			} else {
-				await portfolio.update({ quantity: newQuantity })
+
+			// --- B. 更新 USD 持倉 (UserBalance) ---
+
+			// 同樣使用鎖來獲取餘額
+			let userBalance = await UserBalance.findOne({
+				where: { user_id, currency: 'USD' },
+				transaction: t,
+				lock: t ? t.LOCK.UPDATE : null,
+			})
+
+			if (!userBalance) {
+				userBalance = await UserBalance.create(
+					{
+						user_id,
+						currency: 'USD',
+						balance: 0,
+					},
+					{ transaction: t }
+				)
+			}
+
+			// 使用 atomic increment/decrement 會更安全，但也需要事務支持
+			if (transaction_type === 'buy') {
+				await userBalance.decrement('balance', {
+					by: transactionTotal,
+					transaction: t,
+				})
+			} else if (transaction_type === 'sell') {
+				await userBalance.increment('balance', {
+					by: transactionTotal,
+					transaction: t,
+				})
 			}
 		}
+	}
 
-		// 更新USD持倉
-		const [userBalance] = await UserBalance.findOrCreate({
-			where: { user_id, currency: 'USD' },
-			defaults: {
-				user_id,
-				currency: 'USD',
-				balance: 0,
-			},
-		})
+	Transaction.afterCreate(async (transaction, options) => {
+		await updatePortfolioAndBalance([transaction], options)
+	})
 
-		if (transaction_type === 'buy') {
-			await userBalance.decrement('balance', { by: transactionTotal })
-		} else if (transaction_type === 'sell') {
-			await userBalance.increment('balance', { by: transactionTotal })
-		}
+	Transaction.afterBulkCreate(async (transactions, options) => {
+		await updatePortfolioAndBalance(transactions, options)
 	})
 
 	return Transaction

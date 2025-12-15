@@ -15,6 +15,23 @@ class TransactionController {
 		}
 	}
 
+	async bulkCreate(req: Request, res: Response, next: NextFunction) {
+		try {
+			const userId = _.get(req, 'user.id') as unknown as number
+			req.body.user_id = userId
+			const dataToCreate = req.body.map((item: any) => ({
+				...item,
+				user_id: userId
+			}));
+			const transactions = await transactionService.bulkCreate(dataToCreate)
+			res.json(success(transactions))
+		} catch (error) {
+			console.log(error);
+			
+			next(error)
+		}
+	}
+
 	async getAll(req: Request, res: Response, next: NextFunction) {
 		try {
 			const userId = _.get(req, 'user.id') as unknown as number

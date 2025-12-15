@@ -3,8 +3,7 @@ import transactionController from '../controllers/transactionController'
 import { verifyToken } from '../middleware/auth'
 import { userContext } from '../middleware/userContext'
 import validate from '../middleware/validate'
-import { createSchema, getAllSchema } from '../schemas/transactionSchema'
-// import { verifyAdmin } from '../middleware/adminAuth'
+import { createSchema, getAllSchema, bulkCreateSchema } from '../schemas/transactionSchema'
 
 const router = express.Router()
 
@@ -12,6 +11,7 @@ const router = express.Router()
 router.use(verifyToken, userContext)
 
 router.post('/', validate(createSchema), transactionController.create)
+router.post('/bulkCreate', validate(bulkCreateSchema), transactionController.bulkCreate)
 router.get('/', validate(getAllSchema, 'query'), transactionController.getAll)
 router.get('/:id', transactionController.getById)
 router.put('/:id', transactionController.update)

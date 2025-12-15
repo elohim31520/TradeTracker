@@ -13,8 +13,22 @@ interface GetAllParams {
 
 class TransactionService {
 	async create(data: TransactionCreationAttributes): Promise<TransactionAttributes> {
-		const transaction = await db.Transaction.create(data)
-		return transaction.get({ plain: true })
+		return await db.sequelize.transaction(async (t) => {
+			const transaction = await db.Transaction.create(data, { transaction: t })
+			return transaction.get({ plain: true })
+		})
+	}
+
+	async bulkCreate(data: TransactionCreationAttributes[]): Promise<TransactionAttributes[]> {
+		return await db.sequelize.transaction(async (t) => {
+			const transactions = await db.Transaction.bulkCreate(data, {
+				transaction: t,
+				validate: true,
+				individualHooks: true,
+			})
+
+			return transactions
+		})
 	}
 
 	async getAll({ userId, page, size }: GetAllParams) {
@@ -49,7 +63,7 @@ class TransactionService {
 		const deletedRowCount = await db.Transaction.destroy({
 			where: {
 				id,
-				user_id: userId
+				user_id: userId,
 			},
 		})
 
