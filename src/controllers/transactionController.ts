@@ -6,7 +6,7 @@ import _ from 'lodash'
 class TransactionController {
 	async create(req: Request, res: Response, next: NextFunction) {
 		try {
-			const userId = _.get(req, 'user.id') as unknown as number
+			const userId = req.user!.id
 			req.body.user_id = userId
 			const transaction = await transactionService.create(req.body)
 			res.status(201).json(success(transaction))
@@ -17,27 +17,26 @@ class TransactionController {
 
 	async bulkCreate(req: Request, res: Response, next: NextFunction) {
 		try {
-			const userId = _.get(req, 'user.id') as unknown as number
-			req.body.user_id = userId
+			const userId = req.user!.id
 			const dataToCreate = req.body.map((item: any) => ({
 				...item,
-				user_id: userId
-			}));
+				user_id: userId,
+			}))
 			const transactions = await transactionService.bulkCreate(dataToCreate)
 			res.json(success(transactions))
 		} catch (error) {
-			console.log(error);
-			
+			console.log(error)
+
 			next(error)
 		}
 	}
 
 	async getAll(req: Request, res: Response, next: NextFunction) {
 		try {
-			const userId = _.get(req, 'user.id') as unknown as number
+			const userId = req.user!.id
 			const page = +_.get(req, 'query.page', 1)
 			const size = +_.get(req, 'query.size', 10)
-			const transactions = await transactionService.getAll({userId, page, size})
+			const transactions = await transactionService.getAll({ userId, page, size })
 			res.status(200).json(success(transactions))
 		} catch (error) {
 			next(error)
@@ -76,7 +75,7 @@ class TransactionController {
 			if (!transactionId) {
 				res.status(400).json(fail(400, 'Transaction ID is required'))
 			}
-			const userId = _.get(req, 'user.id') as unknown as number
+			const userId = req.user!.id
 			await transactionService.delete(transactionId, userId)
 			res.status(204).json(success([], 'Transaction deleted successfully'))
 		} catch (error) {
