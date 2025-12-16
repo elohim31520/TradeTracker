@@ -6,7 +6,7 @@ const db = models as unknown as DB
 
 class AdminService {
 	async getAllUsers(): Promise<User[]> {
-		const users = await db.Users.findAll({
+		const users = (await db.Users.findAll({
 			include: [
 				{
 					model: db.Admin,
@@ -14,9 +14,10 @@ class AdminService {
 					attributes: ['id', 'userId'],
 				},
 			],
+			attributes: ['id', 'name', 'email', 'createdAt', 'updatedAt'],
 			nest: true,
 			raw: true,
-		}) as unknown as UserWithAdmin[]
+		})) as unknown as UserWithAdmin[]
 
 		return users.map((user) => {
 			if (user.admin && user.admin.id === null && user.admin.userId === null) {
@@ -29,17 +30,16 @@ class AdminService {
 	}
 
 	async setUserAsAdmin(userId: number): Promise<Admin> {
-		const user = await db.Users.findByPk(userId)
-		if (!user) {
-			throw new Error('用戶不存在')
-		}
+		const [admin, created] = await db.Admin.findOrCreate({
+			where: { userId },
+			defaults: { userId }, // 如果是創建，要使用的值
+		})
 
-		const existingAdmin = await db.Admin.findOne({ where: { userId } })
-		if (existingAdmin) {
+		if (!created) {
 			throw new Error('該用戶已經是管理員')
 		}
 
-		return db.Admin.create({ userId })
+		return admin
 	}
 
 	async removeAdmin(userId: number): Promise<boolean> {
