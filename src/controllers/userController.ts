@@ -30,10 +30,7 @@ class UserController {
 
 	async changePassword(req: AuthenticatedRequest, res: Response, next: NextFunction) {
 		try {
-			const userId = _.get(req, 'user.id')
-			if (_.isUndefined(userId)) {
-				throw new Error('User ID is required')
-			}
+			const userId = req.user!.id
 			const { oldPassword, newPassword } = req.body
 			const result = await userService.changePassword({ userId, oldPassword, newPassword })
 			res.json(success(result))

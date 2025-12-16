@@ -9,7 +9,14 @@
         "esModuleInterop": true,
         "skipLibCheck": true,
         "moduleResolution": "node",
-        "lib": ["ES2020"]
+        "lib": ["ES2020"],
+        "typeRoots": [
+            "./node_modules/@types",
+            "./src/types"
+        ]
+    },
+    "ts-node": {
+        "files": true
     },
     "include": [
         "src/**/*.ts",

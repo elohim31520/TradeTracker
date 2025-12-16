@@ -4,12 +4,9 @@ import { success } from '../modules/responseHelper'
 import _ from 'lodash'
 
 class BalanceController {
-	static async getBalance(req: Request, res: Response, next: NextFunction) {
+	async getBalance(req: Request, res: Response, next: NextFunction) {
 		try {
-			const userId = _.get(req, 'user.id')
-			if (_.isUndefined(userId)) {
-				throw new Error('User ID is required')
-			}
+			const userId = req.user!.id
 			const data = await BalanceService.getBalance(userId)
 			res.json(success(data))
 		} catch (error) {
@@ -17,12 +14,9 @@ class BalanceController {
 		}
 	}
 
-	static async createBalance(req: Request, res: Response, next: NextFunction) {
+	async createBalance(req: Request, res: Response, next: NextFunction) {
 		try {
-			const userId = _.get(req, 'user.id')
-			if (_.isUndefined(userId)) {
-				throw new Error('User ID is required')
-			}
+			const userId = req.user!.id
 			const data = await BalanceService.createBalance(userId, _.get(req, 'body.balance'))
 			res.json(success(data))
 		} catch (error) {
@@ -30,12 +24,9 @@ class BalanceController {
 		}
 	}
 
-	static async updateBalance(req: Request, res: Response, next: NextFunction) {
+	async updateBalance(req: Request, res: Response, next: NextFunction) {
 		try {
-			const userId = _.get(req, 'user.id')
-			if (_.isUndefined(userId)) {
-				throw new Error('User ID is required')
-			}
+			const userId = req.user!.id
 			const data = await BalanceService.updateBalance(userId, _.get(req, 'body.balance'))
 			res.json(success(data))
 		} catch (error) {
@@ -44,4 +35,4 @@ class BalanceController {
 	}
 }
 
-export default BalanceController
+export default new BalanceController()
