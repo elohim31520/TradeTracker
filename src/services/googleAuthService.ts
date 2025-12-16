@@ -69,9 +69,9 @@ class GoogleAuthService {
 			}
 
 			return {
-				token: generateToken({ name: user.name }),
+				token: generateToken({ name: user.name, id: user.id }),
 				picture,
-				name
+				name,
 			}
 		} catch (error) {
 			if (error instanceof ClientError) {

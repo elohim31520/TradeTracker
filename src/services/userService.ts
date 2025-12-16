@@ -18,14 +18,14 @@ class userService {
 		let salt = generateSalt(),
 			hashed = sha256(pwd, salt)
 
-		await db.Users.create({
+		const user = await db.Users.create({
 			name,
 			pwd: hashed,
 			salt,
 			email,
 		})
 
-		return generateToken({ name })
+		return generateToken({ name, id: user.id })
 	}
 
 	async login({ name, pwd }: { name: string; pwd: string }) {
@@ -35,7 +35,7 @@ class userService {
 		const { salt, pwd: storeHash } = user
 		const currentHash = sha256(pwd, salt || '')
 		if (currentHash != storeHash) throw new ClientError(PASSWORD_INCORRECT)
-		return generateToken({ name })
+		return generateToken({ name, id: user.id })
 	}
 
 	async changePassword({

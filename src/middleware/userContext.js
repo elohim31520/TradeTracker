@@ -1,4 +1,3 @@
-const { Users } = require('../../models')
 const { AuthError } = require('../modules/errors')
 
 /**
@@ -7,30 +6,20 @@ const { AuthError } = require('../modules/errors')
  * 會將用戶資訊添加到 req.user 中
  */
 async function userContext(req, res, next) {
-    try {
-        const username = req.decoded?.name
-        if (!username) {
-            throw new AuthError('找不到用戶名稱')
-        }
+	try {
+		const { name, id } = req.decoded
+		if (!id) {
+			throw new AuthError('找不到用戶資訊')
+		}
 
-        const user = await Users.findOne({ 
-            where: { name: username },
-            attributes: { exclude: ['pwd', 'salt'] } // 排除敏感資訊
-        })
+		req.user = { name, id }
 
-        if (!user || !user.id) {
-            throw new AuthError('找不到用戶資訊')
-        }
-
-        // 將用戶資訊添加到請求物件中
-        req.user = user
-
-        next()
-    } catch (error) {
-        next(error)
-    }
+		next()
+	} catch (error) {
+		next(error)
+	}
 }
 
 module.exports = {
-    userContext
-} 
+	userContext,
+}
