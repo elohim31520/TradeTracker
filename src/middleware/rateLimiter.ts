@@ -1,119 +1,117 @@
-import { RateLimiterRedis, RateLimiterMemory, IRateLimiterOptions } from 'rate-limiter-flexible'
-import express, { Request, Response, NextFunction } from 'express'
+import { RateLimiterRedis, RateLimiterMemory, IRateLimiterOptions } from 'rate-limiter-flexible';
+import express, { Request, Response, NextFunction } from 'express';
+// 建議為 errorCodes 和 redis 補上 .d.ts 定義，這裡暫時保留 ignore
 //@ts-ignore
-import errorCodes from '../constant/errorCodes'
-const responseHelper = require('../modules/responseHelper')
+import errorCodes from '../constant/errorCodes';
 //@ts-ignore
-import redisClient from '../modules/redis'
+import { fail } from '../modules/responseHelper';
 //@ts-ignore
-import logger from '../logger'
+import redisClient from '../modules/redis';
+//@ts-ignore
+import logger from '../logger';
 
-// 可調整參數
-const MAX_POINTS = 50 // 每10秒請求數限制
-const DURATION = 10    // 時間窗口大小（秒）
-const KEY_PREFIX = 'rate_limit:'
+// --- 參數設定 ---
+// 建議：拉長窗口時間，對於防範持續性爬蟲較有效
+const LIMIT_POINTS = process.env.RATE_LIMIT_POINTS ? Number(process.env.RATE_LIMIT_POINTS) : 100; // 每分鐘 100 次
+const LIMIT_DURATION = process.env.RATE_LIMIT_DURATION ? Number(process.env.RATE_LIMIT_DURATION) : 60; // 60 秒
+const KEY_PREFIX = 'rl:'; // 縮短 prefix 節省 Redis 記憶體
 
-// 環境檢測
-const isDevelopment = process.env.NODE_ENV === 'development';
+// const isDevelopment = process.env.NODE_ENV === 'development';
+const isDevelopment = false
 
 let rateLimiter: RateLimiterRedis | RateLimiterMemory | null = null;
 
-const getRateLimiter = () => {
-	if (redisClient && redisClient.isReady) {
-		logger.info('限流器正在使用 Redis');
-		return new RateLimiterRedis({
-			storeClient: redisClient,
-			keyPrefix: KEY_PREFIX,
-			points: MAX_POINTS,
-			duration: DURATION,
-		});
-	} else {
-		logger.warn('Redis 尚未就緒，限流器將回退到記憶體模式');
-		// Redis 不可用，使用內存進行限流
-		return new RateLimiterMemory({
-			points: MAX_POINTS,
-			duration: DURATION,
-		});
-	}
+// 初始化工廠函數
+const createLimiter = (): RateLimiterRedis | RateLimiterMemory => {
+    // 檢查 Redis 是否連線 (兼容 node-redis v4 的 isOpen 或 v3 的 connected)
+    const isRedisReady = redisClient && (redisClient.isOpen || redisClient.connected || redisClient.isReady);
+
+    if (isRedisReady) {
+        logger.info(`[RateLimiter] 使用 Redis 模式 (Limit: ${LIMIT_POINTS}/${LIMIT_DURATION}s)`);
+        return new RateLimiterRedis({
+            storeClient: redisClient,
+            keyPrefix: KEY_PREFIX,
+            points: LIMIT_POINTS,
+            duration: LIMIT_DURATION,
+            // 如果 Redis 斷線，自動使用記憶體保險絲 (insuranceLimiter)
+            insuranceLimiter: new RateLimiterMemory({
+                points: LIMIT_POINTS,
+                duration: LIMIT_DURATION,
+            }),
+        });
+    } else {
+        logger.warn(`[RateLimiter] Redis 未就緒，降級為記憶體模式`);
+        return new RateLimiterMemory({
+            points: LIMIT_POINTS,
+            duration: LIMIT_DURATION,
+        });
+    }
 };
 
-// 導出初始化函數，可以在 Redis 連接成功後調用
-export const initRateLimiter = async (): Promise<void> => {
-	try {
-		rateLimiter = getRateLimiter();
-		logger.info('限流器初始化成功');
-	} catch (e) {
-		logger.error('限流器初始化失敗:', e);
-		// 即使初始化失敗，也設置一個內存限流器作為備用
-		rateLimiter = new RateLimiterMemory({
-			points: MAX_POINTS,
-			duration: DURATION,
-		});
-	}
+// 導出初始化，在 Server 啟動時呼叫
+export const initRateLimiter = async () => {
+    try {
+        rateLimiter = createLimiter();
+    } catch (error) {
+        logger.error('[RateLimiter] 初始化失敗:', error);
+        // 最後一道防線
+        rateLimiter = new RateLimiterMemory({ points: LIMIT_POINTS, duration: LIMIT_DURATION });
+    }
 };
 
-const rateLimiterMiddleware = (req: Request, res: Response, next: NextFunction) => {
-	// 開發環境跳過限流
-	if (isDevelopment) {
-		return next();
-	}
-	
-	// 當應用程式在 Cloudflare 後方時，應優先使用 'CF-Connecting-IP' 標頭來取得真實的訪客 IP
-	// 若標頭不存在，則回退到 req.ip (適用於沒有經過 Cloudflare 的請求，例如本地開發)
-	const clientIp = (req.headers['cf-connecting-ip'] as string) || req.ip;
-	
-	// 直接使用 req.ip，因為 app.set('trust proxy', 1) 已經處理了真實 IP
-	// const clientIp = req.ip;
-	const userAgent = req.headers['user-agent'] || 'unknown';
-	const rateLimitKey = `${clientIp}_${userAgent}`;
-	
-	// 調試信息：輸出請求詳情
-	const debugInfo = {
-		cfConnectingIp: req.headers['cf-connecting-ip'],
-		rawIp: req.socket.remoteAddress, // The raw IP from the direct connection (e.g., Nginx)
-		clientIp, // The real client IP resolved by Express
-		path: req.path,
-		headers: {
-			'x-forwarded-for': req.headers['x-forwarded-for'],
-			'user-agent': req.headers['user-agent']
-		}
-	};
-	
-	// 排除某些不需要限流的路徑
-	if (req.path.startsWith('/public') || req.path === '/health') {
-		return next();
-	}
-	
-	// 跳過對本地請求的限流
-	if (clientIp === '::1' || clientIp === '127.0.0.1') {
-		logger.debug('本地請求，跳過限流', debugInfo);
-		return next();
-	}
-	
-	if (!rateLimiter) {
-		// 限流器未初始化，跳過限流檢查
-		return next();
-	}
+const rateLimiterMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+    // 排除路徑
+    if (req.path.startsWith('/public') || req.path === '/health') {
+        return next();
+    }
 
-	rateLimiter
-		.consume(rateLimitKey)
-		.then(() => {
-			next();
-		})
-		.catch((rejRes) => {
-			// 紀錄被限流的請求詳情
-			logger.warn(`請求被限流: ${clientIp}`, { 
-				rateLimitKey,
-				...debugInfo,
-				remainingPoints: rejRes.remainingPoints,
-				msBeforeNext: rejRes.msBeforeNext
-			});
-			
-			res.json(responseHelper.fail(
-				errorCodes.TOO_MANY_REQUESTS.code, 
-				`${errorCodes.TOO_MANY_REQUESTS.message}，請 ${Math.ceil(rejRes.msBeforeNext)} 毫秒後重試`
-			));
-		});
+    // 確保限流器已初始化 (防止啟動時的 Race condition)
+    if (!rateLimiter) {
+        await initRateLimiter();
+    }
+
+    // 1. IP 處理: 請確保 app.set('trust proxy', 1) 已在 app.ts 中設定
+    // 這樣 req.ip 就會是真實 IP (包含 CF-Connecting-IP 的處理)
+    const clientIp = req.ip || '0.0.0.0';
+
+    // 本地請求白名單
+    // if (clientIp === '::1' || clientIp === '127.0.0.1') {
+    //     return next();
+    // }
+
+    // 2. Key 生成: 移除 User-Agent，防止透過切換 UA 繞過限流
+    // 如果是登入接口，建議加入 req.body.username 作為 Key
+    const rateLimitKey = clientIp; 
+
+    // 開發環境增加額度，而不是完全跳過 (方便測試邏輯)
+    const pointsToConsume = isDevelopment ? 0 : 1; 
+
+    try {
+        const result = await rateLimiter!.consume(rateLimitKey, pointsToConsume);
+        
+        // 可選：在 Header 告訴前端剩餘次數 (標準做法)
+        res.set('X-RateLimit-Remaining', String(result.remainingPoints));
+        res.set('X-RateLimit-Reset', String(new Date(Date.now() + result.msBeforeNext).toISOString()));
+        
+        next();
+    } catch (rejRes: any) {
+        // rejRes 來自 rate-limiter-flexible，包含 msBeforeNext 等資訊
+        const msBeforeNext = rejRes.msBeforeNext || 1000;
+        const retrySeconds = Math.ceil(msBeforeNext / 1000);
+
+        logger.warn(`[RateLimit] IP 被限制: ${clientIp}`, {
+            key: rateLimitKey,
+            path: req.path,
+            ua: req.headers['user-agent']
+        });
+
+        res.status(429).json(
+            fail(
+                errorCodes.TOO_MANY_REQUESTS.code,
+                `${errorCodes.TOO_MANY_REQUESTS.message}，請 ${retrySeconds} 秒後重試`
+            )
+        );
+    }
 };
 
 export default rateLimiterMiddleware;
