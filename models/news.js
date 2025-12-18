@@ -56,6 +56,17 @@ module.exports = (sequelize, DataTypes) => {
 					  .update(contentToHash)
 					  .digest('hex');
 				  }
+				},
+				beforeBulkCreate: (newsList) => {
+					newsList.forEach((news) => {
+						if (news.content) {
+							const contentToHash = news.content.trim();
+							news.content_hash = crypto
+								.createHash('md5')
+								.update(contentToHash)
+								.digest('hex');
+						}
+					});
 				}
 			}
 		}
