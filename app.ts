@@ -93,6 +93,22 @@ const initApp = async () => {
 	app.use('/news', newsRoutes)
 	// app.use('/ollama', ollamaRoutes)
 
+	app.get('/api/debug-limit', (req, res) => {
+		res.json({
+			message: "你成功通過了限流器",
+			debugInfo: {
+				// 檢查 Cloudflare 是否有給真實 IP
+				cfIp: req.headers['cf-connecting-ip'], 
+				// 檢查 Nginx 傳過來的 XFF
+				xff: req.headers['x-forwarded-for'],
+				// Express 最終認定的 IP (受 trust proxy 影響)
+				expressIp: req.ip,
+				// 檢查現在是否處於開發模式
+				isDev: process.env.NODE_ENV === 'development',
+			}
+		});
+	});
+
 	app.use(errorHandler) //所有的api錯誤處理, 擺最後
 
 	app.listen(port, () => {
