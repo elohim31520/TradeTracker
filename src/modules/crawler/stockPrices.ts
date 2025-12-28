@@ -10,13 +10,14 @@ const db = require('../../../models')
 
 interface StockPrice {
 	company: string
-	price: number
-	dayChg: number
-	yearChg: number
-	MCap: string
-	date: string
+	MCap?: string
+	date?: string
 	symbol?: string
 	timestamp?: string
+	price: number
+	dayChg: number
+	yearChg?: number
+	weight: number
 }
 
 function getSymbol(companyName: string, symbols: any[]): string {
@@ -28,49 +29,45 @@ function getSymbol(companyName: string, symbols: any[]): string {
 
 async function extractDataFromHtml(htmlContent: string): Promise<StockPrice[]> {
 	const $ = cheerio.load(htmlContent)
-	const componentsTable = $('.table-minimize').eq(1).find('table')
+	const componentsTable = $('.table-responsive').first().find('table');
 	const rows = componentsTable.find('tbody tr').toArray()
+	if (rows.length === 0) {
+        console.warn("警告：找不到任何數據列，請檢查選擇器或 HTML 內容");
+        return [];
+    }
+
 	const stockPrices: StockPrice[] = []
-	const symbols = await db.Company.findAll({ raw: true, attributes: ['symbol'] })
+
+	let pageDate = new Date().toISOString().split('T')[0]
+	const timestamp = String(Date.now())
+	
 	await Promise.all(
 		rows.map(async (row: cheerio.Element) => {
 			const $row = $(row)
+			const cols = $row.find('td')
 
-			const company = $row.find('td').eq(0).text().trim()
-			const priceText = $row.find('td#p').text().trim().replace(/,/g, '')
-			const dayChg = $row.find('td#pch').text().trim().replace(/%/g, '')
-			const yearChg = $row.find('td').eq(5).text().trim().replace(/%/g, '')
-			const MCap = $row.find('td').eq(6).text().trim()
-			const date = $row.find('td#date').text().trim()
+			const company = cols.eq(1).text().trim()
+			const symbol = cols.eq(2).text().trim()
 
-			const symbol = getSymbol(company, symbols)
-
+			const priceText = cols.eq(4).text().trim().replace(/,/g, '')
 			const price = parseFloat(priceText)
 
-			const lastOne = await db.StockPrice.findOne({
-				where: {
-					company,
-					date,
-				},
-				attributes: ['date'],
-				order: [['date', 'DESC']],
-				limit: 1,
-				raw: true,
-			})
-			const hasData = lastOne?.date
+			// 漲跌幅處理：Ex "(1.02%)" -> "1.02"
+			const dayChgText = cols.eq(6).text().trim().replace(/[()%]/g, '')
+			const dayChg = parseFloat(dayChgText)
 
-			if (!hasData) {
-				stockPrices.push({
-					company,
-					price,
-					dayChg: parseFloat(dayChg),
-					yearChg: parseFloat(yearChg),
-					MCap,
-					date,
-					symbol,
-					timestamp: convertToEST(date),
-				})
-			}
+			const weightRaw = cols.eq(3).text().trim().replace('%', '');
+			const weight = _.toNumber(weightRaw);
+
+			stockPrices.push({
+				company,
+				symbol,
+				price,
+				dayChg,
+				date: pageDate,
+				timestamp,
+				weight
+			})
 		})
 	)
 
@@ -84,10 +81,7 @@ export async function crawlStockPrices(): Promise<void> {
 			logger.error('STOCK_PRICES_URL沒有定義！')
 			return
 		}
-		const resp = await axios.get(url, {
-			headers: MARKET_INDEX_HEADERS,
-			responseType: 'arraybuffer',
-		})
+		const resp = await axios.get(url, { responseType: 'arraybuffer' })
 		const html = decodeBuffer(resp.data)
 		const stockPrices = await extractDataFromHtml(html)
 
@@ -96,8 +90,8 @@ export async function crawlStockPrices(): Promise<void> {
 			return
 		}
 		await db.StockPrice.bulkCreate(stockPrices)
-		logger.info(`Successfully inserted ${stockPrices.length} new stock prices.`)
+		logger.info(`成功創建 ${stockPrices.length} stock prices.`)
 	} catch (e: any) {
-		logger.error(`Error fetching stock prices: ${(e as Error).message}`)
+		logger.error(`Error: ${(e as Error)}`)
 	}
 }

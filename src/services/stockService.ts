@@ -25,12 +25,12 @@ class StockService {
 	async getTodayStocks(): Promise<StockPriceAlias[]> {
 		try {
 			const dateQuery = `
-				SELECT DISTINCT DATE(timestamp) as date
-				FROM stock_prices
-				ORDER BY date DESC
-				LIMIT 2
+				SELECT date 
+				FROM stock_prices 
+				ORDER BY id DESC 
+				LIMIT 1;
 			`
-			const dates: { date: string }[] = await db.sequelize.query(dateQuery, {
+			const dates: { date: Date | string }[] = await db.sequelize.query(dateQuery, {
 				type: QueryTypes.SELECT,
 			})
 
@@ -38,25 +38,23 @@ class StockService {
 				return []
 			}
 
-			const fetchStocksByDate = async (date: string) => {
+			const fetchStocksByDate = async (date: Date | string) => {
 				const rawQuery = `
 					SELECT name, symbol, price, chg, ychg, cap, time
 					FROM (
 						SELECT
-							sp.company as name,
-							c.symbol,
-							sp.price,
-							sp.day_chg AS chg,
-							sp.year_chg AS ychg,
-							sp.m_cap AS cap,
-							DATE(sp.timestamp) as time,
-							ROW_NUMBER() OVER (PARTITION BY sp.company ORDER BY sp.timestamp DESC) as rn
+							company AS name,
+							symbol,
+							price,
+							day_chg AS chg,
+							year_chg AS ychg,
+							m_cap AS cap,
+							date AS time,
+							ROW_NUMBER() OVER (PARTITION BY symbol ORDER BY timestamp DESC) as rn
 						FROM
-							stock_prices sp
-						LEFT JOIN
-							company c ON LOWER(c.name) LIKE CONCAT('%', LOWER(TRIM(sp.company)), '%')
+							stock_prices
 						WHERE
-							DATE(sp.timestamp) = :targetDate
+							date = :targetDate
 					) AS ranked_prices
 					WHERE
 						rn = 1;
@@ -70,14 +68,7 @@ class StockService {
 			}
 
 			const latestDate = dates[0].date
-			let stocks = await fetchStocksByDate(latestDate)
-
-			if (stocks.length < 20 && dates.length > 1) {
-				const secondLatestDate = dates[1].date
-				stocks = await fetchStocksByDate(secondLatestDate)
-			}
-
-			return stocks
+			return await fetchStocksByDate(latestDate)
 		} catch (error) {
 			console.error("Error fetching today's stocks:", error)
 			return []
