@@ -32,6 +32,14 @@ module.exports = (sequelize, DataTypes) => {
 				type: DataTypes.DECIMAL(10, 2),
 				allowNull: true,
 			},
+			company_id: {
+				type: DataTypes.INTEGER,
+				allowNull: true,
+				references: {
+					model: 'company',
+					key: 'id'
+				},
+			},
 			createdAt: {
 				type: DataTypes.DATE,
 				allowNull: false,

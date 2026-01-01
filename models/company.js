@@ -3,6 +3,12 @@ module.exports = (sequelize, DataTypes) => {
 	const Company = sequelize.define(
 		'Company',
 		{
+			id: {
+				type: DataTypes.INTEGER,
+				allowNull: false,
+				primaryKey: true,
+				autoIncrement: true,
+			},
 			symbol: {
 				type: DataTypes.STRING,
 				allowNull: false
