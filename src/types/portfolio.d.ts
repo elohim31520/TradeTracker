@@ -1,7 +1,7 @@
 export interface Portfolio {
 	id?: number
 	user_id: number
-	stock_id: number
+	company_id: number
 	quantity: number
 	average_price: number
 	createdAt?: Date
@@ -12,9 +12,12 @@ export interface Portfolio {
 	}
 }
 
-export interface PortfolioWithAvg {
+export interface PortfolioResponse {
 	id: number
-	stock_id: number
 	quantity: number
 	avg: number
+	company?: {
+		name: string
+		symbol: string
+	}
 }

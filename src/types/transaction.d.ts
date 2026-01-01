@@ -1,7 +1,7 @@
 export interface TransactionAttributes {
 	id: number
 	user_id: number
-	stock_id: number
+	company_id: number
 	transaction_type: 'buy' | 'sell'
 	quantity: number
 	price: number
@@ -14,7 +14,7 @@ export type TransactionCreationAttributes = Omit<TransactionAttributes, 'id' | '
 
 export interface TransactionPartial {
 	id: number
-	stock_id: number
+	company_id: number
 	type: 'buy' | 'sell'
 	quantity: number
 	price: number

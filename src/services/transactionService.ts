@@ -36,7 +36,16 @@ class TransactionService {
 			where: {
 				user_id: userId,
 			},
-			attributes: ['id', 'stock_id', 'quantity', 'price', ['transaction_type', 'type'], ['transaction_date', 'date']],
+			attributes: ['id', 'company_id', 'quantity', 'price', ['transaction_type', 'type'], ['transaction_date', 'date']],
+			include: [
+				{
+					model: db.Company,
+					as: 'company',
+					attributes: ['name', 'symbol'],
+					required: false,
+				},
+			],
+			nest: true,
 			offset: (page - 1) * size,
 			order: [['createdAt', 'DESC']],
 			limit: size,

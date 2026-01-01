@@ -1,9 +1,9 @@
 const db = require('../../models')
 import { getZonedDate } from '../modules/date'
-import { Portfolio, PortfolioWithAvg } from '../types/portfolio'
+import { Portfolio, PortfolioResponse } from '../types/portfolio'
 
 interface updateParams {
-	stock_id?: string
+	company_id?: number
 	quantity?: number
 	average_price?: number
 }
@@ -13,25 +13,24 @@ class PortfolioService {
 		return db.Portfolio.findByPk(id)
 	}
 
-	async getAllByUserId(userId: number): Promise<PortfolioWithAvg[]> {
+	async getAllByUserId(userId: number): Promise<PortfolioResponse[]> {
 		const portfolios = await db.Portfolio.findAll({
 			where: {
 				user_id: userId,
 			},
-			attributes: ['id', 'stock_id', 'quantity', ['average_price', 'avg']],
+			attributes: ['id', 'company_id', 'quantity', ['average_price', 'avg']],
 			raw: true,
-			// 不關聯db.Company 為了省雲端網路留流量！
-			// include: [
-			// 	{
-			// 		model: db.Company,
-			// 		as: 'company',
-			// 		attributes: ['name', 'symbol'],
-			// 		required: false,
-			// 	},
-			// ],
-			// nest: true,
+			include: [
+				{
+					model: db.Company,
+					as: 'company',
+					attributes: ['name', 'symbol'],
+					required: false,
+				},
+			],
+			nest: true,
 		})
-		return portfolios as unknown as PortfolioWithAvg[]
+		return portfolios as unknown as PortfolioResponse[]
 	}
 
 	async updateByUser(userId: number, data: updateParams): Promise<void> {
@@ -46,13 +45,13 @@ class PortfolioService {
 				{
 					where: {
 						user_id: userId,
-						stock_id: data?.stock_id,
+						company_id: data?.company_id,
 					},
 				}
 			)
 
 			if (affectedRows === 0) {
-				throw new Error(`Portfolio not found for userId: ${userId} and stock_id ${data.stock_id}`)
+				throw new Error(`Portfolio not found for userId: ${userId} and company_id ${data.company_id}`)
 			}
 
 			return
