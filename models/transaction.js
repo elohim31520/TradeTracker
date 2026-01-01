@@ -4,12 +4,16 @@ module.exports = (sequelize, DataTypes) => {
 	class Transaction extends Model {
 		static associate(models) {
 			Transaction.belongsTo(models.Users, { foreignKey: 'user_id' })
+
+			Transaction.belongsTo(models.Company, { 
+				foreignKey: 'company_id', 
+				as: 'company' 
+			});
 		}
 	}
 	Transaction.init(
 		{
 			user_id: DataTypes.INTEGER,
-			stock_id: DataTypes.STRING,
 			transaction_type: DataTypes.ENUM('buy', 'sell'),
 			quantity: DataTypes.INTEGER,
 			price: DataTypes.DECIMAL(10, 2),
@@ -34,17 +38,17 @@ module.exports = (sequelize, DataTypes) => {
 		// 2. 必須使用串行處理 (For Loop)，不能使用 Promise.all
 		// 因為在同一個事務中，我們希望後一筆交易能讀到前一筆交易更新後的結果
 		for (const transaction of transactions) {
-			const { user_id, stock_id, transaction_type, quantity, price } = transaction
+			const { user_id, company_id, transaction_type, quantity, price } = transaction
 			const transactionTotal = Number(price) * Number(quantity)
 
 			// --- A. 更新股票持倉 (Portfolio) ---
 			// 3. 使用悲觀鎖 (Lock) 查找持倉
 			// 如果這行被鎖住，其他事務必須等待直到當前事務 Commit/Rollback
-			let [portfolio, created] = await Portfolio.findOrCreate({
-				where: { user_id, stock_id },
+			let [portfolio] = await Portfolio.findOrCreate({
+				where: { user_id, company_id },
 				defaults: {
 					user_id,
-					stock_id,
+					company_id,
 					quantity: 0,
 					average_price: 0,
 				},
@@ -70,7 +74,7 @@ module.exports = (sequelize, DataTypes) => {
 			} else if (transaction_type === 'sell') {
 				const newQuantity = currentQty - quantity
 				if (newQuantity < 0) {
-					throw new Error(`庫存不足: Stock ${stock_id} 當前 ${currentQty}, 欲賣出 ${quantity}`)
+					throw new Error(`庫存不足: Stock ${company_id} 當前 ${currentQty}, 欲賣出 ${quantity}`)
 				}
 
 				// 這裡可以選擇刪除或更新為0，這裡選擇更新

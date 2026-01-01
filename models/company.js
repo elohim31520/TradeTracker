@@ -24,7 +24,8 @@ module.exports = (sequelize, DataTypes) => {
 		}
 	)
 	Company.associate = function (models) {
-		Company.hasMany(models.Portfolio, { foreignKey: 'stock_id', sourceKey: 'symbol' })
-	}
+		Company.hasMany(models.Portfolio, { foreignKey: 'company_id', as: 'portfolios' });
+		Company.hasMany(models.Transaction, { foreignKey: 'company_id', as: 'transactions' });
+	};
 	return Company
 }
