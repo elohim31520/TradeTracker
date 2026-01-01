@@ -9,7 +9,7 @@ import { convertToEST } from '../date'
 const db = require('../../../models')
 
 interface StockPrice {
-	company: string
+	companyName?: string
 	MCap?: string
 	date?: string
 	symbol?: string
@@ -18,6 +18,7 @@ interface StockPrice {
 	dayChg: number
 	yearChg?: number
 	weight: number
+	company_id?: number
 }
 
 function getSymbol(companyName: string, symbols: any[]): string {
@@ -40,13 +41,16 @@ async function extractDataFromHtml(htmlContent: string): Promise<StockPrice[]> {
 
 	let pageDate = new Date().toISOString().split('T')[0]
 	const timestamp = String(Date.now())
+
+	const companies = await db.Company.findAll()
+	const companyMap = new Map(companies.map((company:any) => [company.symbol, company.id]))
 	
 	await Promise.all(
 		rows.map(async (row: cheerio.Element) => {
 			const $row = $(row)
 			const cols = $row.find('td')
 
-			const company = cols.eq(1).text().trim()
+			const companyName = cols.eq(1).text().trim()
 			const symbol = cols.eq(2).text().trim()
 
 			const priceText = cols.eq(4).text().trim().replace(/,/g, '')
@@ -59,9 +63,19 @@ async function extractDataFromHtml(htmlContent: string): Promise<StockPrice[]> {
 			const weightRaw = cols.eq(3).text().trim().replace('%', '');
 			const weight = _.toNumber(weightRaw);
 
+			let company_id = companyMap.get(symbol)
+			if (!company_id) {
+                const [companyInstance] = await db.Company.findOrCreate({
+                    where: { symbol },
+                    defaults: { name: companyName }
+                });
+                company_id = companyInstance.id;
+                // 選做：更新 map 以免同批次重複查詢 DB
+                companyMap.set(symbol, company_id);
+            }
+
 			stockPrices.push({
-				company,
-				symbol,
+				company_id: company_id as number,
 				price,
 				dayChg,
 				date: pageDate,
