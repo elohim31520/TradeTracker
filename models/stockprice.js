@@ -7,8 +7,14 @@ module.exports = (sequelize, DataTypes) => {
 	}
 	StockPrice.init(
 		{
-			symbol: DataTypes.STRING,
-			company: DataTypes.STRING,
+			symbol: {
+				type: DataTypes.STRING,
+				allowNull: true,
+			},
+			company: {
+				type: DataTypes.STRING,
+				allowNull: true,
+			},
 			price: DataTypes.DECIMAL(10, 2),
 			dayChg: DataTypes.DECIMAL,
 			yearChg: {
