@@ -43,18 +43,19 @@ class StockService {
 					SELECT name, symbol, price, chg, ychg, cap, time
 					FROM (
 						SELECT
-							company AS name,
-							symbol,
-							price,
-							day_chg AS chg,
-							year_chg AS ychg,
-							m_cap AS cap,
-							date AS time,
-							ROW_NUMBER() OVER (PARTITION BY symbol ORDER BY timestamp DESC) as rn
+							c.name AS name,
+							c.symbol AS symbol,
+							p.price,
+							p.day_chg AS chg,
+							p.year_chg AS ychg,
+							p.m_cap AS cap,
+							p.date AS time,
+							ROW_NUMBER() OVER (PARTITION BY p.company_id ORDER BY timestamp DESC) as rn
 						FROM
-							stock_prices
+							stock_prices p
+						INNER JOIN company c ON p.company_id = c.id
 						WHERE
-							date = :targetDate
+							p.date = :targetDate
 					) AS ranked_prices
 					WHERE
 						rn = 1;
