@@ -30,7 +30,11 @@ class PortfolioService {
 			],
 			nest: true,
 		})
-		return portfolios as unknown as PortfolioResponse[]
+		return portfolios.map(({ company, ...rest }: any) => ({
+			...rest,
+			stock_id: company?.symbol || '',
+			company: company,
+		})) as unknown as PortfolioResponse[]
 	}
 
 	async updateByUser(userId: number, data: updateParams): Promise<void> {

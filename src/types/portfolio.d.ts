@@ -16,6 +16,7 @@ export interface PortfolioResponse {
 	id: number
 	quantity: number
 	avg: number
+	stock_id?: string
 	company?: {
 		name: string
 		symbol: string

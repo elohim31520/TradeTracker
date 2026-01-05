@@ -51,7 +51,12 @@ class TransactionService {
 			limit: size,
 			raw: true,
 		})
-		return transactions as unknown as TransactionPartial[]
+
+		return transactions.map(({ company, ...rest }: any) => ({
+			...rest,
+			stock_id: company?.symbol || '',
+			company: company,
+		})) as unknown as TransactionPartial[]
 	}
 
 	async getById(id: number): Promise<TransactionAttributes | null> {

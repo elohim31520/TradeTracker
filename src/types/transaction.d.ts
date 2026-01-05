@@ -19,4 +19,5 @@ export interface TransactionPartial {
 	quantity: number
 	price: number
 	date: Date
+	stock_id?: string
 }
