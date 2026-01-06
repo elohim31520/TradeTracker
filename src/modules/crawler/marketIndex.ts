@@ -7,30 +7,39 @@ import { MARKET_INDEX_HEADERS } from '../../constant/config'
 const { BTCUSD, USOIL, DXY, US10Y, XAUUSD } = require('../../constant/market')
 import { decodeBuffer } from '../util'
 const logger = require('../../logger')
-const marketIndexService = require('../../services/marketIndexService')
+const db = require('../../../models')
 
-interface MarketIndexAttribute {
-	symbol: string
+interface MarketData {
+	asset_id: number
 	price: number
 	change: number
 }
 
-function extractDataFromHtml($: cheerio.CheerioAPI, symbol: string): MarketIndexAttribute {
-	let template
+function extractDataFromHtml($: cheerio.CheerioAPI, symbol: string, assetId: number): MarketData | null {
+	let selector: string
+
 	if (symbol === USOIL) {
-		template = `tr[data-symbol="CL1:COM"]`
+		selector = `tr[data-symbol="CL1:COM"]`
 	} else if (symbol === US10Y) {
-		template = 'tr[data-symbol="USGG10YR:IND"]'
+		selector = 'tr[data-symbol="USGG10YR:IND"]'
 	} else {
-		template = `tr[data-symbol="${symbol}:CUR"]`
+		selector = `tr[data-symbol="${symbol}:CUR"]`
 	}
-	const row = $(template)
+	const row = $(selector)
+	if (!row.length) return null
+
 	const val = row.find('td#p').text().trim()
 	const chValue = row.find('td#pch').text().trim().replace('%', '')
+
+	const price = parseFloat(val)
+	const change = parseFloat(chValue)
+
+	if (isNaN(price) || isNaN(change)) return null
+
 	return {
-		symbol,
-		price: +val,
-		change: +chValue,
+		asset_id: assetId,
+		price,
+		change,
 	}
 }
 
@@ -46,12 +55,24 @@ export async function crawlMarketIndex(): Promise<void> {
 		const res = await axios.get(url, { headers: MARKET_INDEX_HEADERS })
 		const htmlContent = decodeBuffer(res.data)
 		const $ = cheerio.load(htmlContent)
-		const symbols: string[] = [BTCUSD, DXY, USOIL, US10Y, XAUUSD]
-		for (const symbol of symbols) {
-			const param = extractDataFromHtml($, symbol)
-			await marketIndexService.create(param)
+
+		const assets = await db.Asset.findAll()
+		const results: MarketData[] = []
+
+		for (const asset of assets) {
+			const data = extractDataFromHtml($, asset.symbol, asset.id)
+
+			if (data) {
+				results.push(data)
+			} else {
+				logger.warn(`無法抓取標的數據: ${asset.symbol}`)
+			}
+		}
+
+		if (results.length > 0) {
+			await db.MarketIndex.bulkCreate(results)
 		}
 	} catch (e: any) {
-		logger.error(e.message)
+		logger.error(`Error: ${(e as Error)}`)
 	}
 }
