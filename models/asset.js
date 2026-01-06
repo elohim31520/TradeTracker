@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
         static associate(models) {
             // 一個資產擁有多條價格歷史紀錄
             Asset.hasMany(models.MarketIndex, {
-                foreignKey: 'assetId',
+                foreignKey: 'asset_id',
                 as: 'priceHistories',
             })
         }

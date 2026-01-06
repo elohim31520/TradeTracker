@@ -105,12 +105,23 @@ class MarketIndexService {
 
 	async getLstOne(symbol) {
 		const lastOne = await db.MarketIndex.findOne({
-			where: {
-				symbol,
-			},
-			order: [['createdAt', 'DESC']],
-		})
-		return lastOne
+			include: [{
+				model: db.Asset,
+				as: 'asset',
+				where: { symbol },
+				attributes: ['symbol']
+			}],
+			order: [['created_at', 'DESC']],
+			raw: true,
+			nest: true
+		});
+	
+		if (!lastOne) return null;
+
+		return {
+			...lastOne,
+			symbol: lastOne.asset.symbol
+		};
 	}
 
 	async getDataByDateRange(rangeInDays) {
@@ -118,39 +129,44 @@ class MarketIndexService {
 		const rawQuery = `
 			WITH RankedData AS (
 				SELECT
-					id,
-					symbol,
-					price,
-					\`change\`,
-					DATE_FORMAT(created_at, '%Y-%m-%d %H') AS createdAt,
+					m.id,
+					m.asset_id,
+					m.price,
+					m.\`change\`,
+					-- 修正：保留原始格式化邏輯
+					DATE_FORMAT(m.created_at, '%Y-%m-%d %H') AS hourGroup,
 					ROW_NUMBER() OVER (
-						PARTITION BY symbol, DATE_FORMAT(created_at, '%Y-%m-%d %H')
-						ORDER BY \`change\` DESC, created_at DESC
+						-- 修正：改用 asset_id 進行分區，這比字串比對更快
+						PARTITION BY m.asset_id, DATE_FORMAT(m.created_at, '%Y-%m-%d %H')
+						-- 修正：通常取每小時最後一筆用 created_at DESC
+						ORDER BY m.created_at DESC
 					) as rn
 				FROM
-					market_index
+					market_index m
 				WHERE
-					created_at >= :startDate
+					m.created_at >= :startDate
 			)
 			SELECT
-				symbol,
-				price,
-				\`change\`,
-				createdAt
+				a.symbol,
+				r.price,
+				r.\`change\`,
+				r.hourGroup AS createdAt
 			FROM
-				RankedData
+				RankedData r
+			-- 修正：透過 JOIN 拿回 symbol
+			JOIN assets a ON r.asset_id = a.id
 			WHERE
-				rn = 1
+				r.rn = 1
 			ORDER BY
-				symbol, createdAt;
+				a.symbol, r.hourGroup;
 		`
-
+	
 		const results = await db.sequelize.query(rawQuery, {
 			replacements: { startDate: startDate },
 			type: db.sequelize.QueryTypes.SELECT,
 			raw: true,
 		})
-
+	
 		return results
 	}
 
@@ -190,31 +206,61 @@ class MarketIndexService {
 	}
 
 	async getMarketDataBySymbol({symbol, page, size}) {
-		const data = await db.MarketIndex.findAll({
-			where: {
-				symbol,
-			},
-			order: [['createdAt', 'DESC']],
-			offset: (page - 1) * size,
-			limit: size,
-		})
-		return data
+		const res = await db.MarketIndex.findAll({
+			include: [
+				{
+					model: db.Asset,
+					as: 'asset',
+					where: { symbol },
+					attributes: ['symbol'],
+				}
+			],
+			order: [['created_at', 'DESC']],
+			offset: (Number(page) - 1) * Number(size),
+			limit: Number(size),
+			raw: true,
+			nest: true
+		});
+
+		return res.map(item => ({
+			...item,
+			symbol: item.asset.symbol,
+			asset: undefined
+		}));
 	}
 
 	async getQuotes() {
+		const subQuery = `(
+			SELECT id, ROW_NUMBER() OVER (PARTITION BY asset_id ORDER BY created_at DESC) as rn 
+			FROM market_index
+		)`;
+	
 		const data = await db.MarketIndex.findAll({
-			attributes: ['symbol', 'price', 'created_at'],
+			attributes: ['price', 'created_at', 'asset_id'],
+			include: [
+				{
+					model: db.Asset,
+					as: 'asset',
+					attributes: ['symbol'],
+				}
+			],
 			where: {
 				id: {
-					[db.Sequelize.Op.in]: db.Sequelize.literal(
-						`(SELECT MAX(id) FROM market_index GROUP BY symbol)`
-					)
+					[db.Sequelize.Op.in]: db.Sequelize.literal(`(
+						SELECT t.id FROM ${subQuery} AS t WHERE t.rn = 1
+					)`)
 				}
 			},
-			raw: true
+			raw: true,
+			nest: true
 		});
-		
-		return data;
+	
+		return data.map(item => ({
+			symbol: item.asset.symbol,
+			price: item.price,
+			created_at: item.created_at,
+			asset_id: item.asset_id
+		}));
 	}
 }
 
