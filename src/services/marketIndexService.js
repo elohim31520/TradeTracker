@@ -139,7 +139,7 @@ class MarketIndexService {
 						-- 修正：改用 asset_id 進行分區，這比字串比對更快
 						PARTITION BY m.asset_id, DATE_FORMAT(m.created_at, '%Y-%m-%d %H')
 						-- 修正：通常取每小時最後一筆用 created_at DESC
-						ORDER BY m.created_at DESC
+						ORDER BY m.\`change\` DESC
 					) as rn
 				FROM
 					market_index m
