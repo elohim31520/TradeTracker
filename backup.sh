@@ -53,7 +53,7 @@ fi
 
 # --- 5. 上傳至 GCS ---
 echo "正在上傳至 $GCS_BUCKET ..."
-/usr/bin/gsutil cp cp "$BACKUP_DIR/$FILE_NAME" "$GCS_BUCKET/"
+/usr/bin/gcloud storage cp "$BACKUP_DIR/$FILE_NAME" "$GCS_BUCKET/"
 
 if [ $? -eq 0 ]; then
     echo "🚀 上傳成功！"
