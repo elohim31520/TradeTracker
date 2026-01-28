@@ -109,7 +109,9 @@ services:
     restart: unless-stopped
     command: tunnel --no-autoupdate run --token ${TUNNEL_TOKEN}
     depends_on:
-      - ur-trade-app
+      - app
+    networks:
+      - app-network
 
 networks:
   app-network:
